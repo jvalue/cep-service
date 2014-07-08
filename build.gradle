@@ -1,0 +1,56 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'war'
+apply plugin: 'cargo'
+
+repositories {
+	maven { url 'http://maven.restlet.org' }
+	mavenCentral()
+}
+
+
+buildscript {
+    repositories {
+    	jcenter()
+    }
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-cargo-plugin:1.4'
+    }
+}
+
+cargo {
+    containerId = 'tomcat7x'
+}
+
+
+cargoRedeployRemote.dependsOn('war')
+cargoRunLocal.dependsOn('war')
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
+
+
+mainClassName = "org.jvalue.ceps.Main"
+
+
+dependencies {
+    cargo "org.codehaus.cargo:cargo-ant:1.4.5"
+    
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.2.3'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.2.3'
+	compile 'org.restlet.jee:org.restlet:2.1.6'
+	compile 'org.restlet.jee:org.restlet.ext.jackson:2.1.6'
+	compile 'org.restlet.jee:org.restlet.ext.servlet:2.1.6'
+	compile 'org.ektorp:org.ektorp:1.4.1'
+	compile 'org.slf4j:slf4j-api:1.7.5'
+	compile 'org.slf4j:slf4j-log4j12:1.7.5'	
+	testCompile 'junit:junit:4.11'
+}
+
+
+tasks.withType(Compile) {
+	options.compilerArgs << "-Xlint:unchecked"
+}

@@ -1,0 +1,17 @@
+# Ignore #
+*.class
+*.war
+*.ear
+*.iml
+*.ipr
+*.iws
+*.swp
+/target
+/bin
+/build
+/.gradle
+/.settings
+.classpath
+.project
+logging.log
+gradle.properties
