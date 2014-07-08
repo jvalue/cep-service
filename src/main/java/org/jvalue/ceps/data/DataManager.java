@@ -1,7 +1,5 @@
 package org.jvalue.ceps.data;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import org.jvalue.ceps.utils.Assert;
@@ -28,8 +26,8 @@ public final class DataManager {
 	}
 
 
-	private final Set<DataSource> sources = new HashSet<DataSource>();
 	private final String clientId = UUID.randomUUID().toString();
+	private final DataSourceDb sourceDb = DataSourceDb.getInstance();
 
 	private DataManager() { }
 
@@ -40,10 +38,10 @@ public final class DataManager {
 			String restCallbackParam) throws RestException {
 
 		Assert.assertNotNull(source, restCallbackUrl, restCallbackParam);
-		Assert.assertFalse(sources.contains(source), "source already being monitored");
+		Assert.assertFalse(sourceDb.getAll().contains(source), "source already being monitored");
 
 		updateMonitoring(source, ODS_URL_REGISTRATION, restCallbackUrl, restCallbackParam);
-		sources.add(source);
+		sourceDb.add(source);
 	}
 
 
@@ -53,10 +51,10 @@ public final class DataManager {
 			String restCallbackParam) throws RestException {
 
 		Assert.assertNotNull(source);
-		Assert.assertTrue(sources.contains(source), "source not being monitored");
+		Assert.assertTrue(sourceDb.getAll().contains(source), "source not being monitored");
 
 		updateMonitoring(source, ODS_URL_UNREGISTRATION, restCallbackUrl, restCallbackParam);
-		sources.remove(source);
+		sourceDb.remove(source);
 	}
 
 
@@ -74,6 +72,12 @@ public final class DataManager {
 			.parameter(ODS_PARAM_CEPS_SOURCE, restCallbackParam)
 			.build()
 			.execute();
+	}
+
+
+	public boolean isBeingMonitored(DataSource source) {
+		Assert.assertNotNull(source);
+		return sourceDb.getAll().contains(source);
 	}
 
 

@@ -39,11 +39,16 @@ public final class CepService {
 
 	private static void startSourceMonitoring() {
 		DataSource source = new DataSource("de-pegelonline", ODS_SERVER);
+		DataManager manager = DataManager.getInstance();
+
+		if (manager.isBeingMonitored(source)) return;
+
 		try {
-			DataManager.getInstance().startMonitoring(
+			manager.startMonitoring(
 					source,
 					SERVER_NAME + ":" + SERVER_PORT + OdsRestHook.URL_NOTIFY_SOURCE_CHANGED,
 					OdsRestHook.PARAM_SOURCE);
+
 		} catch (RestException re) {
 			throw new IllegalStateException(re);
 		}

@@ -2,12 +2,21 @@ package org.jvalue.ceps.data;
 
 import org.jvalue.ceps.utils.Assert;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class DataSource {
 
 	private final String odsId, odsUrl;
 
-	public DataSource(String odsId, String odsUrl) {
+	@JsonCreator
+	public DataSource(
+			@JsonProperty("odsId") String odsId, 
+			@JsonProperty("odsUrl") String odsUrl) {
+
 		Assert.assertNotNull(odsId, odsUrl);
 		this.odsId = odsId;
 		this.odsUrl = odsUrl;
