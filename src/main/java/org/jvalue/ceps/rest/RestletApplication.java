@@ -11,6 +11,7 @@ public final class RestletApplication extends Application {
 	@Override
 	public Restlet createInboundRoot() {
 		Router router = new Router(getContext());
+		router.attachDefault(new DefaultReslet());
 		return router;
 	}
 
