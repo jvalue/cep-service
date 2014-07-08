@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jvalue.ceps.data.DataManager;
+import org.jvalue.ceps.data.OdsRestHook;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
