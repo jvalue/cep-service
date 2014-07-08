@@ -1,5 +1,9 @@
 package org.jvalue.ceps.rest;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
@@ -7,12 +11,28 @@ import org.restlet.routing.Router;
 
 public final class RestletApplication extends Application {
 
+	private final List<RestApi> apis = new LinkedList<RestApi>();
+
+	public RestletApplication() {
+		apis.add(new DataRestApi());
+	}
+
 
 	@Override
 	public Restlet createInboundRoot() {
 		Router router = new Router(getContext());
+
+		for (RestApi api : apis) attachRoutes(router, api);
 		router.attachDefault(new DefaultReslet());
+
 		return router;
+	}
+
+
+	private void attachRoutes(Router router, RestApi restApi) {
+		for (Map.Entry<String, Restlet> entry : restApi.getRoutes().entrySet()) {
+			router.attach(entry.getKey(), entry.getValue());
+		}
 	}
 
 

@@ -1,5 +1,6 @@
 package org.jvalue.ceps.rest;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -17,8 +18,9 @@ final class DataRestApi implements RestApi {
 	private static final String URL_NOTIFY_SOURCE_CHANGED = "/data";
 	private static final String PARAM_SOURCE = "source";
 
-	private static final Map<String, Restlet> routes = new HashMap<String, Restlet>();
+	private static Map<String, Restlet> routes;
 	static {
+		Map<String, Restlet> routes = new HashMap<String, Restlet>();
 		Set<String> requiredParams = new HashSet<String>();
 		requiredParams.add(PARAM_SOURCE);
 		Set<String> optionalParams = new HashSet<String>();
@@ -39,9 +41,9 @@ final class DataRestApi implements RestApi {
 						DataManager.getInstance().onSourceChanged(sourceId);
 					}
 				});
+
+		DataRestApi.routes = Collections.unmodifiableMap(routes);
 	}
-
-
 
 
 	@Override
