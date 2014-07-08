@@ -1,7 +1,7 @@
 package org.jvalue.ceps.data;
 
 
-public interface DataListener {
+public interface DataChangeListener {
 
 	public void onNewData();
 

@@ -86,12 +86,12 @@ public final class DataManager {
 	}
 
 
-	public void registerDataListener(DataListener listener) {
+	public void registerDataListener(DataChangeListener listener) {
 		throw new UnsupportedOperationException("working on it ...");
 	}
 
 
-	public void unregisterDataListener(DataListener listener) {
+	public void unregisterDataListener(DataChangeListener listener) {
 		throw new UnsupportedOperationException("working on it ...");
 	}
 
