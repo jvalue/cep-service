@@ -15,18 +15,15 @@ import org.restlet.data.Method;
 
 final class DataRestApi implements RestApi {
 
-	private static final String URL_NOTIFY_SOURCE_CHANGED = "/data";
-	private static final String PARAM_SOURCE = "source";
-
 	private static Map<String, Restlet> routes;
 	static {
 		Map<String, Restlet> routes = new HashMap<String, Restlet>();
 		Set<String> requiredParams = new HashSet<String>();
-		requiredParams.add(PARAM_SOURCE);
+		requiredParams.add(OdsRestHook.PARAM_SOURCE);
 		Set<String> optionalParams = new HashSet<String>();
 
 		routes.put(
-				URL_NOTIFY_SOURCE_CHANGED,
+				OdsRestHook.URL_NOTIFY_SOURCE_CHANGED,
 				new BaseRestlet(requiredParams, optionalParams) {
 
 					@Override
@@ -37,7 +34,7 @@ final class DataRestApi implements RestApi {
 
 					@Override
 					public void doPost(Request request, Response response) {
-						String sourceId = getParameter(request, PARAM_SOURCE);
+						String sourceId = getParameter(request, OdsRestHook.PARAM_SOURCE);
 						DataManager.getInstance().onSourceChanged(sourceId);
 					}
 				});

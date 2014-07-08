@@ -12,8 +12,8 @@ import org.jvalue.ceps.utils.RestException;
 public final class DataManager {
 
 	private static final String
-		ODS_URL_REGISTRATION = "/notifications/rest/register",
-		ODS_URL_UNREGISTRATION = "/notifications/rest/unregister",
+		ODS_URL_REGISTRATION = "notifications/rest/register",
+		ODS_URL_UNREGISTRATION = "notifications/rest/unregister",
 		ODS_PARAM_CLIENT_ID = "regId",
 		ODS_PARAM_SOURCE = "source",
 		ODS_PARAM_CEPS_URL = "restUrl",
@@ -47,11 +47,15 @@ public final class DataManager {
 	}
 
 
-	public void stopMonitoring(DataSource source) throws RestException {
+	public void stopMonitoring(
+			DataSource source,
+			String restCallbackUrl,
+			String restCallbackParam) throws RestException {
+
 		Assert.assertNotNull(source);
 		Assert.assertTrue(sources.contains(source), "source not being monitored");
 
-		updateMonitoring(source, ODS_URL_UNREGISTRATION, null, null);
+		updateMonitoring(source, ODS_URL_UNREGISTRATION, restCallbackUrl, restCallbackParam);
 		sources.remove(source);
 	}
 
