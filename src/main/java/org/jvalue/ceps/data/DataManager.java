@@ -1,10 +1,15 @@
 package org.jvalue.ceps.data;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 import org.jvalue.ceps.utils.Assert;
+import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.RestCall;
 import org.jvalue.ceps.utils.RestException;
+
+import com.fasterxml.jackson.databind.JsonNode;
 
 
 public final class DataManager {
@@ -29,6 +34,7 @@ public final class DataManager {
 
 	private final String clientId = UUID.randomUUID().toString();
 	private final DataSourceDb sourceDb = DataSourceDb.getInstance();
+	private final List<DataChangeListener> listeners = new LinkedList<DataChangeListener>();
 
 	private DataManager() { }
 
@@ -83,18 +89,23 @@ public final class DataManager {
 	}
 
 
-	public void onSourceChanged(String sourceId) {
-		System.err.println("Source " + sourceId + " changed!");
+	public void onSourceChanged(String sourceId, JsonNode data) {
+		Log.info("Source " + sourceId + " has new data");
+		for (DataChangeListener listener : listeners) {
+			listener.onNewData(data);
+		}
 	}
 
 
 	public void registerDataListener(DataChangeListener listener) {
-		throw new UnsupportedOperationException("working on it ...");
+		Assert.assertNotNull(listener);
+		listeners.add(listener);
 	}
 
 
 	public void unregisterDataListener(DataChangeListener listener) {
-		throw new UnsupportedOperationException("working on it ...");
+		Assert.assertNotNull(listener);
+		listeners.remove(listener);
 	}
 
 }

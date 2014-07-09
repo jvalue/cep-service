@@ -1,5 +1,6 @@
 package org.jvalue.ceps.rest;
 
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,13 +9,19 @@ import java.util.Set;
 
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.OdsRestHook;
+import org.jvalue.ceps.utils.Log;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 final class DataRestApi implements RestApi {
+
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private static Map<String, Restlet> routes;
 	static {
@@ -35,8 +42,18 @@ final class DataRestApi implements RestApi {
 
 					@Override
 					public void doPost(Request request, Response response) {
-						String sourceId = getParameter(request, OdsRestHook.PARAM_SOURCE);
-						DataManager.getInstance().onSourceChanged(sourceId);
+						try {
+							String sourceId = getParameter(request, OdsRestHook.PARAM_SOURCE);
+							String rawString = request.getEntity().getText();
+
+							String jsonString = URLDecoder.decode(rawString, "UTF-8");
+							JsonNode data = mapper.readTree(jsonString);
+
+							DataManager.getInstance().onSourceChanged(sourceId, data);
+
+						} catch (Exception e) {
+							Log.error("retreiving data from ods failed", e);
+						}
 					}
 				});
 
