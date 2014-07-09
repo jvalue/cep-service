@@ -12,19 +12,35 @@ public final class Log {
 		Logger.getLogger(getCallerName()).debug(msg);
 	}
 
+	public static void debug(String msg, Throwable throwable) {
+		Logger.getLogger(getCallerName()).debug(msg, throwable);
+	}
+
 
 	public static void info(String msg) {
 		Logger.getLogger(getCallerName()).info(msg);
 	}
 
+	public static void info(String msg, Throwable throwable) {
+		Logger.getLogger(getCallerName()).info(msg, throwable);
+	}
 
-	public static void warning(String msg) {
+
+	public static void warn(String msg) {
 		Logger.getLogger(getCallerName()).warn(msg);
+	}
+
+	public static void warn(String msg, Throwable throwable) {
+		Logger.getLogger(getCallerName()).warn(msg, throwable);
 	}
 
 
 	public static void error(String msg) {
 		Logger.getLogger(getCallerName()).error(msg);
+	}
+
+	public static void error(String msg, Throwable throwable) {
+		Logger.getLogger(getCallerName()).error(msg, throwable);
 	}
 
 
