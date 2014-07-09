@@ -14,6 +14,7 @@ public final class DataManager {
 		ODS_URL_UNREGISTRATION = "notifications/rest/unregister",
 		ODS_PARAM_CLIENT_ID = "regId",
 		ODS_PARAM_SOURCE = "source",
+		ODS_PARAM_SEND_DATA = "sendData",
 		ODS_PARAM_CEPS_URL = "restUrl",
 		ODS_PARAM_CEPS_SOURCE = "restParam";
 
@@ -68,6 +69,7 @@ public final class DataManager {
 			.path(odsRegistrationUrl)
 			.parameter(ODS_PARAM_CLIENT_ID, clientId)
 			.parameter(ODS_PARAM_SOURCE, source.getOdsId())
+			.parameter(ODS_PARAM_SEND_DATA, Boolean.TRUE.toString())
 			.parameter(ODS_PARAM_CEPS_URL, restCallbackUrl)
 			.parameter(ODS_PARAM_CEPS_SOURCE, restCallbackParam)
 			.build()
