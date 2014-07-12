@@ -38,7 +38,10 @@ public final class CepService {
 
 
 	private static void startSourceMonitoring() {
-		DataSource source = new DataSource("de-pegelonline", ODS_SERVER);
+		DataSource source = new DataSource(
+				"de-pegelonline", 
+				ODS_SERVER,
+				"ods/de/pegelonline/stations/$class");
 		DataManager manager = DataManager.getInstance();
 
 		if (manager.isBeingMonitored(source)) return;
