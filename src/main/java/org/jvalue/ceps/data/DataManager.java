@@ -114,7 +114,7 @@ public final class DataManager {
 	public void onSourceChanged(String sourceId, JsonNode data) {
 		Log.info("Source " + sourceId + " has new data");
 		for (DataChangeListener listener : listeners) {
-			listener.onNewData(data);
+			listener.onNewData(sourceId, data);
 		}
 	}
 
