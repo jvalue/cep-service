@@ -1,5 +1,6 @@
 package org.jvalue.ceps.data;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -10,6 +11,7 @@ import org.jvalue.ceps.utils.RestCall;
 import org.jvalue.ceps.utils.RestException;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public final class DataManager {
@@ -24,6 +26,7 @@ public final class DataManager {
 		ODS_PARAM_CEPS_SOURCE = "restParam";
 
 
+	private static final ObjectMapper mapper = new ObjectMapper();
 	private static DataManager instance;
 
 	public static DataManager getInstance() {
@@ -47,6 +50,25 @@ public final class DataManager {
 		Assert.assertNotNull(source, restCallbackUrl, restCallbackParam);
 		Assert.assertFalse(sourceDb.getAll().contains(source), "source already being monitored");
 
+
+		// get new schema from ods
+		String dataSchemaString = new RestCall.Builder(
+				RestCall.RequestType.GET, 
+				source.getOdsUrl())
+			.path(source.getOdsSchemaUrl())
+			.build()
+			.execute();
+
+		try {
+			JsonNode dataSchema = mapper.readTree(dataSchemaString);
+			for (DataChangeListener listener : listeners) {
+				listener.onNewDataType(source.getOdsId(), dataSchema);
+			}
+		} catch (IOException ioe) {
+			throw new RestException(ioe);
+		}
+
+		// register for updates
 		updateMonitoring(source, ODS_URL_REGISTRATION, restCallbackUrl, restCallbackParam);
 		sourceDb.add(source);
 	}
