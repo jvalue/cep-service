@@ -32,6 +32,7 @@ public final class SchemaTranslatorTest {
 		EventDefinition definition = definitions.get(1);
 		assertEquals("pegelonline", definition.getName());
 		assertTrue(definition.getSchema().containsKey("longname"));
+		assertEquals(definition.getSchema().get("longname"), String.class);
 		assertTrue(definition.getSchema().containsKey("shortname"));
 		assertTrue(definition.getSchema().containsKey("number"));
 		assertTrue(definition.getSchema().containsKey("uuid"));
@@ -39,7 +40,7 @@ public final class SchemaTranslatorTest {
 		assertTrue(definition.getSchema().containsKey("agency"));
 		assertTrue(((Map) definition.getSchema().get("BodyOfWater")).containsKey("longname"));
 		assertTrue(((Map) definition.getSchema().get("BodyOfWater")).containsKey("shortname"));
-		assertTrue(((Map) definition.getSchema().get("BodyOfWater")).containsKey("shortname"));
+		assertEquals(((Map) definition.getSchema().get("BodyOfWater")).get("longname"), String.class);
 	}
 
 

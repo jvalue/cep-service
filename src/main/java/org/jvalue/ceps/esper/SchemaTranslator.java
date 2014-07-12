@@ -62,7 +62,7 @@ final class SchemaTranslator {
 		if (objectAttributes.isArray()) {
 
 			JsonNode attribute = objectAttributes.get(0);
-			String attributeType = toObjectType(attribute.get(KEY_NAME).asText(), true);
+			Object attributeType = toObjectType(attribute.get(KEY_NAME).asText(), true);
 			objectSchema.put(objectName, attributeType);
 
 		} else if (objectAttributes.isObject()) {
@@ -71,7 +71,7 @@ final class SchemaTranslator {
 			while (iter.hasNext()) {
 				Map.Entry<String, JsonNode> attribute = iter.next();
 				String attributeName = attribute.getKey();
-				String attributeType = toObjectType(
+				Object attributeType = toObjectType(
 						attribute.getValue().get(KEY_NAME).asText(), 
 						false);
 				objectSchema.put(attributeName, attributeType);
@@ -125,14 +125,23 @@ final class SchemaTranslator {
 	}
 
 
-	private static String toObjectType(String jsonObjectType, boolean isArray) {
-		String type = null;
-		if (jsonObjectType.equals("java.lang.String")) type = "String";
-		else if (jsonObjectType.equals("java.lang.Number")) type = "double";
+	@SuppressWarnings("rawtypes")
+	private static Object toObjectType(String jsonObjectType, boolean isArray) {
+		Object type = null;
+		if (jsonObjectType.equals("java.lang.String")) type = String.class;
+		else if (jsonObjectType.equals("java.lang.Number")) type = double.class;
 		else if (jsonObjectType.equals("Null")) type = "Null";
 		else Log.error("failed to parse object type " + jsonObjectType);
 
-		if (isArray) type = type + "[]";
+		if (isArray) {
+			Class<?> classType = (Class) type;
+			try {
+				type = Class.forName("[L" + classType.getName() + ";");
+			} catch (ClassNotFoundException cne) {
+				Log.error("failed to get object type", cne);
+			}
+		}
+
 		return type;
 	}
 
