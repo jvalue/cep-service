@@ -19,7 +19,8 @@ final class DataSourceDb {
 	private static DataSourceDb instance;
 
 	public static DataSourceDb getInstance() {
-		if (instance == null) instance = new DataSourceDb();
+		if (instance == null) instance = new DataSourceDb(
+				DbAccessorFactory.getCouchDbAccessor(DB_NAME));
 		return instance;
 	}
 
@@ -27,8 +28,9 @@ final class DataSourceDb {
 	private final ObjectMapper mapper = new ObjectMapper();
 	private final DbAccessor dbAccessor;
 
-	private DataSourceDb() {
-		this.dbAccessor = DbAccessorFactory.getCouchDbAccessor(DB_NAME);
+	private DataSourceDb(DbAccessor dbAccessor) {
+		Assert.assertNotNull(dbAccessor);
+		this.dbAccessor = dbAccessor;
 	}
 
 
