@@ -38,16 +38,15 @@ public final class BaseRestletTest {
 
 	@Test
 	public final void testMissingParamRequest() {
-		BaseRestlet restlet = new DummyRestlet(
+		RestletTestHelper helper = new RestletTestHelper(
+				new DummyRestlet(
+					new HashSet<String>(Arrays.asList("dummy")),
+					new	HashSet<String>()),
 				new HashSet<String>(Arrays.asList("dummy")),
 				new	HashSet<String>());
 
-		Request request = new Request(Method.POST, new Reference());
-		Response response = new Response(request);
-
-		restlet.handle(request, response);
-
-		assertEquals(Status.CLIENT_ERROR_BAD_REQUEST, response.getStatus());
+		helper.assertMissingParams(Method.POST);
+		helper.assertMissingParams(Method.GET); 
 	}
 
 
@@ -70,14 +69,9 @@ public final class BaseRestletTest {
 
 	@Test
 	public final void testInvalidMethod() {
-		BaseRestlet restlet = new DummyRestlet();
-
-		Request request = new Request(Method.DELETE, new Reference());
-		Response response = new Response(request);
-
-		restlet.handle(request, response);
-
-		assertEquals(Status.CLIENT_ERROR_BAD_REQUEST, response.getStatus());
+		RestletTestHelper helper = new RestletTestHelper(new DummyRestlet());
+		helper.assertInvalidMethod(Method.DELETE);
+		helper.assertInvalidMethod(Method.PUT);
 	}
 
 
@@ -87,45 +81,39 @@ public final class BaseRestletTest {
 
 	@Test
 	public final void testPostAndGet() {
-		BaseRestlet restlet = new BaseRestlet(
+		RestletTestHelper helper = new RestletTestHelper(
+				new BaseRestlet(
+					new HashSet<String>(Arrays.asList("dummy")),
+					new HashSet<String>()) { 
+
+						@Override
+						public void doGet(Request request, Response response) {
+							doGetCount++;
+							onSuccess(response);
+
+							assertEquals("dummy", getParameter(request, "dummy"));
+						}
+
+						@Override
+						public void doPost(Request request, Response response) {
+							doPostCount++;
+							onSuccess(response);
+						}
+
+					},
 				new HashSet<String>(Arrays.asList("dummy")),
-				new HashSet<String>()) {
+				new HashSet<String>());
 
-			@Override
-			public void doGet(Request request, Response response) {
-				doGetCount++;
-				onSuccess(response);
-
-				assertEquals("value", getParameter(request, "dummy"));
-			}
-
-			@Override
-			public void doPost(Request request, Response response) {
-				doPostCount++;
-				onSuccess(response);
-			}
-
-		};
 
 		// test get
-		Request getRequest = new Request(Method.GET, new Reference());
-		getRequest.getResourceRef().addQueryParameter("dummy", "value");
-		Response getResponse = new Response(getRequest);
-		restlet.handle(getRequest, getResponse);
-
+		helper.assertValidMethod(Method.GET);
 		assertEquals(1, doGetCount);
 		assertEquals(0, doPostCount);
-		assertEquals(Status.SUCCESS_OK, getResponse.getStatus());
 
 		// test post
-		Request postRequest = new Request(Method.POST, new Reference());
-		postRequest.getResourceRef().addQueryParameter("dummy", "value");
-		Response postResponse = new Response(postRequest);
-		restlet.handle(postRequest, postResponse);
-
+		helper.assertValidMethod(Method.POST);
 		assertEquals(1, doGetCount);
 		assertEquals(1, doPostCount);
-		assertEquals(Status.SUCCESS_OK, postResponse.getStatus());
 
 	}
 
