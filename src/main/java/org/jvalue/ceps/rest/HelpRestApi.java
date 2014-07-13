@@ -2,6 +2,7 @@ package org.jvalue.ceps.rest;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,14 +21,15 @@ final class HelpRestApi implements RestApi {
 	private Map<String, Restlet> routes;
 
 
-	public HelpRestApi(List<String> apis) {
+	public HelpRestApi(final List<String> apis) {
 		Assert.assertNotNull(apis);
 
-		apis.add(URL_API);
-		Collections.sort(apis);
+		List<String> apisCopy = new LinkedList<String>(apis);
+		apisCopy.add(URL_API);
+		Collections.sort(apisCopy);
 
 		final StringBuilder builder = new StringBuilder();
-		for (String api : apis) {
+		for (String api : apisCopy) {
 			builder.append(api);
 			builder.append("\n");
 		}
