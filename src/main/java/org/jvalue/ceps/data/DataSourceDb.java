@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jvalue.ceps.db.DbAccessor;
-import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.utils.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,21 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 final class DataSourceDb {
 
-	private static final String DB_NAME = "odsSources";
-
-	private static DataSourceDb instance;
-
-	public static DataSourceDb getInstance() {
-		if (instance == null) instance = new DataSourceDb(
-				DbAccessorFactory.getCouchDbAccessor(DB_NAME));
-		return instance;
-	}
-
-
 	private final ObjectMapper mapper = new ObjectMapper();
 	private final DbAccessor dbAccessor;
 
-	private DataSourceDb(DbAccessor dbAccessor) {
+	public DataSourceDb(DbAccessor dbAccessor) {
 		Assert.assertNotNull(dbAccessor);
 		this.dbAccessor = dbAccessor;
 	}

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.RestCall;
@@ -15,6 +16,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public final class DataManager {
+
+	private static final String DB_NAME = "cepsOdsSources";
 
 	private static final String
 		ODS_URL_REGISTRATION = "notifications/rest/register",
@@ -30,16 +33,20 @@ public final class DataManager {
 	private static DataManager instance;
 
 	public static DataManager getInstance() {
-		if (instance == null) instance = new DataManager();
+		if (instance == null) instance = new DataManager(
+				new DataSourceDb(DbAccessorFactory.getCouchDbAccessor(DB_NAME)));
 		return instance;
 	}
 
 
 	private final String clientId = UUID.randomUUID().toString();
-	private final DataSourceDb sourceDb = DataSourceDb.getInstance();
 	private final List<DataChangeListener> listeners = new LinkedList<DataChangeListener>();
+	private final DataSourceDb sourceDb;
 
-	private DataManager() { }
+	private DataManager(DataSourceDb sourceDb) {
+		Assert.assertNotNull(sourceDb);
+		this.sourceDb = sourceDb;
+	}
 
 
 	public void startMonitoring(
