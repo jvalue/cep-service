@@ -30,38 +30,41 @@ final class RestletTestHelper {
 	}
 
 
-	public void assertInvalidMethod(Method method) {
-		assertMethod(method, Status.CLIENT_ERROR_BAD_REQUEST);
+	public Response assertInvalidMethod(Method method) {
+		return assertMethod(method, Status.CLIENT_ERROR_BAD_REQUEST);
 	}
 
 
-	public void assertValidMethod(Method method) {
-		assertMethod(method, Status.SUCCESS_OK);
+	public Response assertValidMethod(Method method) {
+		return assertMethod(method, Status.SUCCESS_OK);
 	}
 
 	
-	private void assertMethod(Method method, Status status) {
+	private Response assertMethod(Method method, Status status) {
 		Request request = createRequestWithParams(method);
 		Response response = new Response(request);
 		restlet.handle(request, response);
 		assertEquals(status, response.getStatus());
+		return response;
 	}
 
 
-	public void assertMissingParams(Method method) {
+	public Response assertMissingParams(Method method) {
 		Request request = createRequestNoParams(method);
 		Response response = new Response(request);
 		restlet.handle(request, response);
 
 		assertEquals(Status.CLIENT_ERROR_BAD_REQUEST, response.getStatus());
+		return response;
 	}
 
 
-	public void assertStatus(Request request, Status status) {
+	public Response assertStatus(Request request, Status status) {
 		Response response = new Response(request);
 		restlet.handle(request, response);
 
 		assertEquals(status, response.getStatus());
+		return response;
 	}
 
 
