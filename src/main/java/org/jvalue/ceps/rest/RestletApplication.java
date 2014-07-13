@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jvalue.ceps.data.DataManager;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
@@ -14,7 +15,7 @@ public final class RestletApplication extends Application {
 	private final List<RestApi> apis = new LinkedList<RestApi>();
 
 	public RestletApplication() {
-		apis.add(new DataRestApi());
+		apis.add(new DataRestApi(DataManager.getInstance()));
 
 		List<String> apiCalls = new LinkedList<String>();
 		for (RestApi api : apis) apiCalls.addAll(api.getRoutes().keySet());

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jvalue.ceps.data.DataManager;
+import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.restlet.Request;
 import org.restlet.Response;
@@ -22,8 +23,12 @@ final class DataRestApi implements RestApi {
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
-	private static Map<String, Restlet> routes;
-	static {
+
+	private Map<String, Restlet> routes;
+
+	public DataRestApi(final DataManager manager) {
+		Assert.assertNotNull(manager);
+
 		Map<String, Restlet> routes = new HashMap<String, Restlet>();
 		Set<String> requiredParams = new HashSet<String>();
 		requiredParams.add(OdsRestHook.PARAM_SOURCE);
@@ -48,7 +53,7 @@ final class DataRestApi implements RestApi {
 							String jsonString = URLDecoder.decode(rawString, "UTF-8");
 							JsonNode data = mapper.readTree(jsonString);
 
-							DataManager.getInstance().onSourceChanged(sourceId, data);
+							manager.onSourceChanged(sourceId, data);
 
 						} catch (Exception e) {
 							Log.error("retreiving data from ods failed", e);
@@ -56,7 +61,7 @@ final class DataRestApi implements RestApi {
 					}
 				});
 
-		DataRestApi.routes = Collections.unmodifiableMap(routes);
+		this.routes = Collections.unmodifiableMap(routes);
 	}
 
 
