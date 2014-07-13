@@ -111,7 +111,6 @@ public final class BaseRestletTest {
 		Request getRequest = new Request(Method.GET, new Reference());
 		getRequest.getResourceRef().addQueryParameter("dummy", "value");
 		Response getResponse = new Response(getRequest);
-
 		restlet.handle(getRequest, getResponse);
 
 		assertEquals(1, doGetCount);
@@ -120,13 +119,13 @@ public final class BaseRestletTest {
 
 		// test post
 		Request postRequest = new Request(Method.POST, new Reference());
+		postRequest.getResourceRef().addQueryParameter("dummy", "value");
 		Response postResponse = new Response(postRequest);
-
 		restlet.handle(postRequest, postResponse);
 
 		assertEquals(1, doGetCount);
 		assertEquals(1, doPostCount);
-		assertEquals(Status.SUCCESS_OK, getResponse.getStatus());
+		assertEquals(Status.SUCCESS_OK, postResponse.getStatus());
 
 	}
 
