@@ -27,7 +27,7 @@ public final class RestletApplication extends Application {
 		Router router = new Router(getContext());
 
 		for (RestApi api : apis) attachRoutes(router, api);
-		router.attachDefault(new DefaultReslet());
+		router.attachDefault(new DefaultRestlet());
 
 		return router;
 	}
