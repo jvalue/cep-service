@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.jvalue.ceps.db.DbAccessorFactory;
+import org.jvalue.ceps.db.JsonObjectDb;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.RestCall;
@@ -34,16 +35,18 @@ public final class DataManager {
 
 	public static DataManager getInstance() {
 		if (instance == null) instance = new DataManager(
-				new DataSourceDb(DbAccessorFactory.getCouchDbAccessor(DB_NAME)));
+				new JsonObjectDb<DataSource>(
+					DbAccessorFactory.getCouchDbAccessor(DB_NAME), 
+					DataSource.class));
 		return instance;
 	}
 
 
 	private final String clientId = UUID.randomUUID().toString();
 	private final List<DataChangeListener> listeners = new LinkedList<DataChangeListener>();
-	private final DataSourceDb sourceDb;
+	private final JsonObjectDb<DataSource> sourceDb;
 
-	private DataManager(DataSourceDb sourceDb) {
+	private DataManager(JsonObjectDb<DataSource> sourceDb) {
 		Assert.assertNotNull(sourceDb);
 		this.sourceDb = sourceDb;
 	}
