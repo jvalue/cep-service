@@ -2,14 +2,14 @@ package org.jvalue.ceps.esper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
 import org.junit.Test;
 
-import com.espertech.esper.client.EventBean;
-import com.espertech.esper.client.UpdateListener;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -60,9 +60,12 @@ public final class EsperManagerTest {
 	}
 
 
-	private class DummyUpdateListener implements UpdateListener {
+	private class DummyUpdateListener implements JsonUpdateListener {
 		@Override
-		public void update(EventBean[] newEvents, EventBean[] oldEvents) {
+		public void onNewEvents(List<JsonNode> newEvents, List<JsonNode> oldEvents) {
+			assertNotNull(newEvents);
+			assertNotNull(oldEvents);
+			assertTrue(newEvents.size() > 0);
 			updateCount++;
 		}
 	}

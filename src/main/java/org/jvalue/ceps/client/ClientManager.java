@@ -32,12 +32,12 @@ public final class ClientManager {
 	}
 
 
-	public String register(String eplStmt) {
-		Assert.assertNotNull(eplStmt);
+	public String register(String eplStmt, ClientUpdateListener listener) {
+		Assert.assertNotNull(eplStmt, listener);
 
 		String clientId = UUID.randomUUID().toString();
-		ClientUpdateListener listener = new ClientUpdateListener(clientId);
-		String stmtId = EsperManager.getInstance().register(eplStmt, listener);
+		EsperUpdateListener esperListener = new EsperUpdateListener(clientId, listener);
+		String stmtId = EsperManager.getInstance().register(eplStmt, esperListener);
 
 		Client client = new Client(clientId, stmtId);
 		clientDb.add(client);

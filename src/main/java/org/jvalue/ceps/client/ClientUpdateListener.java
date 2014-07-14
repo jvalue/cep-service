@@ -1,29 +1,12 @@
 package org.jvalue.ceps.client;
 
-import org.jvalue.ceps.utils.Assert;
+import java.util.List;
 
-import com.espertech.esper.client.EventBean;
-import com.espertech.esper.client.UpdateListener;
-
-
-final class ClientUpdateListener implements UpdateListener {
-
-	private final String clientId;
+import com.fasterxml.jackson.databind.JsonNode;
 
 
-	public ClientUpdateListener(String clientId) {
-		Assert.assertNotNull(clientId);
-		this.clientId = clientId;
-	}
+public interface ClientUpdateListener {
 
-
-	public String getClientId() {
-		return clientId;
-	}
-
-
-	@Override
-	public void update(EventBean[] newEvents, EventBean[] oldEvents) {
-	}
+	public void onNewEvents(String clientId, List<JsonNode> newEvents, List<JsonNode> oldEvents);
 
 }

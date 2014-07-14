@@ -15,7 +15,6 @@ import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
-import com.espertech.esper.client.UpdateListener;
 import com.fasterxml.jackson.databind.JsonNode;
 
 
@@ -40,11 +39,11 @@ public final class EsperManager implements DataChangeListener {
 	}
 
 
-	public String register(String eplStatement, UpdateListener listener) {
+	public String register(String eplStatement, JsonUpdateListener listener) {
 		Assert.assertNotNull(eplStatement, listener);
 
 		EPStatement stmt = admin.createEPL(eplStatement);
-		stmt.addListener(listener);
+		stmt.addListener(new EsperUpdateListener(listener));
 
 		String stmtId = UUID.randomUUID().toString();
 		startedStatements.put(stmtId, stmt);
