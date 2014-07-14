@@ -1,9 +1,14 @@
 package org.jvalue.ceps.notifications;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.db.JsonObjectDb;
+import org.jvalue.ceps.notifications.clients.Client;
+import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.notifications.sender.NotificationSender;
+import org.jvalue.ceps.notifications.sender.SenderFactory;
 import org.jvalue.ceps.utils.Assert;
 
 
@@ -15,20 +20,27 @@ public final class NotificationManager {
 
 	public static NotificationManager getInstance() {
 		if (instance == null) {
-			instance = new NotificationManager(
-					new JsonObjectDb<Client>(
-						DbAccessorFactory.getCouchDbAccessor(DB_NAME),
-						Client.class));
+			Map<Class<?>, NotificationSender<?>> sender = new HashMap<>();
+			sender.put(GcmClient.class, SenderFactory.getGcmSender());
+			JsonObjectDb<Client> clientDb = new JsonObjectDb<Client>(
+					DbAccessorFactory.getCouchDbAccessor(DB_NAME),
+					Client.class);
+
+			instance = new NotificationManager(sender, clientDb);
 		}
 		return instance;
 	}
 
 
 	private final JsonObjectDb<Client> clientDb;
-	private final Map<Class<?>, NotificationDefinition<?>> defintions = null;
+	private final Map<Class<?>, NotificationSender<?>> sender;
 
-	private NotificationManager(JsonObjectDb<Client> clientDb) {
-		Assert.assertNotNull(clientDb);
+	private NotificationManager(
+			Map<Class<?>, NotificationSender<?>> sender, 
+			JsonObjectDb<Client> clientDb) {
+
+		Assert.assertNotNull(sender, clientDb);
+		this.sender = sender;
 		this.clientDb = clientDb;
 	}
 
@@ -36,23 +48,18 @@ public final class NotificationManager {
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public void register(Client client) {
 		Assert.assertNotNull(client);
+		Assert.assertTrue(sender.containsKey(client.getClass()), "unknown client type");
 
-		NotificationSender sender = defintions.get(client.getClass()).getSender();
-		ClientEplMapper.register(client, sender);
+		NotificationSender s = sender.get(client.getClass());
+		ClientEplMapper.register(client, s);
 		clientDb.add(client);
 	}
 
 
 	public void unregister(Client client) {
 		Assert.assertNotNull(client);
-		unregister(client.getClientId());
+		ClientEplMapper.unregister(client.getClientId());
+		clientDb.remove(client);
 	}
-
-
-	public void unregister(String clientId) {
-		Assert.assertNotNull(clientId);
-		// ClientEplMapper.unregister(clientId);
-	}
-
 
 }

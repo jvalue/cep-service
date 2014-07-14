@@ -1,35 +1,33 @@
-package org.jvalue.ceps.notifications;
+package org.jvalue.ceps.notifications.clients;
 
 import org.jvalue.ceps.utils.Assert;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
 public abstract class Client {
 
 	private final String clientId;
 	private final String eplStmt;
 
-	@JsonCreator
-	public Client(
-			@JsonProperty("clientId") String clientId,
-			@JsonProperty("eplStmt") String eplStmt) {
-
+	Client(String clientId, String eplStmt) {
 		Assert.assertNotNull(clientId, eplStmt);
 		this.clientId = clientId;
 		this.eplStmt = eplStmt;
 	}
 
 
-	public String getClientId() {
+	public final String getClientId() {
 		return clientId;
 	}
 
 
-	public String getEplStmt() {
+	public final String getEplStmt() {
 		return eplStmt;
 	}
 
@@ -43,9 +41,10 @@ public abstract class Client {
 	}
 
 
+	final int MULT = 17;
+
 	@Override
 	public int hashCode() {
-		final int MULT = 17;
 		int hash = 13;
 		hash = hash + MULT * clientId.hashCode();
 		hash = hash + MULT * eplStmt.hashCode();

@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.JsonUpdateListener;
+import org.jvalue.ceps.notifications.clients.Client;
+import org.jvalue.ceps.notifications.sender.NotificationSender;
 import org.jvalue.ceps.utils.Assert;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,11 +21,11 @@ final class ClientEplMapper {
 
 	public static <C extends Client> void register(
 			C client,
-			ClientEventListener<C> listener) {
+			NotificationSender<C> sender) {
 
-		Assert.assertNotNull(client, listener);
+		Assert.assertNotNull(client, sender);
 
-		EsperUpdateListener<?> esperListener = new EsperUpdateListener<C>(client, listener);
+		EsperUpdateListener<?> esperListener = new EsperUpdateListener<C>(client, sender);
 		String stmtId = EsperManager.getInstance().register(client.getEplStmt(), esperListener);
 
 		clientToStmtMap.put(client.getClientId(), stmtId);
@@ -40,17 +42,17 @@ final class ClientEplMapper {
 	private static class EsperUpdateListener<C extends Client> implements JsonUpdateListener {
 
 		private final C client;
-		private final ClientEventListener<C> listener;
+		private final NotificationSender<C> sender;
 
-		public EsperUpdateListener(C client, ClientEventListener<C> listener) {
-			Assert.assertNotNull(client, listener);
+		public EsperUpdateListener(C client, NotificationSender<C> sender) {
+			Assert.assertNotNull(client, sender);
 			this.client = client;
-			this.listener = listener;
+			this.sender = sender;
 		}
 
 
 		public void onNewEvents(List<JsonNode> newEvents, List<JsonNode> oldEvents) {
-			listener.onNewEvents(client, newEvents, oldEvents);
+			sender.sendEventUpdate(client, newEvents, oldEvents);
 		}
 
 	}
