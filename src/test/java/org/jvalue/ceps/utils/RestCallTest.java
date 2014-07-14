@@ -1,5 +1,6 @@
 package org.jvalue.ceps.utils;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
@@ -37,6 +38,15 @@ public final class RestCallTest {
 
 		call.execute();
 
+	}
+
+	
+	@Test
+	public void testRequestType() {
+		assertEquals("GET", RestCall.RequestType.GET.toString());
+		assertEquals("POST", RestCall.RequestType.POST.toString());
+		assertEquals("UPDATE", RestCall.RequestType.UPDATE.toString());
+		assertEquals("DELETE", RestCall.RequestType.DELETE.toString());
 	}
 
 
