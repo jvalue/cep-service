@@ -10,7 +10,7 @@ public final class ClientFactory {
 	private ClientFactory() { }
 
 
-	public GcmClient createGcmClient(String eplStmt, String gcmId) {
+	public static GcmClient createGcmClient(String eplStmt, String gcmId) {
 		Assert.assertNotNull(eplStmt, gcmId);
 		return new GcmClient(UUID.randomUUID().toString(), eplStmt, gcmId);
 	}
