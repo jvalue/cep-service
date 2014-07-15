@@ -15,4 +15,10 @@ public final class ClientFactory {
 		return new GcmClient(UUID.randomUUID().toString(), eplStmt, gcmId);
 	}
 
+
+	public static GcmClient createGcmClient(GcmClient client, String newClientId) {
+		Assert.assertNotNull(client, newClientId);
+		return new GcmClient(newClientId, client.getEplStmt(), client.getGcmId());
+	}
+
 }
