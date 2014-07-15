@@ -1,7 +1,6 @@
 package org.jvalue.ceps.rest.restlet;
 
 import org.junit.Test;
-import org.jvalue.ceps.rest.RestletTestHelper;
 import org.jvalue.ceps.rest.restlet.DefaultRestlet;
 import org.restlet.data.Method;
 import org.restlet.data.Status;

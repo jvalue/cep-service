@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.jvalue.ceps.rest.RestletTestHelper;
 import org.jvalue.ceps.rest.restlet.BaseRestlet;
 import org.restlet.Request;
 import org.restlet.Response;

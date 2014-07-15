@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.jvalue.ceps.notifications.clients.ClientFactory;
 import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -29,6 +30,7 @@ final class GcmSender extends NotificationSender<GcmClient> {
 	private final Sender sender;
 
 	GcmSender(String apiKeyResource) {
+		Assert.assertNotNull(apiKeyResource);
 		String apiKey = new GcmApiKey(apiKeyResource).toString();
 		if (apiKey == null) sender = null;
 		else sender = new Sender(apiKey);

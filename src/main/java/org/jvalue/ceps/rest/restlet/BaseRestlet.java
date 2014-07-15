@@ -13,7 +13,7 @@ import org.restlet.data.Parameter;
 import org.restlet.data.Status;
 
 
-abstract class BaseRestlet extends Restlet {
+public abstract class BaseRestlet extends Restlet {
 
 	private final Set<String> mandatoryQueryParams, optionalQueryParams;
 

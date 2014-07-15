@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.jvalue.ceps.data.DataChangeListener;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DummyDataManager;
+import org.jvalue.ceps.rest.restlet.RestletTestHelper;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;

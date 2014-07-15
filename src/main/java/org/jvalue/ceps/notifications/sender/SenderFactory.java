@@ -11,7 +11,7 @@ public final class SenderFactory {
 	private static NotificationSender<GcmClient> gcmSender;
 
 	public static NotificationSender<GcmClient> getGcmSender() {
-		if (gcmSender == null) gcmSender = new GcmSender();
+		if (gcmSender == null) gcmSender = new GcmSender("/googleApi.key");
 		return gcmSender;
 	}
 

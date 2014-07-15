@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest;
+package org.jvalue.ceps.rest.restlet;
 
 import static org.junit.Assert.assertEquals;
 
@@ -13,7 +13,7 @@ import org.restlet.data.Reference;
 import org.restlet.data.Status;
 
 
-final class RestletTestHelper {
+public final class RestletTestHelper {
 
 	private final Restlet restlet;
 	private final Set<String> optParams;

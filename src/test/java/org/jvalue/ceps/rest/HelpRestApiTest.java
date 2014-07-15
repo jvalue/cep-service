@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.jvalue.ceps.rest.restlet.RestletTestHelper;
 import org.restlet.Response;
 import org.restlet.Restlet;
 import org.restlet.data.Method;
