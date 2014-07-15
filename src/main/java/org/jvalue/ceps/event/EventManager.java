@@ -1,5 +1,6 @@
 package org.jvalue.ceps.event;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -60,6 +61,11 @@ public final class EventManager {
 		Assert.assertNotNull(eventId);
 		Event event = getEvent(eventId);
 		eventDb.remove(event);
+	}
+
+
+	public List<Event> getAll() {
+		return new LinkedList<Event>(eventDb.getAll());
 	}
 
 
