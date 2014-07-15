@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest.restlet;
+package org.jvalue.ceps.rest;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.jvalue.ceps.rest.restlet.BaseRestlet;
+import org.jvalue.ceps.rest.BaseRestlet;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;

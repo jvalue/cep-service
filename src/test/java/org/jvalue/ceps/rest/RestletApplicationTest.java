@@ -14,7 +14,7 @@ public final class RestletApplicationTest {
 		Router root = (Router) new RestletApplication().createInboundRoot();
 
 		assertNotNull(root.getDefaultRoute());
-		assertEquals(4, root.getRoutes().size());
+		assertEquals(6, root.getRoutes().size());
 
 	}
 

@@ -1,10 +1,11 @@
-package org.jvalue.ceps.rest.restlet;
+package org.jvalue.ceps.rest.event;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.jvalue.ceps.event.EventManager;
+import org.jvalue.ceps.rest.BaseRestlet;
 import org.jvalue.ceps.utils.Assert;
 import org.restlet.Request;
 import org.restlet.Response;

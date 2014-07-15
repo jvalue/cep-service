@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest.restlet;
+package org.jvalue.ceps.rest.notifications;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -6,13 +6,15 @@ import java.util.Set;
 
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
+import org.jvalue.ceps.rest.BaseRestlet;
+import org.jvalue.ceps.utils.Assert;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 
 
-abstract class BaseNotificationRegisterRestlet extends BaseRestlet {
+abstract class BaseRegisterRestlet extends BaseRestlet {
 
 	private static final String PARAM_EPL_STMT = "eplStmt";
 	protected static final Set<String> BASE_PARAMS;
@@ -23,11 +25,16 @@ abstract class BaseNotificationRegisterRestlet extends BaseRestlet {
 	}
 
 
-	protected BaseNotificationRegisterRestlet(
+	protected final NotificationManager manager;
+
+	protected BaseRegisterRestlet(
+			NotificationManager manager,
 			Set<String> mandatoryQueryParams,
 			Set<String> optionalQueryParams) {
 		
 		super(mandatoryQueryParams, optionalQueryParams);
+		Assert.assertNotNull(manager);
+		this.manager = manager;
 	}
 
 
@@ -41,7 +48,7 @@ abstract class BaseNotificationRegisterRestlet extends BaseRestlet {
 	protected final void doPost(Request request, Response response) {
 		String eplStmt = getParameter(request, PARAM_EPL_STMT);
 		Client client = getClient(request, eplStmt);
-		NotificationManager.getInstance().register(client);
+		manager.register(client);
 		response.setEntity(client.getClientId(), MediaType.TEXT_PLAIN);
 		onSuccess(response);
 	}

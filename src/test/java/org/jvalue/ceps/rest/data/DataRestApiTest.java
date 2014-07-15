@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest;
+package org.jvalue.ceps.rest.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,7 +10,9 @@ import org.junit.Test;
 import org.jvalue.ceps.data.DataChangeListener;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DummyDataManager;
-import org.jvalue.ceps.rest.restlet.RestletTestHelper;
+import org.jvalue.ceps.rest.RestletTestHelper;
+import org.jvalue.ceps.rest.data.DataRestApi;
+import org.jvalue.ceps.rest.data.OdsRestHook;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;

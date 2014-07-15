@@ -1,7 +1,7 @@
-package org.jvalue.ceps.rest.restlet;
+package org.jvalue.ceps.rest;
 
 import org.junit.Test;
-import org.jvalue.ceps.rest.restlet.DefaultRestlet;
+import org.jvalue.ceps.rest.DefaultRestlet;
 import org.restlet.data.Method;
 import org.restlet.data.Status;
 

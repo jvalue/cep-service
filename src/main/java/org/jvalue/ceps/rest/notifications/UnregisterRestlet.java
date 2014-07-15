@@ -1,16 +1,18 @@
-package org.jvalue.ceps.rest.restlet;
+package org.jvalue.ceps.rest.notifications;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.jvalue.ceps.notifications.NotificationManager;
+import org.jvalue.ceps.rest.BaseRestlet;
+import org.jvalue.ceps.utils.Assert;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.Method;
 
 
-final class NotificationUnregisterRestlet extends BaseRestlet {
+final class UnregisterRestlet extends BaseRestlet {
 
 	private static final String PARAM_CLIENT_ID = "clientId";
 	private static final Set<String> PARAMS;
@@ -20,9 +22,13 @@ final class NotificationUnregisterRestlet extends BaseRestlet {
 		PARAMS = Collections.unmodifiableSet(params);
 	}
 
+	
+	private final NotificationManager manager;
 
-	protected NotificationUnregisterRestlet() {
+	protected UnregisterRestlet(NotificationManager manager) {
 		super(PARAMS, new HashSet<String>());
+		Assert.assertNotNull(manager);
+		this.manager = manager;
 	}
 
 
@@ -35,7 +41,7 @@ final class NotificationUnregisterRestlet extends BaseRestlet {
 	@Override
 	protected final void doPost(Request request, Response response) {
 		String clientId = getParameter(request, PARAM_CLIENT_ID);
-		NotificationManager.getInstance().unregister(clientId);
+		manager.unregister(clientId);
 		onSuccess(response);
 	}
 

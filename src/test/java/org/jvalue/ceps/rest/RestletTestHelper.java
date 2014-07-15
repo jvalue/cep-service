@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest.restlet;
+package org.jvalue.ceps.rest;
 
 import static org.junit.Assert.assertEquals;
 

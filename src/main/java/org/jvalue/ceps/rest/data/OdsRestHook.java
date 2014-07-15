@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest;
+package org.jvalue.ceps.rest.data;
 
 
 public final class OdsRestHook {

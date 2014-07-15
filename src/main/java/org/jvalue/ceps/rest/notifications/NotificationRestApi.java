@@ -1,16 +1,16 @@
-package org.jvalue.ceps.rest;
+package org.jvalue.ceps.rest.notifications;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.rest.restlet.RestletFactory;
+import org.jvalue.ceps.rest.RestApi;
 import org.jvalue.ceps.utils.Assert;
 import org.restlet.Restlet;
 
 
-final class NotificationsRestApi implements RestApi {
+public final class NotificationRestApi implements RestApi {
 
 	private static final String 
 		PATH_PREFIX = "/cep",
@@ -20,13 +20,13 @@ final class NotificationsRestApi implements RestApi {
 
 	private Map<String, Restlet> routes;
 
-	public NotificationsRestApi(final NotificationManager manager) {
+	public NotificationRestApi(NotificationManager manager) {
 		Assert.assertNotNull(manager);
 
 		Map<String, Restlet> routes = new HashMap<String, Restlet>();
 
-		routes.put(PATH_REGISTER_GCM, RestletFactory.createGcmRegisterRestlet());
-		routes.put(PATH_UNREGISTER, RestletFactory.createUnregisterRestlet());
+		routes.put(PATH_REGISTER_GCM, new GcmRegisterRestlet(manager));
+		routes.put(PATH_UNREGISTER, new UnregisterRestlet(manager));
 
 		this.routes = Collections.unmodifiableMap(routes);
 	}

@@ -1,14 +1,15 @@
-package org.jvalue.ceps.rest;
+package org.jvalue.ceps.rest.event;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jvalue.ceps.rest.restlet.RestletFactory;
+import org.jvalue.ceps.event.EventManager;
+import org.jvalue.ceps.rest.RestApi;
 import org.restlet.Restlet;
 
 
-final class EventRestApi implements RestApi {
+public final class EventRestApi implements RestApi {
 
 	private static final String 
 		PATH_PREFIX = "/event",
@@ -16,13 +17,13 @@ final class EventRestApi implements RestApi {
 		PATH_EVENT_REMOVE = PATH_PREFIX + "/remove";
 
 
-	private Map<String, Restlet> routes;
+	private final Map<String, Restlet> routes;
 
-	public EventRestApi() {
+	public EventRestApi(EventManager manager) {
 		Map<String, Restlet> routes = new HashMap<String, Restlet>();
 
-		routes.put(PATH_EVENT_GET, RestletFactory.createFetchEventRestlet());
-		routes.put(PATH_EVENT_REMOVE, RestletFactory.createRemoveEventRestlet());
+		routes.put(PATH_EVENT_GET, new FetchEventRestlet(manager));
+		routes.put(PATH_EVENT_REMOVE, new RemoveEventRestlet(manager));
 
 		this.routes = Collections.unmodifiableMap(routes);
 	}

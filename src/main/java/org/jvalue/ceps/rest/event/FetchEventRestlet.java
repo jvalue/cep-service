@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest.restlet;
+package org.jvalue.ceps.rest.event;
 
 import org.jvalue.ceps.event.Event;
 import org.jvalue.ceps.event.EventManager;

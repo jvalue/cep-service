@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jvalue.ceps.rest.restlet.BaseRestlet;
 import org.jvalue.ceps.utils.Assert;
 import org.restlet.Request;
 import org.restlet.Response;

@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.jvalue.ceps.data.DataManager;
+import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.rest.restlet.RestletFactory;
+import org.jvalue.ceps.rest.data.DataRestApi;
+import org.jvalue.ceps.rest.event.EventRestApi;
+import org.jvalue.ceps.rest.notifications.NotificationRestApi;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
@@ -18,8 +21,8 @@ public final class RestletApplication extends Application {
 
 	public RestletApplication() {
 		apis.add(new DataRestApi(DataManager.getInstance()));
-		apis.add(new NotificationsRestApi(NotificationManager.getInstance()));
-		apis.add(new EventRestApi());
+		apis.add(new NotificationRestApi(NotificationManager.getInstance()));
+		apis.add(new EventRestApi(EventManager.getInstance()));
 
 		List<String> apiCalls = new LinkedList<String>();
 		for (RestApi api : apis) apiCalls.addAll(api.getRoutes().keySet());
@@ -32,7 +35,7 @@ public final class RestletApplication extends Application {
 		Router router = new Router(getContext());
 
 		for (RestApi api : apis) attachRoutes(router, api);
-		router.attachDefault(RestletFactory.createDefaultRestlet());
+		router.attachDefault(new DefaultRestlet());
 
 		return router;
 	}

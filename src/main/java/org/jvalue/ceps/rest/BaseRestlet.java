@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest.restlet;
+package org.jvalue.ceps.rest;
 
 import java.util.Collections;
 import java.util.HashSet;
