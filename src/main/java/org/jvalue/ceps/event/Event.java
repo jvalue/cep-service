@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-final class Event {
+public final class Event {
 
 	private final String eventId;
 	private final List<JsonNode> newEventData;
