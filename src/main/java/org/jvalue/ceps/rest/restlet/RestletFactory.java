@@ -12,4 +12,14 @@ public final class RestletFactory {
 		return new DefaultRestlet();
 	}
 
+
+	public static Restlet createGcmRegisterRestlet() {
+		return new GcmRegisterRestlet();
+	}
+
+
+	public static Restlet createUnregisterRestlet() {
+		return new NotificationUnregisterRestlet();
+	}
+
 }

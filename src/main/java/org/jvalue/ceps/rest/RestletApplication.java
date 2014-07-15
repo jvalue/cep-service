@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jvalue.ceps.data.DataManager;
+import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.rest.restlet.RestletFactory;
 import org.restlet.Application;
 import org.restlet.Restlet;
@@ -17,6 +18,7 @@ public final class RestletApplication extends Application {
 
 	public RestletApplication() {
 		apis.add(new DataRestApi(DataManager.getInstance()));
+		apis.add(new NotificationsRestApi(NotificationManager.getInstance()));
 
 		List<String> apiCalls = new LinkedList<String>();
 		for (RestApi api : apis) apiCalls.addAll(api.getRoutes().keySet());
