@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jvalue.ceps.data.DataManager;
+import org.jvalue.ceps.rest.restlet.RestletFactory;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
@@ -28,7 +29,7 @@ public final class RestletApplication extends Application {
 		Router router = new Router(getContext());
 
 		for (RestApi api : apis) attachRoutes(router, api);
-		router.attachDefault(new DefaultRestlet());
+		router.attachDefault(RestletFactory.createDefaultRestlet());
 
 		return router;
 	}

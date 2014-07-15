@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jvalue.ceps.data.DataManager;
+import org.jvalue.ceps.rest.restlet.BaseRestlet;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.restlet.Request;
