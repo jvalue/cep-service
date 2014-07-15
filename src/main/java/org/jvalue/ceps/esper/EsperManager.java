@@ -20,10 +20,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public final class EsperManager implements DataChangeListener {
 
+	private static final String ESPER_ENGINE_NAME = "esper";
+
 	private static EsperManager instance;
 
 	public static EsperManager getInstance() {
-		if (instance == null) instance = new EsperManager();
+		if (instance == null) instance = new EsperManager(ESPER_ENGINE_NAME);
 		return instance;
 	}
 
@@ -32,8 +34,8 @@ public final class EsperManager implements DataChangeListener {
 	private final EPAdministrator admin;
 	private final Map<String, EPStatement> startedStatements = new HashMap<String, EPStatement>();
 
-	private EsperManager() {
-		EPServiceProvider provider = EPServiceProviderManager.getDefaultProvider();
+	private EsperManager(String engineName) {
+		EPServiceProvider provider = EPServiceProviderManager.getProvider(engineName);
 		runtime = provider.getEPRuntime();
 		admin = provider.getEPAdministrator();
 	}

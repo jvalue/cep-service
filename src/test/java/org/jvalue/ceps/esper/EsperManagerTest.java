@@ -27,7 +27,7 @@ public final class EsperManagerTest {
 	@Test
 	public void testEventUpdates() throws Exception {
 
-		EsperManager manager = EsperManager.getInstance();
+		EsperManager manager = DummyEsperManager.createInstance("EsperManagerTest");
 		assertNotNull(manager);
 
 		String eplStmt = 
@@ -62,7 +62,8 @@ public final class EsperManagerTest {
 
 	private class DummyUpdateListener implements JsonUpdateListener {
 		@Override
-		public void onNewEvents(List<JsonNode> newEvents, List<JsonNode> oldEvents) {
+		public void onNewEvents(String stmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
+			assertNotNull(stmtId);
 			assertNotNull(newEvents);
 			assertNotNull(oldEvents);
 			assertTrue(newEvents.size() > 0);
