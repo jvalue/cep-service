@@ -87,6 +87,12 @@ public final class NotificationManager implements JsonUpdateListener {
 	}
 
 
+	public boolean isRegistered(String clientId) {
+		Assert.assertNotNull(clientId);
+		return clientToStmtMap.containsFirst(clientId);
+	}
+
+
 	@Override
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void onNewEvents(String eplStmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
