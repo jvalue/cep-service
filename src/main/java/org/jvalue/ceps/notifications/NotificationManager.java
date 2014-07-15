@@ -73,14 +73,17 @@ public final class NotificationManager {
 	}
 
 
-	public void unregister(Client client) {
-		Assert.assertNotNull(client);
-		Assert.assertTrue(clientToStmtMap.containsKey(client.getClientId()), "not registered");
+	public void unregister(String clientId) {
+		Assert.assertNotNull(clientId);
+		Assert.assertTrue(clientToStmtMap.containsKey(clientId), "not registered");
 
-		String clientId = client.getClientId();
 		esperManager.unregister(clientToStmtMap.get(clientId));
 		clientToStmtMap.remove(clientId);
-		clientDb.remove(client);
+
+		for (Client client : clientDb.getAll()) {
+			if (client.getClientId().equals(clientId))
+				clientDb.remove(client);
+		}
 	}
 
 }

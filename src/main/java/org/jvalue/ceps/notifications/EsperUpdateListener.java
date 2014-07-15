@@ -51,12 +51,12 @@ class EsperUpdateListener<C extends Client> implements JsonUpdateListener {
 
 			case REMOVE_CLIENT:
 				Log.info("Removing client " + client.getClientId());
-				notificationManager.unregister(result.getOldClient());
+				notificationManager.unregister(result.getOldClient().getClientId());
 				break;
 
 			case UPDATE_CLIENT:
 				Log.info("Updating client " + client.getClientId());
-				notificationManager.unregister(result.getOldClient());
+				notificationManager.unregister(result.getOldClient().getClientId());
 				notificationManager.register(result.getNewClient());
 				break;
 		}
