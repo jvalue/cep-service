@@ -12,6 +12,7 @@ final class GcmSender extends NotificationSender<GcmClient> {
 	@Override
 	public void sendEventUpdate(
 			GcmClient client, 
+			String eventId,
 			List<JsonNode> newEvents, 
 			List<JsonNode> oldEvents) {
 

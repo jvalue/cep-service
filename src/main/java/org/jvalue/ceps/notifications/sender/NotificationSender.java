@@ -11,6 +11,7 @@ public abstract class NotificationSender<C extends Client> {
 
 	public abstract void sendEventUpdate(
 			C client, 
+			String eventId,
 			List<JsonNode> newEvents, 
 			List<JsonNode> oldEvents);
 

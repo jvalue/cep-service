@@ -8,6 +8,7 @@ import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.db.JsonObjectDb;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.JsonUpdateListener;
+import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
@@ -95,7 +96,8 @@ public final class NotificationManager {
 		}
 
 		public void onNewEvents(List<JsonNode> newEvents, List<JsonNode> oldEvents) {
-			sender.sendEventUpdate(client, newEvents, oldEvents);
+			String eventId = EventManager.getInstance().onNewEvents(newEvents, oldEvents);
+			sender.sendEventUpdate(client, eventId, newEvents, oldEvents);
 		}
 
 	}
