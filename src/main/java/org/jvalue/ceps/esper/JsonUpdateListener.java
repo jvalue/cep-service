@@ -7,6 +7,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface JsonUpdateListener{
 
-	public void onNewEvents(List<JsonNode> newEvents, List<JsonNode> oldEvents);
+	public void onNewEvents(String eplStmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents);
 
 }

@@ -16,17 +16,19 @@ final class EsperUpdateListener implements UpdateListener {
 	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private final JsonUpdateListener listener;
+	private final String eplStmtId;
 
 
-	public EsperUpdateListener(JsonUpdateListener listener) {
-		Assert.assertNotNull(listener);
+	public EsperUpdateListener(JsonUpdateListener listener, String eplStmtId) {
+		Assert.assertNotNull(listener, eplStmtId);
 		this.listener = listener;
+		this.eplStmtId = eplStmtId;
 	}
 
 
 	@Override
 	public void update(EventBean[] newEvents, EventBean[] oldEvents) {
-		listener.onNewEvents(toJson(newEvents), toJson(oldEvents));
+		listener.onNewEvents(eplStmtId, toJson(newEvents), toJson(oldEvents));
 	}
 
 

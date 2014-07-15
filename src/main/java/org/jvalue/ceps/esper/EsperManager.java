@@ -42,10 +42,9 @@ public final class EsperManager implements DataChangeListener {
 	public String register(String eplStatement, JsonUpdateListener listener) {
 		Assert.assertNotNull(eplStatement, listener);
 
-		EPStatement stmt = admin.createEPL(eplStatement);
-		stmt.addListener(new EsperUpdateListener(listener));
-
 		String stmtId = UUID.randomUUID().toString();
+		EPStatement stmt = admin.createEPL(eplStatement);
+		stmt.addListener(new EsperUpdateListener(listener, stmtId));
 		startedStatements.put(stmtId, stmt);
 
 		return stmtId;
