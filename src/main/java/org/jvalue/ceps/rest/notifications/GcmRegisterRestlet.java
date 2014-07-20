@@ -12,12 +12,12 @@ import org.restlet.Request;
 
 final class GcmRegisterRestlet extends BaseRegisterRestlet {
 
-	private static final String PARAM_EPL_STMT = "eplStmt";
+	private static final String PARAM_GCM_ID = "regId";
 	private static final Set<String> GCM_PARAMS;
 	static {
 		Set<String> params = new HashSet<String>();
 		params.addAll(BaseRegisterRestlet.BASE_PARAMS);
-		params.add(PARAM_EPL_STMT);
+		params.add(PARAM_GCM_ID);
 		GCM_PARAMS = Collections.unmodifiableSet(params);
 	}
 
@@ -29,7 +29,7 @@ final class GcmRegisterRestlet extends BaseRegisterRestlet {
 
 	@Override
 	protected Client getClient(Request request, String eplStmt) {
-		String gcmId = getParameter(request, PARAM_EPL_STMT);
+		String gcmId = getParameter(request, PARAM_GCM_ID);
 		return ClientFactory.createGcmClient(eplStmt, gcmId);
 	}
 
