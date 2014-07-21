@@ -3,7 +3,6 @@ package org.jvalue.ceps.data;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.db.JsonObjectDb;
@@ -22,12 +21,15 @@ public final class DataManager {
 
 	private static final String
 		ODS_URL_REGISTRATION = "notifications/rest/register",
-		ODS_URL_UNREGISTRATION = "notifications/rest/unregister",
-		ODS_PARAM_CLIENT_ID = "regId",
+		ODS_URL_UNREGISTRATION = "notifications/unregister",
 		ODS_PARAM_SOURCE = "source",
 		ODS_PARAM_SEND_DATA = "sendData",
 		ODS_PARAM_CEPS_URL = "restUrl",
-		ODS_PARAM_CEPS_SOURCE = "restParam";
+		ODS_PARAM_CEPS_SOURCE = "restParam",
+		ODS_PARAM_CLIENT_ID = "clientId";
+
+	private static final String
+		ODS_KEY_CLIENTID = "clientId";
 
 
 	private static final ObjectMapper mapper = new ObjectMapper();
@@ -35,18 +37,17 @@ public final class DataManager {
 
 	public static DataManager getInstance() {
 		if (instance == null) instance = new DataManager(
-				new JsonObjectDb<DataSource>(
+				new JsonObjectDb<DataSourceRegistration>(
 					DbAccessorFactory.getCouchDbAccessor(DB_NAME), 
-					DataSource.class));
+					DataSourceRegistration.class));
 		return instance;
 	}
 
 
-	private final String clientId = UUID.randomUUID().toString();
 	private final List<DataChangeListener> listeners = new LinkedList<DataChangeListener>();
-	private final JsonObjectDb<DataSource> sourceDb;
+	private final JsonObjectDb<DataSourceRegistration> sourceDb;
 
-	private DataManager(JsonObjectDb<DataSource> sourceDb) {
+	private DataManager(JsonObjectDb<DataSourceRegistration> sourceDb) {
 		Assert.assertNotNull(sourceDb);
 		this.sourceDb = sourceDb;
 	}
@@ -60,7 +61,6 @@ public final class DataManager {
 		Assert.assertNotNull(source, restCallbackUrl, restCallbackParam);
 		Assert.assertFalse(sourceDb.getAll().contains(source), "source already being monitored");
 
-
 		// get new schema from ods
 		String dataSchemaString = new RestCall.Builder(
 				RestCall.RequestType.GET, 
@@ -72,52 +72,53 @@ public final class DataManager {
 		try {
 			JsonNode dataSchema = mapper.readTree(dataSchemaString);
 			for (DataChangeListener listener : listeners) {
-				listener.onNewDataType(source.getOdsId(), dataSchema);
+				listener.onNewDataType(source.getOdsSourceId(), dataSchema);
 			}
 		} catch (IOException ioe) {
 			throw new RestException(ioe);
 		}
 
 		// register for updates
-		updateMonitoring(source, ODS_URL_REGISTRATION, restCallbackUrl, restCallbackParam);
-		sourceDb.add(source);
-	}
-
-
-	public void stopMonitoring(
-			DataSource source,
-			String restCallbackUrl,
-			String restCallbackParam) throws RestException {
-
-		Assert.assertNotNull(source);
-		Assert.assertTrue(sourceDb.getAll().contains(source), "source not being monitored");
-
-		updateMonitoring(source, ODS_URL_UNREGISTRATION, restCallbackUrl, restCallbackParam);
-		sourceDb.remove(source);
-	}
-
-
-	private void updateMonitoring(
-			DataSource source, 
-			String odsRegistrationUrl,
-			String restCallbackUrl,
-			String restCallbackParam) throws RestException {
-
-		new RestCall.Builder(RestCall.RequestType.POST, source.getOdsUrl())
-			.path(odsRegistrationUrl)
-			.parameter(ODS_PARAM_CLIENT_ID, clientId)
-			.parameter(ODS_PARAM_SOURCE, source.getOdsId())
+		String jsonResult = new RestCall.Builder(RestCall.RequestType.POST, source.getOdsUrl())
+			.path(ODS_URL_REGISTRATION)
+			.parameter(ODS_PARAM_SOURCE, source.getOdsSourceId())
 			.parameter(ODS_PARAM_SEND_DATA, Boolean.TRUE.toString())
 			.parameter(ODS_PARAM_CEPS_URL, restCallbackUrl)
 			.parameter(ODS_PARAM_CEPS_SOURCE, restCallbackParam)
 			.build()
 			.execute();
+
+		String clientId;
+		try {
+			JsonNode json = mapper.readTree(jsonResult);
+			clientId = json.get(ODS_KEY_CLIENTID).asText();
+		} catch (IOException ioe) {
+			throw new RestException(ioe);
+		}
+
+		DataSourceRegistration registration = new DataSourceRegistration(clientId, source);
+		sourceDb.add(registration);
+	}
+
+
+	public void stopMonitoring(DataSource source) throws RestException {
+		Assert.assertNotNull(source);
+		DataSourceRegistration registration = getRegistrationForSource(source);
+		Assert.assertTrue(registration != null, "source not being monitored");
+
+		new RestCall.Builder(RestCall.RequestType.POST, source.getOdsUrl())
+			.path(ODS_URL_UNREGISTRATION)
+			.parameter(ODS_PARAM_CLIENT_ID, registration.getClientId())
+			.build()
+			.execute();
+
+		sourceDb.remove(registration);
 	}
 
 
 	public boolean isBeingMonitored(DataSource source) {
 		Assert.assertNotNull(source);
-		return sourceDb.getAll().contains(source);
+		return getRegistrationForSource(source) != null;
 	}
 
 
@@ -138,6 +139,16 @@ public final class DataManager {
 	public void unregisterDataListener(DataChangeListener listener) {
 		Assert.assertNotNull(listener);
 		listeners.remove(listener);
+	}
+
+
+	private DataSourceRegistration getRegistrationForSource(DataSource source) {
+		for (DataSourceRegistration registration : sourceDb.getAll()) {
+			if (registration.getDataSource().equals(source)) {
+				return registration;
+			}
+		}
+		return null;
 	}
 
 }

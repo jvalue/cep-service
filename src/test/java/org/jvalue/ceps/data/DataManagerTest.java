@@ -5,8 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Before;
 import org.junit.Test;
+import org.jvalue.ceps.utils.Log;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.Request;
@@ -17,10 +21,13 @@ import org.restlet.data.Protocol;
 import org.restlet.routing.Router;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 
 
 public final class DataManagerTest {
+
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private static final String DATA_NAME = "dummy";
 	private static final JsonNode DATA_TYPE = new TextNode("type");
@@ -76,8 +83,10 @@ public final class DataManagerTest {
 		final String CALLBACK_PARAM = "dummyParam";
 
 		final String ODS_REGISTER = "notifications/rest/register";
-		final String ODS_UNREGISTER = "notifications/rest/unregister";
+		final String ODS_UNREGISTER = "notifications/unregister";
 		final String ODS_SCHEMA = "schema";
+
+		final String KEY_CLIENTID = "clientId";
 
 		Application application = new Application() {
 
@@ -104,15 +113,29 @@ public final class DataManagerTest {
 								break;
 
 							case 1:
-								assertTrue(request.getResourceRef().getPath()
-									.contains(ODS_REGISTER));
-								callCount++;
+								try {
+									assertTrue(request.getResourceRef().getPath()
+										.contains(ODS_REGISTER));
+									Map<String, Object> result = new HashMap<String, Object>();
+									result.put(KEY_CLIENTID, "dummyClientId");
+									response.setEntity(
+											mapper.valueToTree(result).toString(), 
+											MediaType.APPLICATION_JSON);
+									callCount++;
+								} catch (Exception e) {
+									Log.info("fail", e);
+								}
+
 								break;
 
 							case 2:
 								assertTrue(request.getResourceRef().getPath()
 									.contains(ODS_UNREGISTER));
 								callCount++;
+								assertEquals(
+										"dummyClientId", 
+										request.getResourceRef().getQueryAsForm()
+											.getFirst(KEY_CLIENTID).getValue());
 								break;
 
 							default:
@@ -142,7 +165,7 @@ public final class DataManagerTest {
 		assertEquals(1, onNewDataType);
 		assertEquals(0, onNewDataCount);
 
-		manager.stopMonitoring(source, CALLBACK_URL, CALLBACK_PARAM);
+		manager.stopMonitoring(source);
 
 		assertFalse(manager.isBeingMonitored(source));
 		assertEquals(1, onNewDataType);

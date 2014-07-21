@@ -10,23 +10,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class DataSource {
 
-	private final String odsId, odsUrl, odsSchemaUrl;
+	private final String odsSourceId, odsUrl, odsSchemaUrl;
 
 	@JsonCreator
 	public DataSource(
-			@JsonProperty("odsId") String odsId, 
+			@JsonProperty("odsSourceId") String odsSourceId, 
 			@JsonProperty("odsUrl") String odsUrl,
 			@JsonProperty("odsSchemaUrl") String odsSchemaUrl) {
 
-		Assert.assertNotNull(odsId, odsUrl, odsSchemaUrl);
-		this.odsId = odsId;
+		Assert.assertNotNull(odsSourceId, odsUrl, odsSchemaUrl);
+		this.odsSourceId = odsSourceId;
 		this.odsUrl = odsUrl;
 		this.odsSchemaUrl = odsSchemaUrl;
 	}
 
 
-	public String getOdsId() {
-		return odsId;
+	public String getOdsSourceId() {
+		return odsSourceId;
 	}
 
 
@@ -44,7 +44,7 @@ public final class DataSource {
 	public boolean equals(Object other) {
 		if (other == null || !(other instanceof DataSource)) return false;
 		DataSource source = (DataSource) other;
-		return source.odsId.equals(odsId) 
+		return source.odsSourceId.equals(odsSourceId) 
 			&& source.odsUrl.equals(odsUrl) 
 			&& source.odsSchemaUrl.equals(odsSchemaUrl);
 	}
@@ -54,7 +54,7 @@ public final class DataSource {
 	public int hashCode() {
 		final int MULT = 17;
 		int hash = 13;
-		hash = hash + MULT * odsId.hashCode();
+		hash = hash + MULT * odsSourceId.hashCode();
 		hash = hash + MULT * odsUrl.hashCode();
 		hash = hash + MULT * odsSchemaUrl.hashCode();
 		return hash;

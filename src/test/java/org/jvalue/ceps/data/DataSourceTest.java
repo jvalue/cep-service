@@ -19,7 +19,7 @@ public final class DataSourceTest {
 	@Test
 	public void testGet() {
 		DataSource source = new DataSource("dummy1", "dummy2", "dummy3");
-		assertEquals("dummy1", source.getOdsId());
+		assertEquals("dummy1", source.getOdsSourceId());
 		assertEquals("dummy2", source.getOdsUrl());
 		assertEquals("dummy3", source.getOdsSchemaUrl());
 	}
