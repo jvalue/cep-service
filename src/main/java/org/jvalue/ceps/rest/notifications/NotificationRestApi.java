@@ -14,7 +14,7 @@ public final class NotificationRestApi implements RestApi {
 
 	private static final String 
 		PATH_PREFIX = "/cep",
-		PATH_REGISTER_GCM = PATH_PREFIX + "/registerGcm",
+		PATH_REGISTER_GCM = PATH_PREFIX + "/gcm/register",
 		PATH_UNREGISTER = PATH_PREFIX + "/unregister";
 
 
