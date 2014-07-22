@@ -55,6 +55,13 @@ public final class DataManager {
 		Assert.assertNotNull(sourceDb, dataListener);
 		this.sourceDb = sourceDb;
 		this.dataListener = dataListener;
+
+		// load schemata
+		for (DataSourceRegistration registration : sourceDb.getAll()) {
+			dataListener.onNewDataType(
+					registration.getDataSource().getOdsSourceId(), 
+					registration.getDataSchema());
+		}
 	}
 
 
@@ -74,8 +81,9 @@ public final class DataManager {
 			.build()
 			.execute();
 
+		JsonNode dataSchema = null;
 		try {
-			JsonNode dataSchema = mapper.readTree(dataSchemaString);
+			dataSchema = mapper.readTree(dataSchemaString);
 			dataListener.onNewDataType(source.getOdsSourceId(), dataSchema);
 		} catch (IOException ioe) {
 			throw new RestException(ioe);
@@ -99,7 +107,10 @@ public final class DataManager {
 			throw new RestException(ioe);
 		}
 
-		DataSourceRegistration registration = new DataSourceRegistration(clientId, source);
+		DataSourceRegistration registration = new DataSourceRegistration(
+				clientId, 
+				source, 
+				dataSchema);
 		sourceDb.add(registration);
 	}
 
