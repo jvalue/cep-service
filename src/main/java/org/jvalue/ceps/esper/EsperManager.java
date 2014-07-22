@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.jvalue.ceps.data.DataChangeListener;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 
@@ -18,7 +17,7 @@ import com.espertech.esper.client.EPStatement;
 import com.fasterxml.jackson.databind.JsonNode;
 
 
-public final class EsperManager implements DataChangeListener {
+public final class EsperManager implements DataUpdateListener {
 
 	private static final String ESPER_ENGINE_NAME = "esper";
 

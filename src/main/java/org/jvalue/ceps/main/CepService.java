@@ -2,7 +2,6 @@ package org.jvalue.ceps.main;
 
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataSource;
-import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.rest.RestletApplication;
 import org.jvalue.ceps.rest.data.OdsRestHook;
 import org.jvalue.ceps.utils.RestException;
@@ -44,7 +43,6 @@ public final class CepService {
 				ODS_SERVER,
 				"ods/de/pegelonline/stations/$class");
 		DataManager manager = DataManager.getInstance();
-		manager.registerDataListener(EsperManager.getInstance());
 
 		if (manager.isBeingMonitored(source)) return;
 

@@ -7,12 +7,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.junit.Test;
-import org.jvalue.ceps.data.DataChangeListener;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DummyDataManager;
+import org.jvalue.ceps.esper.DataUpdateListener;
 import org.jvalue.ceps.rest.RestletTestHelper;
-import org.jvalue.ceps.rest.data.DataRestApi;
-import org.jvalue.ceps.rest.data.OdsRestHook;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
@@ -32,7 +30,7 @@ public final class DataRestApiTest {
 
 	@Test
 	public final void testNewDataRestlet() throws Exception {
-		DataManager manager = DummyDataManager.createInstance();
+		DataManager manager = DummyDataManager.createInstance(new DummyDataUpdateListener());
 		Restlet restlet = new DataRestApi(manager)
 			.getRoutes()
 			.get(OdsRestHook.URL_NOTIFY_SOURCE_CHANGED);
@@ -48,7 +46,6 @@ public final class DataRestApiTest {
 		Request request = helper.createRequestWithParams(Method.POST);
 		request.setEntity(DATA.toString(), MediaType.APPLICATION_JSON);
 
-		manager.registerDataListener(new DummyDataChangeListener());
 		Response response = new Response(request);
 		restlet.handle(request, response);
 
@@ -57,7 +54,7 @@ public final class DataRestApiTest {
 	}
 
 
-	private class DummyDataChangeListener implements DataChangeListener {
+	private class DummyDataUpdateListener implements DataUpdateListener {
 
 		@Override
 		public void onNewDataType(String dataName, JsonNode dataSchema) { }

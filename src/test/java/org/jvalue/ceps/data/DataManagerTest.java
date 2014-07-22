@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.jvalue.ceps.esper.DataUpdateListener;
 import org.jvalue.ceps.utils.Log;
 import org.restlet.Application;
 import org.restlet.Component;
@@ -47,32 +48,16 @@ public final class DataManagerTest {
 
 	@Test
 	public final void testDataListener() throws Exception {
-		DataManager manager = DummyDataManager.createInstance();
-		DataChangeListener listener1 = new DummyDataChangeListener();
-		DataChangeListener listener2 = new DummyDataChangeListener();
+		DataManager manager = DummyDataManager.createInstance(new DummyDataUpdateListener());
 		manager.onSourceChanged(DATA_NAME, DATA_VALUE);
 
 		assertEquals(0, onNewDataType);
-		assertEquals(0, onNewDataCount);
+		assertEquals(1, onNewDataCount);
 
-		manager.registerDataListener(listener1);
-		manager.registerDataListener(listener2);
 		manager.onSourceChanged(DATA_NAME, DATA_VALUE);
 
 		assertEquals(0, onNewDataType);
 		assertEquals(2, onNewDataCount);
-
-		manager.unregisterDataListener(listener1);
-		manager.onSourceChanged(DATA_NAME, DATA_VALUE);
-		
-		assertEquals(0, onNewDataType);
-		assertEquals(3, onNewDataCount);
-
-		manager.unregisterDataListener(listener2);
-		manager.onSourceChanged(DATA_NAME, DATA_VALUE);
-
-		assertEquals(0, onNewDataType);
-		assertEquals(3, onNewDataCount);
 	}
 
 
@@ -153,9 +138,8 @@ public final class DataManagerTest {
 		component.getDefaultHost().attach(application);
 		component.start();
 
-		DataManager manager = DummyDataManager.createInstance();
+		DataManager manager = DummyDataManager.createInstance(new DummyDataUpdateListener());
 		DataSource source = new DataSource(DATA_NAME, "http://localhost:8184", ODS_SCHEMA);
-		manager.registerDataListener(new DummyDataChangeListener());
 
 		assertFalse(manager.isBeingMonitored(source));
 
@@ -174,7 +158,7 @@ public final class DataManagerTest {
 	}
 
 
-	private class DummyDataChangeListener implements DataChangeListener {
+	private class DummyDataUpdateListener implements DataUpdateListener {
 
 		@Override
 		public void onNewDataType(String name, JsonNode schema) {

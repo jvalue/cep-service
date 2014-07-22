@@ -4,19 +4,23 @@ import java.lang.reflect.Constructor;
 
 import org.jvalue.ceps.db.DummyDbAccessor;
 import org.jvalue.ceps.db.JsonObjectDb;
+import org.jvalue.ceps.esper.DataUpdateListener;
 
 
 public final class DummyDataManager {
 
 	private DummyDataManager() { }
 
-	public static DataManager createInstance() throws Exception {
+	public static DataManager createInstance(DataUpdateListener listener) throws Exception {
 		Constructor<DataManager> constructor = DataManager.class.getDeclaredConstructor(
-				JsonObjectDb.class);
+				JsonObjectDb.class,
+				DataUpdateListener.class);
 		constructor.setAccessible(true);
-		return constructor.newInstance(new JsonObjectDb<DataSourceRegistration>(
+		return constructor.newInstance(
+				new JsonObjectDb<DataSourceRegistration>(
 					new DummyDbAccessor(), 
-					DataSourceRegistration.class));
+					DataSourceRegistration.class), 
+				listener);
 	}
 
 }

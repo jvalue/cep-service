@@ -1,11 +1,11 @@
 package org.jvalue.ceps.data;
 
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.db.JsonObjectDb;
+import org.jvalue.ceps.esper.DataUpdateListener;
+import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.RestCall;
@@ -39,17 +39,22 @@ public final class DataManager {
 		if (instance == null) instance = new DataManager(
 				new JsonObjectDb<DataSourceRegistration>(
 					DbAccessorFactory.getCouchDbAccessor(DB_NAME), 
-					DataSourceRegistration.class));
+					DataSourceRegistration.class),
+				EsperManager.getInstance());
 		return instance;
 	}
 
 
-	private final List<DataChangeListener> listeners = new LinkedList<DataChangeListener>();
 	private final JsonObjectDb<DataSourceRegistration> sourceDb;
+	private final DataUpdateListener dataListener;
 
-	private DataManager(JsonObjectDb<DataSourceRegistration> sourceDb) {
-		Assert.assertNotNull(sourceDb);
+	private DataManager(
+			JsonObjectDb<DataSourceRegistration> sourceDb,
+			DataUpdateListener dataListener) {
+
+		Assert.assertNotNull(sourceDb, dataListener);
 		this.sourceDb = sourceDb;
+		this.dataListener = dataListener;
 	}
 
 
@@ -71,9 +76,7 @@ public final class DataManager {
 
 		try {
 			JsonNode dataSchema = mapper.readTree(dataSchemaString);
-			for (DataChangeListener listener : listeners) {
-				listener.onNewDataType(source.getOdsSourceId(), dataSchema);
-			}
+			dataListener.onNewDataType(source.getOdsSourceId(), dataSchema);
 		} catch (IOException ioe) {
 			throw new RestException(ioe);
 		}
@@ -124,21 +127,7 @@ public final class DataManager {
 
 	public void onSourceChanged(String sourceId, JsonNode data) {
 		Log.info("Source " + sourceId + " has new data");
-		for (DataChangeListener listener : listeners) {
-			listener.onNewData(sourceId, data);
-		}
-	}
-
-
-	public void registerDataListener(DataChangeListener listener) {
-		Assert.assertNotNull(listener);
-		listeners.add(listener);
-	}
-
-
-	public void unregisterDataListener(DataChangeListener listener) {
-		Assert.assertNotNull(listener);
-		listeners.remove(listener);
+		dataListener.onNewData(sourceId, data);
 	}
 
 
