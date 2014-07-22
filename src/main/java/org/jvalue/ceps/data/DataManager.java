@@ -148,6 +148,7 @@ public final class DataManager implements Restoreable {
 
 	@Override
 	public void restoreState() {
+		Log.info("Restoring state for " + DataManager.class.getSimpleName());
 		for (DataSourceRegistration registration : sourceDb.getAll()) {
 			dataListener.onNewDataType(
 					registration.getDataSource().getOdsSourceId(), 

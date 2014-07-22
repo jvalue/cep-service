@@ -144,6 +144,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 
 	@Override
 	public void restoreState() {
+		Log.info("Restoring state for " + NotificationManager.class.getSimpleName());
 		for (Client client : clientDb.getAll()) {
 			register(client, false);
 		}

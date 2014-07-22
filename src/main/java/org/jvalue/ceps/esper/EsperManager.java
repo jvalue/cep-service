@@ -65,6 +65,7 @@ public final class EsperManager implements DataUpdateListener {
 
 	@Override
 	public void onNewDataType(String dataName, JsonNode dataSchema) {
+		Log.info("Adding datatype \"" + dataName + "\"");
 		List<EventDefinition> definitions = SchemaTranslator.toEventDefinition(dataName, dataSchema);
 		for (EventDefinition definition : definitions) {
 			admin.getConfiguration().addEventType(definition.getName(), definition.getSchema());
