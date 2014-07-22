@@ -10,12 +10,13 @@ import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.RestCall;
 import org.jvalue.ceps.utils.RestException;
+import org.jvalue.ceps.utils.Restoreable;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-public final class DataManager {
+public final class DataManager implements Restoreable {
 
 	private static final String DB_NAME = "cepsOdsSources";
 
@@ -55,13 +56,6 @@ public final class DataManager {
 		Assert.assertNotNull(sourceDb, dataListener);
 		this.sourceDb = sourceDb;
 		this.dataListener = dataListener;
-
-		// load schemata
-		for (DataSourceRegistration registration : sourceDb.getAll()) {
-			dataListener.onNewDataType(
-					registration.getDataSource().getOdsSourceId(), 
-					registration.getDataSchema());
-		}
 	}
 
 
@@ -149,6 +143,16 @@ public final class DataManager {
 			}
 		}
 		return null;
+	}
+
+
+	@Override
+	public void restoreState() {
+		for (DataSourceRegistration registration : sourceDb.getAll()) {
+			dataListener.onNewDataType(
+					registration.getDataSource().getOdsSourceId(), 
+					registration.getDataSchema());
+		}
 	}
 
 }

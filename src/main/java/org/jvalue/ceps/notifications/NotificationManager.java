@@ -17,11 +17,12 @@ import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.BiMap;
 import org.jvalue.ceps.utils.Log;
+import org.jvalue.ceps.utils.Restoreable;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 
-public final class NotificationManager implements JsonUpdateListener {
+public final class NotificationManager implements JsonUpdateListener, Restoreable {
 
 	private static final String DB_NAME = "cepsClients";
 
@@ -69,9 +70,14 @@ public final class NotificationManager implements JsonUpdateListener {
 		Assert.assertNotNull(client);
 		Assert.assertTrue(sender.containsKey(client.getClass()), "unknown client type");
 
+		register(client, true);
+	}
+
+
+	private void register(Client client, boolean addToDb) {
 		String stmtId = esperManager.register(client.getEplStmt(), this);
 		clientToStmtMap.put(client.getClientId(), stmtId);
-		clientDb.add(client);
+		if (addToDb) clientDb.add(client);
 	}
 
 
@@ -133,6 +139,14 @@ public final class NotificationManager implements JsonUpdateListener {
 				return client;
 		}
 		return null;
+	}
+
+
+	@Override
+	public void restoreState() {
+		for (Client client : clientDb.getAll()) {
+			register(client, false);
+		}
 	}
 
 }

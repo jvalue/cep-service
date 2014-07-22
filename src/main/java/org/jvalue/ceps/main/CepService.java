@@ -1,10 +1,15 @@
 package org.jvalue.ceps.main;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataSource;
+import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.rest.RestletApplication;
 import org.jvalue.ceps.rest.data.OdsRestHook;
 import org.jvalue.ceps.utils.RestException;
+import org.jvalue.ceps.utils.Restoreable;
 import org.restlet.Application;
 import org.restlet.Component;
 import org.restlet.data.Protocol;
@@ -20,6 +25,7 @@ public final class CepService {
 
 	public static void main(String[] args) {
 		startRestService();
+		restoreState();
 		startSourceMonitoring();
 	}
 
@@ -34,6 +40,15 @@ public final class CepService {
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+
+	private static void restoreState() {
+		List<Restoreable> restoreables = Arrays.asList(
+				DataManager.getInstance(),
+				NotificationManager.getInstance());
+
+		for (Restoreable restoreable : restoreables) restoreable.restoreState();
 	}
 
 
