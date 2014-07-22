@@ -33,7 +33,13 @@ public final class JsonObjectDb<T> {
 
 	public void remove(T object) {
 		Assert.assertNotNull(object);
-		dbAccessor.delete(mapper.valueToTree(object));
+		List<JsonNode> jsonObjects = dbAccessor.getAll();
+		for (JsonNode node : jsonObjects) {
+			if (jsonToObject(node).equals(object)) {
+				dbAccessor.delete(node);
+				break;
+			}
+		}
 	}
 
 
@@ -41,13 +47,18 @@ public final class JsonObjectDb<T> {
 		List<JsonNode> jsonObjects = dbAccessor.getAll();
 		List<T> objects = new LinkedList<T>();
 		for (JsonNode json : jsonObjects) {
-			try {
-				objects.add(mapper.treeToValue(json, objectClass));
-			} catch (JsonProcessingException jpe) {
-				throw new IllegalStateException(jpe);
-			}
+			objects.add(jsonToObject(json));
 		}
 		return objects;
+	}
+
+
+	private T jsonToObject(JsonNode json) {
+		try {
+			return mapper.treeToValue(json, objectClass);
+		} catch (JsonProcessingException jpe) {
+			throw new IllegalStateException(jpe);
+		}
 	}
 
 }
