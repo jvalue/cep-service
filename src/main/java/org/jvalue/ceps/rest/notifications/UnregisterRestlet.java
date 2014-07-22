@@ -6,10 +6,9 @@ import java.util.Set;
 
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.rest.BaseRestlet;
+import org.jvalue.ceps.rest.RestletResult;
 import org.jvalue.ceps.utils.Assert;
 import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.data.Method;
 
 
 final class UnregisterRestlet extends BaseRestlet {
@@ -26,23 +25,17 @@ final class UnregisterRestlet extends BaseRestlet {
 	private final NotificationManager manager;
 
 	protected UnregisterRestlet(NotificationManager manager) {
-		super(PARAMS, new HashSet<String>());
+		super(PARAMS, false);
 		Assert.assertNotNull(manager);
 		this.manager = manager;
 	}
 
 
 	@Override
-	protected final void doGet(Request request, Response response) {
-		onInvalidMethod(response, Method.GET);
-	}
-
-
-	@Override
-	protected final void doPost(Request request, Response response) {
+	protected final RestletResult doPost(Request request) {
 		String clientId = getParameter(request, PARAM_CLIENT_ID);
 		manager.unregister(clientId);
-		onSuccess(response);
+		return RestletResult.newSuccessResult();
 	}
 
 }

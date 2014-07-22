@@ -10,21 +10,21 @@ public final class DefaultRestletTest {
 
 	@Test
 	public final void testGet() {
-		test(Method.GET);
+		test(Method.GET, Status.CLIENT_ERROR_NOT_FOUND);
 	}
 
 
 	@Test
 	public final void testPost() {
-		test(Method.POST);
+		test(Method.POST, Status.CLIENT_ERROR_BAD_REQUEST);
 	}
 
 
-	private final void test(Method method) {
+	private final void test(Method method, Status status) {
 		RestletTestHelper helper = new RestletTestHelper(new DefaultRestlet());
 		helper.assertStatus(
 				helper.createRequestNoParams(method),
-				Status.CLIENT_ERROR_NOT_FOUND);
+				status);
 	}
 
 }

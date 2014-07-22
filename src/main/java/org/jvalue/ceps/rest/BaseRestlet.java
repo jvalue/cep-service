@@ -1,6 +1,5 @@
 package org.jvalue.ceps.rest;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,6 +7,7 @@ import org.jvalue.ceps.utils.Assert;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Restlet;
+import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Parameter;
 import org.restlet.data.Status;
@@ -15,71 +15,72 @@ import org.restlet.data.Status;
 
 public abstract class BaseRestlet extends Restlet {
 
-	private final Set<String> mandatoryQueryParams, optionalQueryParams;
+	private final Set<String> mandatoryQueryParams;
+	private final boolean allowAdditionalParams;
 
-	protected BaseRestlet(
-			Set<String> mandatoryQueryParams,
-			Set<String> optionalQueryParams) {
-
-		Assert.assertNotNull(mandatoryQueryParams, optionalQueryParams);
-		Assert.assertTrue(
-				Collections.disjoint(mandatoryQueryParams, optionalQueryParams),
-				"param sets must be disjoint");
+	protected BaseRestlet(Set<String> mandatoryQueryParams, boolean allowAdditionalParams) {
+		Assert.assertNotNull(mandatoryQueryParams);
 
 		this.mandatoryQueryParams = mandatoryQueryParams;
-		this.optionalQueryParams = optionalQueryParams;
+		this.allowAdditionalParams = allowAdditionalParams;
 	}
 
 
 	protected BaseRestlet() {
-		this(new HashSet<String>(), new HashSet<String>());
+		this(new HashSet<String>(), false);
 	}
 
 
 	@Override
 	public final void handle(Request request, Response response) {
+		RestletResult result = handleRequest(request);
+		response.setStatus(result.getStatus());
+		if (result.getData() != null) {
+			response.setEntity(result.getData().toString(), MediaType.APPLICATION_JSON);
+		}
+	}
+
+
+	private final RestletResult handleRequest(Request request) {
 		// validate params
 		Set<String> paramNames = request.getResourceRef().getQueryAsForm().getNames();
 		for (String param : mandatoryQueryParams) {
 			if (!paramNames.remove(param)) {
-				onInvalidRequest(response, "missing query param " + param);
-				return;
+				return onBadRequest("missing query param " + param); 
 			}
 		}
-		paramNames.removeAll(optionalQueryParams);
-		if (paramNames.size() > 0) {
-			onInvalidRequest(response, "found unknown query params");
-			return;
+		if (!allowAdditionalParams && paramNames.size() > 0) {
+			return onBadRequest("found unknown query params");
 		}
 
 		// validate method type
 		Method method = request.getMethod();
-		if (method.equals(Method.GET)) doGet(request, response);
-		else if (method.equals(Method.POST)) doPost(request, response);
-		else onInvalidMethod(response, method);
+		if (method.equals(Method.GET)) return doGet(request);
+		else if (method.equals(Method.POST)) return doPost(request);
+		else return onInvalidMethod(method);
 	}
 
 
-	protected abstract void doGet(Request request, Response response);
-	protected abstract void doPost(Request request, Response response);
+	protected RestletResult doGet(Request request) {
+		return onInvalidMethod(Method.GET);
+	}
 
-
-	protected final void onInvalidRequest(Response response, String msg) {
-		response.setStatus(Status.CLIENT_ERROR_BAD_REQUEST, msg);
+	protected RestletResult doPost(Request request) {
+		return onInvalidMethod(Method.POST);
 	}
 
 
-	protected final void onInvalidMethod(Response response, Method method) {
-		onInvalidRequest(response, "method " + method.toString() + " not supported");
+	private final RestletResult onBadRequest(String msg) {
+		return RestletResult.newErrorResult(Status.CLIENT_ERROR_BAD_REQUEST, msg);
 	}
 
 
-	protected final void onSuccess(Response response) {
-		response.setStatus(Status.SUCCESS_OK);
+	private final RestletResult onInvalidMethod(Method method) {
+		return onBadRequest("method " + method.toString() + " not supported");
 	}
 
 
-	protected String getParameter(Request request, String key) {
+	protected final String getParameter(Request request, String key) {
 		Parameter param = request.getResourceRef().getQueryAsForm().getFirst(key);
 		if (param == null) return null;
 		else return param.getValue();

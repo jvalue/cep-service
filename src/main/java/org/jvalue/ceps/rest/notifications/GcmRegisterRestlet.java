@@ -23,7 +23,7 @@ final class GcmRegisterRestlet extends BaseRegisterRestlet {
 
 
 	protected GcmRegisterRestlet(NotificationManager manager) {
-		super(manager, GCM_PARAMS, new HashSet<String>());
+		super(manager, GCM_PARAMS);
 	}
 
 

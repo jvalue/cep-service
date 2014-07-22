@@ -8,7 +8,6 @@ import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.rest.BaseRestlet;
 import org.jvalue.ceps.utils.Assert;
 import org.restlet.Request;
-import org.restlet.Response;
 
 
 abstract class BaseEventRestlet extends BaseRestlet {
@@ -25,27 +24,14 @@ abstract class BaseEventRestlet extends BaseRestlet {
 	protected final EventManager manager;
 
 	protected BaseEventRestlet(EventManager manager) {
-		super(PARAMS, new HashSet<String>());
+		super(PARAMS, false);
 		Assert.assertNotNull(manager);
 		this.manager = manager;
 	}
 
 
-	@Override
-	protected final void doGet(Request request, Response response) {
-		String eventId = getParameter(request, PARAM_EVENT_ID);
-		doGet(eventId, response);
+	protected final String getEventId(Request request) {
+		return getParameter(request, PARAM_EVENT_ID);
 	}
-
-
-	@Override
-	protected final void doPost(Request request, Response response) {
-		String eventId = getParameter(request, PARAM_EVENT_ID);
-		doPost(eventId, response);
-	}
-
-
-	protected abstract void doGet(String eventId, Response response);
-	protected abstract void doPost(String eventId, Response response);
 
 }

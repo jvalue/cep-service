@@ -2,9 +2,9 @@ package org.jvalue.ceps.rest.event;
 
 import org.jvalue.ceps.event.Event;
 import org.jvalue.ceps.event.EventManager;
-import org.restlet.Response;
-import org.restlet.data.MediaType;
-import org.restlet.data.Method;
+import org.jvalue.ceps.rest.RestletResult;
+import org.restlet.Request;
+import org.restlet.data.Status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,21 +19,17 @@ final class FetchEventRestlet extends BaseEventRestlet {
 	}
 
 	@Override
-	protected void doGet(String eventId, Response response) {
+	protected RestletResult doGet(Request request) {
+		String eventId = getEventId(request);
 		try {
 			Event event = manager.getEvent(eventId);
 			JsonNode json = mapper.valueToTree(event);
-			response.setEntity(json.toString(), MediaType.APPLICATION_JSON);
-			onSuccess(response);
+			return RestletResult.newSuccessResult(json);
 		} catch (Exception e) {
-			onInvalidRequest(response, "unknown event \"" + eventId + "\"");
+			return RestletResult.newErrorResult(
+					Status.CLIENT_ERROR_NOT_FOUND, 
+					"unknown event \"" + eventId + "\"");
 		}
-	}
-
-
-	@Override
-	protected void doPost(String eventId, Response response) {
-		onInvalidMethod(response, Method.POST);
 	}
 
 }

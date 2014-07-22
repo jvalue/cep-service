@@ -7,11 +7,11 @@ import java.util.Set;
 
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.rest.BaseRestlet;
+import org.jvalue.ceps.rest.RestletResult;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.data.Method;
+import org.restlet.data.Status;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,20 +32,14 @@ final class NewDataRestlet extends BaseRestlet {
 	private final DataManager manager;
 
 	public NewDataRestlet(DataManager manager) {
-		super(PARAMS, new HashSet<String>());
+		super(PARAMS, false);
 		Assert.assertNotNull(manager);
 		this.manager = manager;
 	}
 
 
 	@Override
-	public void doGet(Request request, Response response) {
-		onInvalidMethod(response, Method.GET);
-	}
-
-
-	@Override
-	public void doPost(Request request, Response response) {
+	protected RestletResult doPost(Request request) {
 		try {
 			String sourceId = getParameter(request, OdsRestHook.PARAM_SOURCE);
 			String rawString = request.getEntity().getText();
@@ -55,8 +49,13 @@ final class NewDataRestlet extends BaseRestlet {
 
 			manager.onSourceChanged(sourceId, data);
 
+			return RestletResult.newSuccessResult();
+
 		} catch (Exception e) {
 			Log.error("retreiving data from ods failed", e);
+			return RestletResult.newErrorResult(
+					Status.SERVER_ERROR_INTERNAL,
+					"retreiving data from ods failed");
 		}
 	}
 

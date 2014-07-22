@@ -49,7 +49,7 @@ public final class DataRestApiTest {
 		Response response = new Response(request);
 		restlet.handle(request, response);
 
-		assertEquals(Status.SUCCESS_OK, response.getStatus());
+		assertEquals(Status.SUCCESS_NO_CONTENT, response.getStatus());
 		assertEquals(1, onNewDataCount);
 	}
 

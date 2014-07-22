@@ -1,8 +1,9 @@
 package org.jvalue.ceps.rest.event;
 
 import org.jvalue.ceps.event.EventManager;
-import org.restlet.Response;
-import org.restlet.data.Method;
+import org.jvalue.ceps.rest.RestletResult;
+import org.restlet.Request;
+import org.restlet.data.Status;
 
 
 final class RemoveEventRestlet extends BaseEventRestlet {
@@ -11,21 +12,17 @@ final class RemoveEventRestlet extends BaseEventRestlet {
 		super(manager);
 	}
 
-
-	@Override
-	protected void doGet(String eventId, Response response) {
-		onInvalidMethod(response, Method.GET);
-	}
-
 	
 	@Override
-	protected void doPost(String eventId, Response response) {
+	protected RestletResult doPost(Request request) {
+		String eventId = getEventId(request);
 		try {
 			manager.removeEvent(eventId);
-			onSuccess(response);
+			return RestletResult.newSuccessResult();
 		} catch (Exception e) {
-			onInvalidRequest(response, "unknown event \"" + eventId + "\"");
-			return;
+			return RestletResult.newErrorResult(
+					Status.CLIENT_ERROR_NOT_FOUND, 
+					"unknown event \"" + eventId + "\"");
 		} 
 	}
 
