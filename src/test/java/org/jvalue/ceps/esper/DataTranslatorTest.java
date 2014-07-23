@@ -23,9 +23,9 @@ public final class DataTranslatorTest {
 	@SuppressWarnings("rawtypes")
 	public void testToMap() throws Exception {
 
-		URL jsonUrl = getClass().getResource("/data-pegelonline-eitze1.json");
+		URL jsonUrl = getClass().getResource("/data-pegelonline1.json");
 		JsonNode json = mapper.readTree(new File(jsonUrl.toURI())); 
-		Map<String, Object> map = DataTranslator.toMap(json);
+		Map<String, Object> map = DataTranslator.toMap(json.get(0));
 
 		assertNotNull(map);
 		assertTrue(map.containsKey("_id"));

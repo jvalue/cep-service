@@ -1,9 +1,9 @@
 package org.jvalue.ceps.notifications;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.net.URL;
@@ -25,8 +25,6 @@ import org.jvalue.ceps.notifications.sender.SenderResult;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 
 public final class NotificationManagerTest {
@@ -122,8 +120,7 @@ public final class NotificationManagerTest {
 
 	private void testResult(SenderResult.Status status) throws Exception {
 		sender.setStatus(status);
-		esperManager.onNewData(dataType, new ArrayNode(JsonNodeFactory.instance)
-				.add(getResource("/data-pegelonline-eitze1.json")));
+		esperManager.onNewData(dataType, getResource("/data-pegelonline1.json"));
 		assertEquals(1, sendEventUpdateCount);
 	}
 

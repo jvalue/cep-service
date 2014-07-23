@@ -13,8 +13,6 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 
 
 public final class EsperManagerTest {
@@ -46,8 +44,7 @@ public final class EsperManagerTest {
 			+ "and timeseries[0].shortname = 'W'";
 
 		JsonNode schema = getResource("/schema-pegelonline.json");
-		JsonNode data = new ArrayNode(JsonNodeFactory.instance)
-			.add(getResource("/data-pegelonline-eitze1.json"));
+		JsonNode data = getResource("/data-pegelonline1.json");
 
 		manager.onNewDataType(dataType, schema);
 		String regId = manager.register(eplStmt, new DummyUpdateListener());
@@ -90,8 +87,7 @@ public final class EsperManagerTest {
 		int dataCount = 4;
 		JsonNode[] data = new JsonNode[dataCount];
 		for (int i = 0; i < dataCount; i++) {
-			data[i] = new ArrayNode(JsonNodeFactory.instance)
-				.add(getResource("/data-pegelonline-eitze" + (i+1) + ".json"));
+			data[i] = getResource("/data-pegelonline" + (i+1) + ".json");
 		}
 
 		manager.onNewDataType(dataType, schema);
