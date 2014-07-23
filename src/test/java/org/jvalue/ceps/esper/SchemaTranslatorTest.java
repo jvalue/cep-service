@@ -27,9 +27,9 @@ public final class SchemaTranslatorTest {
 				getJsonSchema("/schema-pegelonline.json"));
 
 		assertNotNull(definitions);
-		assertEquals(2, definitions.size());
+		assertEquals(3, definitions.size());
 
-		EventDefinition definition = definitions.get(1);
+		EventDefinition definition = definitions.get(2);
 		assertEquals("pegelonline", definition.getName());
 		assertTrue(definition.getSchema().containsKey("longname"));
 		assertEquals(definition.getSchema().get("longname"), String.class);
