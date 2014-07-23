@@ -1,5 +1,6 @@
 package org.jvalue.ceps.esper;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -22,7 +23,7 @@ public final class DataTranslatorTest {
 	@SuppressWarnings("rawtypes")
 	public void testToMap() throws Exception {
 
-		URL jsonUrl = getClass().getResource("/data-pegelonline-eitze.json");
+		URL jsonUrl = getClass().getResource("/data-pegelonline-eitze1.json");
 		JsonNode json = mapper.readTree(new File(jsonUrl.toURI())); 
 		Map<String, Object> map = DataTranslator.toMap(json);
 
@@ -31,6 +32,7 @@ public final class DataTranslatorTest {
 		assertTrue(map.containsKey("_rev"));
 		assertTrue(map.containsKey("coordinate"));
 		assertTrue(((Map) map.get("coordinate")).containsKey("longitude"));
+		assertEquals(((Map) ((Object[]) map.get("timeseries"))[0]).get("shortname"), "W");
 
 	}
 
