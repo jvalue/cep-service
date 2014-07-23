@@ -123,7 +123,7 @@ public final class NotificationManagerTest {
 	private void testResult(SenderResult.Status status) throws Exception {
 		sender.setStatus(status);
 		esperManager.onNewData(dataType, new ArrayNode(JsonNodeFactory.instance)
-				.add(getResource("/data-pegelonline-eitze.json")));
+				.add(getResource("/data-pegelonline-eitze1.json")));
 		assertEquals(1, sendEventUpdateCount);
 	}
 

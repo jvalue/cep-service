@@ -8,6 +8,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -24,6 +25,12 @@ public final class EsperManagerTest {
 	private int updateCount = 0;
 
 
+	@Before
+	public final void resetCounter() {
+		updateCount = 0;
+	}
+
+
 	@Test
 	public void testEventUpdates() throws Exception {
 
@@ -31,13 +38,16 @@ public final class EsperManagerTest {
 		assertNotNull(manager);
 
 		String eplStmt = 
-			"select * from "
+			"select timeseries[0] from "
 			+ dataType 
-			+ ".win:length(1) where longname = 'EITZE' and BodyOfWater.longname = 'ALLER'";
+			+ ".win:length(1) where "
+			+ "longname = 'EITZE' "
+			+ "and BodyOfWater.longname = 'ALLER' "
+			+ "and timeseries[0].shortname = 'W'";
 
 		JsonNode schema = getResource("/schema-pegelonline.json");
 		JsonNode data = new ArrayNode(JsonNodeFactory.instance)
-			.add(getResource("/data-pegelonline-eitze.json"));
+			.add(getResource("/data-pegelonline-eitze1.json"));
 
 		manager.onNewDataType(dataType, schema);
 		String regId = manager.register(eplStmt, new DummyUpdateListener());
@@ -51,6 +61,48 @@ public final class EsperManagerTest {
 
 		assertEquals(1, updateCount);
 
+	}
+
+
+	@Test
+	public void testComplexEventUpdate() throws Exception {
+
+		EsperManager manager = DummyEsperManager.createInstance("EsperManagerComplexTest");
+		assertNotNull(manager);
+
+		String station = "EITZE";
+		String river = "ALLER";
+		String filter = "(longname = '" + station + "' " 
+			+ "and BodyOfWater.longname = '" + river + "' "
+			+ "and timeseries.firstof(i => i.shortname = 'W') is not null)";
+		double level = 300;
+
+		String eplStmt = 
+			"select a, b from pattern [every "
+			+ "a=" + dataType + filter + " -> b=" + dataType + filter + "] "
+			+ "where "
+			+ "a.timeseries.firstof(i => i.shortname = 'W' and i.currentMeasurement.value <= " + level + ") "
+			+ "is not null and "
+			+ "b.timeseries.firstof(i => i.shortname = 'W' and i.currentMeasurement.value > " + level + ") "
+			+ " is not null";
+
+		JsonNode schema = getResource("/schema-pegelonline.json");
+		int dataCount = 4;
+		JsonNode[] data = new JsonNode[dataCount];
+		for (int i = 0; i < dataCount; i++) {
+			data[i] = new ArrayNode(JsonNodeFactory.instance)
+				.add(getResource("/data-pegelonline-eitze" + (i+1) + ".json"));
+		}
+
+		manager.onNewDataType(dataType, schema);
+		manager.register(eplStmt, new DummyUpdateListener());
+
+		manager.onNewData(dataType, data[0]);
+		manager.onNewData(dataType, data[1]);
+		assertEquals(0, updateCount);
+		manager.onNewData(dataType, data[2]);
+		manager.onNewData(dataType, data[3]);
+		assertEquals(1, updateCount);
 	}
 
 
