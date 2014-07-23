@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jvalue.ceps.utils.Assert;
-import org.jvalue.ceps.utils.Log;
 
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.EventType;
@@ -52,13 +51,11 @@ final class EsperUpdateListener implements UpdateListener {
 
 			EventType eventType = event.getEventType();
 			JSONEventRenderer renderer = new JSONRendererImpl(eventType, new JSONRenderingOptions());
-			String json = renderer.render("someEvent", event);
-			Log.info(json);
+			String json = renderer.render("eventData", event);
 
 			try {
 				JsonNode node = mapper.readTree(json);
 				jsonList.add(node);
-				// jsonList.add(mapper.valueToTree(event.getUnderlying()));
 			} catch (IOException ioe) {
 				throw new RuntimeException(ioe);
 			}
