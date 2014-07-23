@@ -46,7 +46,7 @@ final class SchemaTranslator {
 		readAttributes(objectName, objectSchema, attributes);
 
 		JsonNode references = jsonObjectSchema.get(KEY_REFERENCED_OBJECTS);
-		readReferenceObjects(objectName, objectSchema, references, allObjects);
+		readReferenceObjects(objectSchema, references, allObjects);
 
 		return objectSchema;
 	}
@@ -84,39 +84,42 @@ final class SchemaTranslator {
 
 
 	private static void readReferenceObjects(
-			String objectName,
 			Map<String, Object> objectSchema, 
 			JsonNode objectReferences,
 			List<EventDefinition> allObjects) {
 
 		if (objectReferences.size() == 0) return;
 
-		if (objectReferences.isArray()) {
-
-			JsonNode reference = objectReferences.get(0);
-			String referenceType = objectName + UUID.randomUUID().toString();
-			String referenceName = objectName;
-			Map<String, Object> referenceSchema = readSchema(
-					referenceName,
-					reference,
-					allObjects);
-
-			allObjects.add(new EventDefinition(referenceType, referenceSchema));
-			objectSchema.put(referenceName, referenceType + "[]");
-
-		} else if (objectReferences.isObject()) {
+		if (objectReferences.isObject()) {
 
 			Iterator<Map.Entry<String, JsonNode>> iter = objectReferences.fields();
 			while (iter.hasNext()) {
 
 				Map.Entry<String, JsonNode> reference = iter.next();
 				String referenceName = reference.getKey();
-				Map<String, Object> referenceSchema = readSchema(
-						referenceName,
-						reference.getValue(),
-						allObjects);
+				JsonNode referenceValue = reference.getValue();
 
-				objectSchema.put(referenceName, referenceSchema);
+				// check for reference array
+				if (!referenceValue.get(KEY_REFERENCED_OBJECTS).isArray()) {
+					Map<String, Object> referenceSchema = readSchema(
+							referenceName,
+							referenceValue,
+							allObjects);
+					objectSchema.put(referenceName, referenceSchema);
+
+				} else {
+					if (referenceValue.get(KEY_REFERENCED_OBJECTS).size() == 0) continue;
+
+					String referenceType = referenceName + UUID.randomUUID().toString();
+					objectSchema.put(referenceName, referenceType + "[]");
+
+					Map<String, Object> referenceSchema = readSchema(
+							referenceName,
+							referenceValue.get(KEY_REFERENCED_OBJECTS).get(0),
+							allObjects);
+					allObjects.add(new EventDefinition(referenceType, referenceSchema));
+				}
+
 			}
 
 

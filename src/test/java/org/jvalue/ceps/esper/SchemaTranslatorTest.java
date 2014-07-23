@@ -41,6 +41,7 @@ public final class SchemaTranslatorTest {
 		assertTrue(((Map) definition.getSchema().get("BodyOfWater")).containsKey("longname"));
 		assertTrue(((Map) definition.getSchema().get("BodyOfWater")).containsKey("shortname"));
 		assertEquals(((Map) definition.getSchema().get("BodyOfWater")).get("longname"), String.class);
+		assertEquals(definition.getSchema().get("timeseries").getClass(), String.class);
 	}
 
 
