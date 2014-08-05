@@ -4,8 +4,7 @@ import org.restlet.Request;
 import org.restlet.data.Status;
 
 
-final class DefaultRestlet extends BaseRestlet {
-
+public final class DefaultRestlet extends BaseRestlet {
 
 	@Override
 	protected RestletResult doGet(Request request) {
@@ -13,6 +12,5 @@ final class DefaultRestlet extends BaseRestlet {
 				Status.CLIENT_ERROR_NOT_FOUND, 
 				"Nothing here for now. Maybe later?");
 	}
-
 
 }

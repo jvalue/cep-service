@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-final class HelpRestApi implements RestApi {
+public final class HelpRestApi implements RestApi {
 	
 	private static final ObjectMapper mapper = new ObjectMapper();
 	

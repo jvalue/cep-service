@@ -33,7 +33,7 @@ task wrapper(type: Wrapper) {
 }
 
 
-mainClassName = "org.jvalue.ceps.main.CepService"
+mainClassName = "org.jvalue.ceps.main.MainMethod"
 
 
 dependencies {
