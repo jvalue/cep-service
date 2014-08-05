@@ -1,6 +1,8 @@
 package org.jvalue.ceps.data;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.db.JsonObjectDb;
@@ -127,6 +129,11 @@ public final class DataManager implements Restoreable {
 	public boolean isBeingMonitored(DataSource source) {
 		Assert.assertNotNull(source);
 		return getRegistrationForSource(source) != null;
+	}
+
+
+	public Set<DataSourceRegistration> getAll() {
+		return new HashSet<DataSourceRegistration>(sourceDb.getAll());
 	}
 
 

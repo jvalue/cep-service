@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-final class DataSourceRegistration {
+public final class DataSourceRegistration {
 
 	private final String clientId;
 	private final DataSource dataSource;

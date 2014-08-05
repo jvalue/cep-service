@@ -24,7 +24,9 @@ public final class RestletApplication extends Application {
 		apis.add(new DataRestApi(DataManager.getInstance()));
 		apis.add(new NotificationRestApi(NotificationManager.getInstance()));
 		apis.add(new EventRestApi(EventManager.getInstance()));
-		apis.add(new DebugRestApi(NotificationManager.getInstance()));
+		apis.add(new DebugRestApi(
+					NotificationManager.getInstance(),
+					DataManager.getInstance()));
 
 		List<String> apiCalls = new LinkedList<String>();
 		for (RestApi api : apis) apiCalls.addAll(api.getRoutes().keySet());
