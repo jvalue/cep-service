@@ -1,8 +1,10 @@
 package org.jvalue.ceps.notifications;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.db.JsonObjectDb;
@@ -96,6 +98,11 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	public boolean isRegistered(String clientId) {
 		Assert.assertNotNull(clientId);
 		return clientToStmtMap.containsFirst(clientId);
+	}
+
+
+	public Set<Client> getAll() {
+		return new HashSet<Client>(clientDb.getAll());
 	}
 
 

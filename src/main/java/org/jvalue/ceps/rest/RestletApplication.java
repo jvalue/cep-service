@@ -8,6 +8,7 @@ import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.rest.data.DataRestApi;
+import org.jvalue.ceps.rest.debug.DebugRestApi;
 import org.jvalue.ceps.rest.event.EventRestApi;
 import org.jvalue.ceps.rest.notifications.NotificationRestApi;
 import org.restlet.Application;
@@ -23,6 +24,7 @@ public final class RestletApplication extends Application {
 		apis.add(new DataRestApi(DataManager.getInstance()));
 		apis.add(new NotificationRestApi(NotificationManager.getInstance()));
 		apis.add(new EventRestApi(EventManager.getInstance()));
+		apis.add(new DebugRestApi(NotificationManager.getInstance()));
 
 		List<String> apiCalls = new LinkedList<String>();
 		for (RestApi api : apis) apiCalls.addAll(api.getRoutes().keySet());
