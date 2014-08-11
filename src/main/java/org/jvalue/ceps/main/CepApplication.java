@@ -8,6 +8,7 @@ import java.util.Map;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataSource;
 import org.jvalue.ceps.event.EventManager;
+import org.jvalue.ceps.event.GarbageCollector;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.rest.DefaultRestlet;
 import org.jvalue.ceps.rest.HelpRestApi;
@@ -72,6 +73,7 @@ public final class CepApplication extends Application {
 		super.start();
 		restoreState();
 		startSourceMonitoring();
+		startGarbageCollection();
 	}
 
 
@@ -102,6 +104,14 @@ public final class CepApplication extends Application {
 		} catch (RestException re) {
 			throw new IllegalStateException(re);
 		}
+	}
+
+
+	private static void startGarbageCollection() {
+		// trash all events older than 3 hours (clients arent using them currently anyways ...)
+		EventManager eventManager = EventManager.getInstance();
+		GarbageCollector collector = new GarbageCollector(eventManager, 3600000, 3600000);
+		collector.start();
 	}
 
 }
