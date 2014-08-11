@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest;
+package org.jvalue.ceps.main;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -7,14 +7,14 @@ import org.junit.Test;
 import org.restlet.routing.Router;
 
 
-public final class RestletApplicationTest {
+public final class CepApplicationTest {
 
 	@Test
 	public final void testInboundRoot() {
-		Router root = (Router) new RestletApplication().createInboundRoot();
+		Router root = (Router) new CepApplication().createInboundRoot();
 
 		assertNotNull(root.getDefaultRoute());
-		assertEquals(6, root.getRoutes().size());
+		assertEquals(8, root.getRoutes().size());
 
 	}
 
