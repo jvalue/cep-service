@@ -41,7 +41,7 @@ public final class EventManager {
 			List<JsonNode> oldEvents) {
 
 		String eventId = UUID.randomUUID().toString();
-		Event event = new Event(eventId, newEvents, oldEvents);
+		Event event = new Event(eventId, System.currentTimeMillis(), newEvents, oldEvents);
 		eventDb.add(event);
 		return eventId;
 	}

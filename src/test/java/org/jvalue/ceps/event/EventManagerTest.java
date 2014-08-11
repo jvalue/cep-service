@@ -27,6 +27,7 @@ public final class EventManagerTest {
 		assertTrue(manager.getEvent(eventId).getOldEventData().isEmpty());
 		assertTrue(manager.getEvent(eventId).getNewEventData().isEmpty());
 		assertEquals(eventId, manager.getEvent(eventId).getEventId());
+		assertTrue(manager.getEvent(eventId).getTimestamp() <= System.currentTimeMillis());
 		assertTrue(manager.getAll().contains(manager.getEvent(eventId)));
 		assertEquals(1, manager.getAll().size());
 

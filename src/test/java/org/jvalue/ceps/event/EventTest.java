@@ -23,8 +23,10 @@ public final class EventTest {
 	public void testGet() {
 		List<JsonNode> newData = createEventData("newDummy");
 		List<JsonNode> oldData = createEventData("oldDummy");
-		Event event = new Event("dummy", newData, oldData);
+		long timestamp = System.currentTimeMillis();
+		Event event = new Event("dummy", timestamp, newData, oldData);
 		assertEquals("dummy", event.getEventId());
+		assertEquals(timestamp, event.getTimestamp());
 		assertEquals(newData, event.getNewEventData());
 		assertEquals(oldData, event.getOldEventData());
 	}
@@ -32,11 +34,12 @@ public final class EventTest {
 
 	@Test
 	public void testEqualsAndHashCode() {
-		Event event1 = new Event("dummy", createEventData("newDummy"), createEventData("oldDummy"));
-		Event event2 = new Event("dummy", createEventData("newDummy"), createEventData("oldDummy"));
-		Event event3 = new Event("dummy", createEventData("dummy"), createEventData("oldDummy"));
-		Event event4 = new Event("dummy", createEventData("newDummy"), createEventData("dummy"));
-		Event event5 = new Event("dummy2", createEventData("newDummy"), createEventData("oldDummy"));
+		long timestamp = System.currentTimeMillis();
+		Event event1 = new Event("dummy", timestamp, createEventData("newDummy"), createEventData("oldDummy"));
+		Event event2 = new Event("dummy", timestamp, createEventData("newDummy"), createEventData("oldDummy"));
+		Event event3 = new Event("dummy", timestamp, createEventData("dummy"), createEventData("oldDummy"));
+		Event event4 = new Event("dummy", timestamp, createEventData("newDummy"), createEventData("dummy"));
+		Event event5 = new Event("dummy2", System.currentTimeMillis(), createEventData("newDummy"), createEventData("oldDummy"));
 
 		assertEquals(event1, event2);
 		assertNotEquals(event1, event3);
@@ -52,7 +55,7 @@ public final class EventTest {
 
 	@Test
 	public void testJson() throws JsonProcessingException {
-		Event event = new Event("dummy", createEventData("dummy1"), createEventData("dummy2"));
+		Event event = new Event("dummy", System.currentTimeMillis(), createEventData("dummy1"), createEventData("dummy2"));
 		JsonNode json = mapper.valueToTree(event);
 		assertNotNull(json);
 		assertEquals(event, mapper.treeToValue(json, Event.class));

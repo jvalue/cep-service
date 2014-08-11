@@ -14,17 +14,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 public final class Event {
 
 	private final String eventId;
+	private final long timestamp;
 	private final List<JsonNode> newEventData;
 	private final List<JsonNode> oldEventData;
 
 	@JsonCreator
 	public Event(
 			@JsonProperty("eventId") String eventId,
+			@JsonProperty("timestamp") long timestamp,
 			@JsonProperty("newEventData") List<JsonNode> newEventData,
 			@JsonProperty("oldEventData") List<JsonNode> oldEventData) {
 
 		Assert.assertNotNull(eventId, newEventData, oldEventData);;
 		this.eventId = eventId;
+		this.timestamp = timestamp;
 		this.newEventData = newEventData;
 		this.oldEventData = oldEventData;
 	}
@@ -32,6 +35,11 @@ public final class Event {
 
 	public String getEventId() {
 		return eventId;
+	}
+
+
+	public long getTimestamp() {
+		return timestamp;
 	}
 
 
@@ -51,6 +59,7 @@ public final class Event {
 		if (other == this) return true;
 		Event event = (Event) other;
 		return eventId.equals(event.eventId)
+			&& timestamp == event.timestamp
 			&& newEventData.equals(event.newEventData)
 			&& oldEventData.equals(event.oldEventData);
 	}
@@ -61,6 +70,7 @@ public final class Event {
 		final int MULT = 17;
 		int hash = 13;
 		hash = hash + MULT * eventId.hashCode();
+		hash = hash + MULT * Long.valueOf(timestamp).hashCode();
 		hash = hash + MULT * newEventData.hashCode();
 		hash = hash + MULT * oldEventData.hashCode();
 		return hash;
