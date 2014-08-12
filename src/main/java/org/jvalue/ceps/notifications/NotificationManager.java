@@ -96,6 +96,15 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	}
 
 
+	public void unregisterDevice(String deviceId) {
+		Assert.assertNotNull(deviceId);
+
+		for (Client client : clientDb.getAll()) {
+			if (client.getDeviceId().equals(deviceId)) unregister(client.getClientId());
+		}
+	}
+
+
 	public boolean isRegistered(String clientId) {
 		Assert.assertNotNull(clientId);
 		return clientToStmtMap.containsFirst(clientId);

@@ -124,6 +124,15 @@ public final class NotificationManagerTest {
 	}
 
 
+	@Test
+	public void testUnregisterDevice() {
+		notificationManager.unregisterDevice(client.getDeviceId());
+		assertFalse(notificationManager.isRegistered(client.getClientId()));
+		registerClient();
+	}
+
+
+
 	private void testResult(SenderResult.Status status) throws Exception {
 		sender.setStatus(status);
 		esperManager.onNewData(dataType, getResource("/data-pegelonline1.json"));
