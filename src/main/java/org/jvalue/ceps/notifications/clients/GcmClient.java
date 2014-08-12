@@ -18,4 +18,10 @@ public final class GcmClient extends Client {
 		super(clientId, gcmId, eplStmt);
 	}
 
+
+	@Override
+	public <P,R> R accept(ClientVisitor<P,R> visitor, P param) {
+		return visitor.visit(this, param);
+	}
+
 }

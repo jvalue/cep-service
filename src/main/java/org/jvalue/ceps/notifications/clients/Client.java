@@ -67,4 +67,7 @@ public abstract class Client {
 		return hash;
 	}
 
+
+	public abstract <P,R> R accept(ClientVisitor<P,R> visitor, P param);
+
 }
