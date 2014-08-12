@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jvalue.ceps.notifications.clients.ClientFactory;
 import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
@@ -79,15 +78,13 @@ final class GcmSender extends NotificationSender<GcmClient> {
 				String canonicalRegId = result.getCanonicalRegistrationId();
 				if (canonicalRegId != null) {
 					// same device has more than on registration id: update it
-					return getUpdateClientResult(
-							client, 
-							ClientFactory.createGcmClient(client, canonicalRegId));
+					return getUpdateClientResult(client.getDeviceId(), canonicalRegId);
 				}
 			} else {
 				String error = result.getErrorCodeName();
 				if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
 					// application has been removed from device - unregister it
-					return getRemoveClientResult(client);
+					return getRemoveClientResult(client.getDeviceId());
 				} else {
 					return getErrorResult(error);
 				}

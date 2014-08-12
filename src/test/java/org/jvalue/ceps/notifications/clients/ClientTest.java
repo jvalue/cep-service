@@ -37,7 +37,7 @@ public final class ClientTest {
 
 
 	private Client newClient(String clientId, String deviceId, String eplStmt) {
-		return new Client(clientId, deviceId, eplStmt) { };
+		return new DummyClient(clientId, deviceId, eplStmt);
 	}
 
 }

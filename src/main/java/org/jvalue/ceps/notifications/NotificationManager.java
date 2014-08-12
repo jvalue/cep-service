@@ -12,6 +12,7 @@ import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.JsonUpdateListener;
 import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.clients.Client;
+import org.jvalue.ceps.notifications.clients.DeviceIdUpdater;
 import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
 import org.jvalue.ceps.notifications.sender.SenderFactory;
@@ -127,14 +128,28 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 				break;
 
 			case REMOVE_CLIENT:
-				Log.info("Removing client " + client.getClientId());
-				unregister(result.getOldClient().getClientId());
+				Log.info("Removing client with deviceId " + result.getRemoveDeviceId());
+				for (Client removeClient : clientDb.getAll()) {
+					if (removeClient.getDeviceId().equals(result.getRemoveDeviceId())) {
+						unregister(removeClient.getClientId());
+					}
+				}
 				break;
 
 			case UPDATE_CLIENT:
 				Log.info("Updating client " + client.getClientId());
-				unregister(result.getOldClient().getClientId());
-				register(result.getNewClient());
+
+				DeviceIdUpdater updater = new DeviceIdUpdater();
+				String oldDeviceId = result.getUpdateDeviceId().first;
+				String newDeviceId = result.getUpdateDeviceId().second;
+
+				for (Client updateClient : clientDb.getAll()) {
+					if (updateClient.getDeviceId().equals(oldDeviceId)) {
+						Client newClient = updateClient.accept(updater, newDeviceId);
+						unregister(updateClient.getClientId());
+						register(newClient);
+					}
+				}
 				break;
 		}
 	}

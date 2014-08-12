@@ -31,17 +31,16 @@ public abstract class NotificationSender<C extends Client> {
 	}
 
 	
-	protected SenderResult getUpdateClientResult(Client oldClient, Client newClient) {
+	protected SenderResult getUpdateClientResult(String oldDeviceId, String newDeviceId) {
 		return new SenderResult.Builder(SenderResult.Status.UPDATE_CLIENT)
-			.oldClient(oldClient)
-			.newClient(newClient)
+			.updateDeviceId(oldDeviceId, newDeviceId)
 			.build();
 	}
 
 
-	protected SenderResult getRemoveClientResult(Client oldClient) {
+	protected SenderResult getRemoveClientResult(String deviceId) {
 		return new SenderResult.Builder(SenderResult.Status.REMOVE_CLIENT)
-			.oldClient(oldClient)
+			.removeDeviceId(deviceId)
 			.build();
 	}
 

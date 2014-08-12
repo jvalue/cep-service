@@ -34,7 +34,7 @@ public final class NotificationManagerTest {
 	private static final String dataType = "pegelonline";
 
 	private static DummyClient client;
-	private static DummyClient newClient;
+	private static String newDeviceId;
 
 	private static EsperManager esperManager;
 	private static NotificationManager notificationManager;
@@ -47,8 +47,7 @@ public final class NotificationManagerTest {
 
 		client = new DummyClient("dummy", "dumm2", "select * from " 
 				+ dataType + ".win:length(1) where longname = 'EITZE'");
-		newClient = new DummyClient("dummy2", "dummy3", "select longname from " 
-				+ dataType + ".win:length(1) where longname = 'EITZE'");
+		newDeviceId = "dummy3";
 
 		EventManager eventManager = DummyEventManager.createInstance();
 		esperManager = DummyEsperManager.createInstance("NotificationManagerTest");
@@ -110,10 +109,17 @@ public final class NotificationManagerTest {
 
 	@Test
 	public void testUpdateClient() throws Exception {
+		assertTrue(notificationManager.isRegistered(client.getClientId()));
+		assertEquals(1, notificationManager.getAll().size());
+		assertEquals(client.getDeviceId(), notificationManager.getAll().iterator().next().getDeviceId());
+
 		testResult(SenderResult.Status.UPDATE_CLIENT);
-		assertTrue(notificationManager.isRegistered(newClient.getClientId()));
-		assertFalse(notificationManager.isRegistered(client.getClientId()));
-		notificationManager.unregister(newClient.getClientId());
+
+		assertTrue(notificationManager.isRegistered(client.getClientId()));
+		assertEquals(1, notificationManager.getAll().size());
+		assertEquals(newDeviceId, notificationManager.getAll().iterator().next().getDeviceId());
+
+		notificationManager.unregister(client.getClientId());
 		notificationManager.register(client);
 	}
 
@@ -156,9 +162,10 @@ public final class NotificationManagerTest {
 				case SUCCESS:
 					return getSuccessResult();
 				case UPDATE_CLIENT:
-					return getUpdateClientResult(client, newClient);
+					System.out.println("called test update");
+					return getUpdateClientResult(client.getDeviceId(), newDeviceId);
 				case REMOVE_CLIENT:
-					return getRemoveClientResult(client);
+					return getRemoveClientResult(client.getDeviceId());
 				case ERROR:
 					return getErrorResult("error");
 			}

@@ -4,8 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-import org.jvalue.ceps.notifications.clients.Client;
-import org.jvalue.ceps.notifications.clients.DummyClient;
 
 
 public final class SenderResultTest {
@@ -15,8 +13,8 @@ public final class SenderResultTest {
 
 		SenderResult result = new SenderResult.Builder(SenderResult.Status.UPDATE_CLIENT).build();
 		assertEquals(result.getStatus(), SenderResult.Status.UPDATE_CLIENT);
-		assertNull(result.getOldClient());
-		assertNull(result.getNewClient());
+		assertNull(result.getRemoveDeviceId());
+		assertNull(result.getUpdateDeviceId());
 		assertNull(result.getErrorCause());
 		assertNull(result.getErrorMsg());
 
@@ -28,19 +26,20 @@ public final class SenderResultTest {
 
 		Throwable throwable  = new RuntimeException("bang");
 		String errorMsg = "error";
-		Client oldClient = new DummyClient("dummy1", "dummy1", "dummy2");
-		Client newClient = new DummyClient("dummy2", "dummy2", "dummy3");
+		String oldId = "oldId";
+		String newId = "newId";
 
 		SenderResult result = new SenderResult.Builder(SenderResult.Status.REMOVE_CLIENT)
-			.oldClient(oldClient)
-			.newClient(newClient)
+			.removeDeviceId(oldId)
+			.updateDeviceId(oldId, newId)
 			.errorCause(throwable)
 			.errorMsg(errorMsg)
 			.build();
 
 		assertEquals(result.getStatus(), SenderResult.Status.REMOVE_CLIENT);
-		assertEquals(result.getOldClient(), oldClient);
-		assertEquals(result.getNewClient(), newClient);
+		assertEquals(result.getRemoveDeviceId(), oldId);
+		assertEquals(result.getUpdateDeviceId().first, oldId);
+		assertEquals(result.getUpdateDeviceId().second, newId);
 		assertEquals(result.getErrorCause(), throwable);
 		assertEquals(result.getErrorMsg(), errorMsg);
 

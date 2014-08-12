@@ -1,7 +1,7 @@
 package org.jvalue.ceps.notifications.sender;
 
-import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.utils.Assert;
+import org.jvalue.ceps.utils.Pair;
 
 
 
@@ -16,22 +16,22 @@ public final class SenderResult {
 
 
 	private final Status status;
-	private final Client oldClient;
-	private final Client newClient;
+	private final String removeDeviceId;
+	private final Pair<String, String> updateDeviceId;
 	private final Throwable errorCause;
 	private final String errorMsg;
 	
 
 	private SenderResult(
 			Status status,
-			Client oldClient,
-			Client newClient,
+			String removeDeviceId,
+			Pair<String, String> updateDeviceId,
 			Throwable errorCause,
 			String errorMsg) {
 
 		this.status = status;
-		this.oldClient = oldClient;
-		this.newClient = newClient;
+		this.removeDeviceId = removeDeviceId;
+		this.updateDeviceId = updateDeviceId;
 		this.errorCause = errorCause;
 		this.errorMsg = errorMsg;
 	}
@@ -41,16 +41,16 @@ public final class SenderResult {
 		return status;
 	}
 
-
-	public Client getOldClient() {
-		return oldClient;
-	}
-
-
-	public Client getNewClient() {
-		return newClient;
-	}
 	
+	public String getRemoveDeviceId() {
+		return removeDeviceId;
+	}
+
+
+	public Pair<String, String> getUpdateDeviceId() {
+		return updateDeviceId;
+	}
+
 
 	public Throwable getErrorCause() {
 		return errorCause;
@@ -64,7 +64,8 @@ public final class SenderResult {
 
 	static class Builder {
 		private final Status status;
-		private Client oldClient, newClient;
+		private String removeDeviceId;
+		private Pair<String, String> updateDeviceId;
 		private Throwable errorCause;
 		private String errorMsg;
 
@@ -75,14 +76,14 @@ public final class SenderResult {
 		}
 
 
-		public Builder oldClient(Client oldClient) {
-			this.oldClient = oldClient;
+		public Builder removeDeviceId(String removeDeviceId) {
+			this.removeDeviceId = removeDeviceId;
 			return this;
 		}
 
 
-		public Builder newClient(Client newClient) {
-			this.newClient = newClient;
+		public Builder updateDeviceId(String oldDeviceId, String newDeviceId) {
+			this.updateDeviceId = new Pair<String, String>(oldDeviceId, newDeviceId);
 			return this;
 		}
 
@@ -100,7 +101,7 @@ public final class SenderResult {
 
 
 		public SenderResult build() {
-			return new SenderResult(status, oldClient, newClient, errorCause, errorMsg);
+			return new SenderResult(status, removeDeviceId, updateDeviceId, errorCause, errorMsg);
 		}
 	}
 

@@ -22,8 +22,8 @@ public final class NotificationSenderTest {
 		SenderResult success = sender.getSuccessResult();
 		assertNotNull(success);
 		assertEquals(success.getStatus(), SenderResult.Status.SUCCESS);
-		assertNull(success.getOldClient());
-		assertNull(success.getNewClient());
+		assertNull(success.getRemoveDeviceId());
+		assertNull(success.getUpdateDeviceId());
 		assertNull(success.getErrorMsg());
 		assertNull(success.getErrorCause());
 
@@ -39,8 +39,8 @@ public final class NotificationSenderTest {
 		assertNotNull(error);
 		assertEquals(error.getStatus(), SenderResult.Status.ERROR);
 		assertEquals(error.getErrorMsg(), "error");
-		assertNull(error.getOldClient());
-		assertNull(error.getNewClient());
+		assertNull(error.getRemoveDeviceId());
+		assertNull(error.getUpdateDeviceId());
 		assertNull(error.getErrorCause());
 
 	}
@@ -56,8 +56,8 @@ public final class NotificationSenderTest {
 		assertNotNull(error);
 		assertEquals(error.getStatus(), SenderResult.Status.ERROR);
 		assertEquals(error.getErrorCause(), exception);
-		assertNull(error.getOldClient());
-		assertNull(error.getNewClient());
+		assertNull(error.getRemoveDeviceId());
+		assertNull(error.getUpdateDeviceId());
 		assertNull(error.getErrorMsg());
 
 	}
@@ -67,22 +67,24 @@ public final class NotificationSenderTest {
 	public final void testClientResults() {
 
 		DummyNotificationSender sender = new DummyNotificationSender();
-		DummyClient oldClient = new DummyClient("dummy", "dummy", "dummy");
-		DummyClient newClient = new DummyClient("dummy2", "dummy2", "dummy2");
 
-		SenderResult result = sender.getRemoveClientResult(oldClient);
+		String oldDeviceId = "idOld";
+		String newDeviceId = "idNew";
+
+		SenderResult result = sender.getRemoveClientResult(oldDeviceId);
 		assertNotNull(result);
 		assertEquals(SenderResult.Status.REMOVE_CLIENT, result.getStatus());
-		assertEquals(oldClient, result.getOldClient());
-		assertNull(result.getNewClient());
+		assertEquals(oldDeviceId, result.getRemoveDeviceId());
+		assertNull(result.getUpdateDeviceId());
 		assertNull(result.getErrorCause());
 		assertNull(result.getErrorMsg());
 
-		result = sender.getUpdateClientResult(oldClient, newClient);
+		result = sender.getUpdateClientResult(oldDeviceId, newDeviceId);
 		assertNotNull(result);
 		assertEquals(SenderResult.Status.UPDATE_CLIENT, result.getStatus());
-		assertEquals(oldClient, result.getOldClient());
-		assertEquals(newClient, result.getNewClient());
+		assertNull(result.getRemoveDeviceId());
+		assertEquals(oldDeviceId, result.getUpdateDeviceId().first);
+		assertEquals(newDeviceId, result.getUpdateDeviceId().second);
 		assertNull(result.getErrorCause());
 		assertNull(result.getErrorMsg());
 
