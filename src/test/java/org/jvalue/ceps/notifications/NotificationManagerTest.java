@@ -45,9 +45,9 @@ public final class NotificationManagerTest {
 	@BeforeClass
 	public static void setup() throws Exception {
 
-		client = new DummyClient("dummy", "select * from " 
+		client = new DummyClient("dummy", "dumm2", "select * from " 
 				+ dataType + ".win:length(1) where longname = 'EITZE'");
-		newClient = new DummyClient("dummy2", "select longname from " 
+		newClient = new DummyClient("dummy2", "dummy3", "select longname from " 
 				+ dataType + ".win:length(1) where longname = 'EITZE'");
 
 		EventManager eventManager = DummyEventManager.createInstance();

@@ -12,13 +12,13 @@ public final class ClientFactory {
 
 	public static GcmClient createGcmClient(String eplStmt, String gcmId) {
 		Assert.assertNotNull(eplStmt, gcmId);
-		return new GcmClient(UUID.randomUUID().toString(), eplStmt, gcmId);
+		return new GcmClient(UUID.randomUUID().toString(), gcmId, eplStmt);
 	}
 
 
 	public static GcmClient createGcmClient(GcmClient client, String newClientId) {
 		Assert.assertNotNull(client, newClientId);
-		return new GcmClient(newClientId, client.getEplStmt(), client.getGcmId());
+		return new GcmClient(newClientId, client.getDeviceId(), client.getEplStmt());
 	}
 
 }

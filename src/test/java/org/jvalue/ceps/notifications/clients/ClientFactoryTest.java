@@ -12,7 +12,7 @@ public final class ClientFactoryTest {
 		GcmClient client = ClientFactory.createGcmClient("dummy1", "dummy2");
 		assertNotNull(client.getClientId());
 		assertEquals("dummy1", client.getEplStmt());
-		assertEquals("dummy2", client.getGcmId());
+		assertEquals("dummy2", client.getDeviceId());
 	}
 
 }

@@ -67,8 +67,8 @@ public final class NotificationSenderTest {
 	public final void testClientResults() {
 
 		DummyNotificationSender sender = new DummyNotificationSender();
-		DummyClient oldClient = new DummyClient("dummy", "dummy");
-		DummyClient newClient = new DummyClient("dummy2", "dummy2");
+		DummyClient oldClient = new DummyClient("dummy", "dummy", "dummy");
+		DummyClient newClient = new DummyClient("dummy2", "dummy2", "dummy2");
 
 		SenderResult result = sender.getRemoveClientResult(oldClient);
 		assertNotNull(result);

@@ -28,8 +28,8 @@ public final class SenderResultTest {
 
 		Throwable throwable  = new RuntimeException("bang");
 		String errorMsg = "error";
-		Client oldClient = new DummyClient("dummy1", "dummy1");
-		Client newClient = new DummyClient("dummy2", "dummy2");
+		Client oldClient = new DummyClient("dummy1", "dummy1", "dummy2");
+		Client newClient = new DummyClient("dummy2", "dummy2", "dummy3");
 
 		SenderResult result = new SenderResult.Builder(SenderResult.Status.REMOVE_CLIENT)
 			.oldClient(oldClient)

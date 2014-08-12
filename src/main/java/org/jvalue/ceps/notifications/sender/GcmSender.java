@@ -52,7 +52,7 @@ final class GcmSender extends NotificationSender<GcmClient> {
 		payload.put(DATA_KEY_DEBUG, Boolean.TRUE.toString());
 
 		final List<String> devices = new ArrayList<String>();
-		devices.add(client.getGcmId());
+		devices.add(client.getDeviceId());
 
 		// send
 		Message.Builder builder = new Message.Builder();
