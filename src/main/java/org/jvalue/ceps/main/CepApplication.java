@@ -42,7 +42,8 @@ public final class CepApplication extends Application {
 		apis.add(new EventRestApi(EventManager.getInstance()));
 		apis.add(new DebugRestApi(
 					NotificationManager.getInstance(),
-					DataManager.getInstance()));
+					DataManager.getInstance(),
+					EventManager.getInstance()));
 
 		List<String> apiCalls = new LinkedList<String>();
 		for (RestApi api : apis) apiCalls.addAll(api.getRoutes().keySet());

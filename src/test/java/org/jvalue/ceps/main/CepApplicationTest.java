@@ -14,7 +14,7 @@ public final class CepApplicationTest {
 		Router root = (Router) new CepApplication().createInboundRoot();
 
 		assertNotNull(root.getDefaultRoute());
-		assertEquals(8, root.getRoutes().size());
+		assertEquals(9, root.getRoutes().size());
 
 	}
 
