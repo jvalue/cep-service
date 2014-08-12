@@ -31,7 +31,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 
 	private static NotificationManager instance;
 
-	public static NotificationManager getInstance() {
+	public static synchronized NotificationManager getInstance() {
 		if (instance == null) {
 			EsperManager esperManager = EsperManager.getInstance();
 			EventManager eventManager = EventManager.getInstance();
@@ -69,7 +69,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	}
 
 
-	public void register(Client client) {
+	public synchronized void register(Client client) {
 		Assert.assertNotNull(client);
 		Assert.assertTrue(sender.containsKey(client.getClass()), "unknown client type");
 
@@ -84,7 +84,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	}
 
 
-	public void unregister(String clientId) {
+	public synchronized void unregister(String clientId) {
 		Assert.assertNotNull(clientId);
 		Assert.assertTrue(clientToStmtMap.containsFirst(clientId), "not registered");
 
@@ -96,7 +96,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	}
 
 
-	public void unregisterDevice(String deviceId) {
+	public synchronized void unregisterDevice(String deviceId) {
 		Assert.assertNotNull(deviceId);
 
 		for (Client client : clientDb.getAll()) {
@@ -105,20 +105,20 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	}
 
 
-	public boolean isRegistered(String clientId) {
+	public synchronized boolean isRegistered(String clientId) {
 		Assert.assertNotNull(clientId);
 		return clientToStmtMap.containsFirst(clientId);
 	}
 
 
-	public Set<Client> getAll() {
+	public synchronized Set<Client> getAll() {
 		return new HashSet<Client>(clientDb.getAll());
 	}
 
 
 	@Override
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public void onNewEvents(String eplStmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
+	public synchronized void onNewEvents(String eplStmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
 		String eventId = eventManager.onNewEvents(newEvents, oldEvents);
 		String clientId = clientToStmtMap.getFirst(eplStmtId);
 		Client client = getClientForId(clientId);
@@ -174,7 +174,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 
 
 	@Override
-	public void restoreState() {
+	public synchronized void restoreState() {
 		Log.info("Restoring state for " + NotificationManager.class.getSimpleName());
 		for (Client client : clientDb.getAll()) {
 			register(client, false);
