@@ -7,7 +7,7 @@ import org.jvalue.ceps.notifications.utils.GcmUtils;
 import org.jvalue.ceps.utils.Assert;
 
 
-final class GcmGarbageCollector implements GarbageCollector {
+public final class GcmGarbageCollector implements GarbageCollector {
 
 	static final String DATA_KEY_PING = "ping";
 
