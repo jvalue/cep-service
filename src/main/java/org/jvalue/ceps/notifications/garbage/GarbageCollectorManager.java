@@ -10,6 +10,7 @@ import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.ClientVisitor;
 import org.jvalue.ceps.utils.Assert;
+import org.jvalue.ceps.utils.Log;
 
 
 public final class GarbageCollectorManager {
@@ -77,6 +78,7 @@ public final class GarbageCollectorManager {
 		
 		@Override
 		public void run() {
+			Log.info("Running clients garbage collection");
 			Set<String> visitedDevices = new HashSet<String>();
 
 			for (Client client : notificationManager.getAll()) {
@@ -85,11 +87,13 @@ public final class GarbageCollectorManager {
 
 				CollectionStatus status = client.accept(mapper, null);
 				if (status.equals(CollectionStatus.COLLECT)) {
+					Log.info("Removing device " + deviceId);
 					notificationManager.unregisterDevice(deviceId);
 				}
 
 				visitedDevices.add(deviceId);
 			}
+			Log.info("Finished client garbage collection");
 		}
 	}
 
