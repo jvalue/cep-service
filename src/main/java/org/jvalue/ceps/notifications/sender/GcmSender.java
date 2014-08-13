@@ -21,9 +21,9 @@ final class GcmSender extends NotificationSender<GcmClient> {
 
 	private final GcmUtils gcmUtils;
 
-	GcmSender(String apiKeyResource) {
-		Assert.assertNotNull(apiKeyResource);
-		gcmUtils = new GcmUtils(apiKeyResource);
+	GcmSender(GcmUtils gcmUtils) {
+		Assert.assertNotNull(gcmUtils);
+		this.gcmUtils = gcmUtils;
 	}
 
 	@Override
