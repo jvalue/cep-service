@@ -1,21 +1,14 @@
 package org.jvalue.ceps.notifications.sender;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.notifications.utils.GcmUtils;
 import org.jvalue.ceps.utils.Assert;
-import org.jvalue.ceps.utils.Log;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.android.gcm.server.Constants;
-import com.google.android.gcm.server.Message;
-import com.google.android.gcm.server.MulticastResult;
-import com.google.android.gcm.server.Result;
-import com.google.android.gcm.server.Sender;
 
 
 final class GcmSender extends NotificationSender<GcmClient> {
@@ -26,13 +19,11 @@ final class GcmSender extends NotificationSender<GcmClient> {
 		DATA_KEY_DEBUG = "debug";
 
 
-	private final Sender sender;
+	private final GcmUtils gcmUtils;
 
 	GcmSender(String apiKeyResource) {
 		Assert.assertNotNull(apiKeyResource);
-		String apiKey = new GcmApiKey(apiKeyResource).toString();
-		if (apiKey == null) sender = null;
-		else sender = new Sender(apiKey);
+		gcmUtils = new GcmUtils(apiKeyResource);
 	}
 
 	@Override
@@ -42,56 +33,21 @@ final class GcmSender extends NotificationSender<GcmClient> {
 			List<JsonNode> newEvents, 
 			List<JsonNode> oldEvents) {
 
-		if (sender == null) return getErrorResult("api key not set");
-
 		// gather data
 		Map<String,String> payload = new HashMap<String,String>();
 		payload.put(DATA_KEY_CLIENT_ID, client.getClientId());
 		payload.put(DATA_KEY_EVENT_ID, eventId);
 		payload.put(DATA_KEY_DEBUG, Boolean.TRUE.toString());
 
-		final List<String> devices = new ArrayList<String>();
-		devices.add(client.getDeviceId());
+		GcmUtils.GcmResult result = gcmUtils.sendMsg(client.getDeviceId(), payload);
 
-		// send
-		Message.Builder builder = new Message.Builder();
-		for (Map.Entry<String, String> e : payload.entrySet()) {
-			builder.addData(e.getKey(), e.getValue());
-		}
+		if (result.isSuccess()) return getSuccessResult();
+		else if (result.getErrorMsg() != null) return getErrorResult(result.getErrorMsg());
+		else if (result.getException() != null) return getErrorResult(result.getException());
+		else if (result.getNewGcmId() != null) return getUpdateClientResult(client.getDeviceId(), result.getNewGcmId());
+		else if (result.isNotRegistered()) return getRemoveClientResult(client.getDeviceId());
 
-		MulticastResult multicastResult;
-		try {
-			multicastResult = sender.send(builder.build(), devices, 5);
-		} catch (IOException io) {
-			return getErrorResult(io);
-		}
-
-		// analyze the results
-		List<Result> results = multicastResult.getResults();
-		for (int i = 0; i < devices.size(); i++) {
-			String regId = devices.get(i);
-			Result result = results.get(i);
-			String messageId = result.getMessageId();
-			if (messageId != null) {
-				Log.info("Succesfully sent message to device: " 
-					+ regId + "; messageId = " + messageId);
-				String canonicalRegId = result.getCanonicalRegistrationId();
-				if (canonicalRegId != null) {
-					// same device has more than on registration id: update it
-					return getUpdateClientResult(client.getDeviceId(), canonicalRegId);
-				}
-			} else {
-				String error = result.getErrorCodeName();
-				if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-					// application has been removed from device - unregister it
-					return getRemoveClientResult(client.getDeviceId());
-				} else {
-					return getErrorResult(error);
-				}
-			}
-		}
-
-		return getSuccessResult();
+		throw new IllegalStateException("ups, this shouldn't have happened ...");
 	}
 
 }
