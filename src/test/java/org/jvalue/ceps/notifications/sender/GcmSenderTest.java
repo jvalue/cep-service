@@ -35,16 +35,13 @@ public final class GcmSenderTest {
 		when(utils.sendMsg(any(String.class), any(Map.class))).thenReturn(result);
 
 		GcmSender sender = new GcmSender(utils);
-
 		String EVENT_ID = "someEventId";
 
-		String CLIENT_ID = "someClientId";
-		String DEVICE_ID = "someDeviceId";
-		GcmClient client = PowerMockito.mock(GcmClient.class);
-		when(client.getClientId()).thenReturn(CLIENT_ID);
-		when(client.getDeviceId()).thenReturn(DEVICE_ID);
-
-		SenderResult senderResult = sender.sendEventUpdate(client, EVENT_ID, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
+		SenderResult senderResult = sender.sendEventUpdate(
+				getGcmClient(), 
+				EVENT_ID, 
+				new LinkedList<JsonNode>(), 
+				new LinkedList<JsonNode>());
 		assertEquals(SenderResult.Status.SUCCESS, senderResult.getStatus());
 
 		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
@@ -52,6 +49,51 @@ public final class GcmSenderTest {
 
 		assertEquals(CLIENT_ID, captor.getValue().get(GcmSender.DATA_KEY_CLIENT_ID));
 		assertEquals(EVENT_ID, captor.getValue().get(GcmSender.DATA_KEY_EVENT_ID));
+	}
+
+
+	@Test
+	public final void testErrorResult() {
+		String errorMsg = "some fail";
+		SenderResult result = testResult(getResult(false, errorMsg, false, null, null));
+		assertEquals(SenderResult.Status.ERROR, result.getStatus());
+		assertEquals(errorMsg, result.getErrorMsg());
+
+		IOException exception = new IOException("booom");
+		result = testResult(getResult(false, null, false, null, exception));
+		assertEquals(SenderResult.Status.ERROR, result.getStatus());
+		assertEquals(exception, result.getErrorCause());
+	}
+
+
+	@Test
+	public final void testUpdateResult() {
+		String newId = "someNewGcmId";
+		SenderResult result = testResult(getResult(false, null, false, newId, null));
+		assertEquals(SenderResult.Status.UPDATE_CLIENT, result.getStatus());
+		assertEquals(DEVICE_ID, result.getUpdateDeviceId().first);
+		assertEquals(newId, result.getUpdateDeviceId().second);
+	}
+
+
+	@Test
+	public final void testRemoveResult() {
+		SenderResult result = testResult(getResult(false, null, true, null, null));
+		assertEquals(SenderResult.Status.REMOVE_CLIENT, result.getStatus());
+		assertEquals(DEVICE_ID, result.getRemoveDeviceId());
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private SenderResult testResult(GcmUtils.GcmResult gcmResult) {
+		GcmUtils utils = PowerMockito.mock(GcmUtils.class);
+		when(utils.sendMsg(any(String.class), any(Map.class))).thenReturn(gcmResult);
+
+		return new GcmSender(utils).sendEventUpdate(
+				getGcmClient(), 
+				"someEventId", 
+				new LinkedList<JsonNode>(), 
+				new LinkedList<JsonNode>());
 	}
 
 
@@ -71,6 +113,16 @@ public final class GcmSenderTest {
 		return result;
 	}
 
-		
+
+	private static final String 
+		CLIENT_ID = "someClientId",
+		DEVICE_ID = "someDeviceId";
+
+	private GcmClient getGcmClient() {
+		GcmClient client = PowerMockito.mock(GcmClient.class);
+		when(client.getClientId()).thenReturn(CLIENT_ID);
+		when(client.getDeviceId()).thenReturn(DEVICE_ID);
+		return client;
+	}
 
 }
