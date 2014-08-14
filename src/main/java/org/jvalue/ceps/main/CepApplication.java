@@ -22,6 +22,7 @@ import org.jvalue.ceps.rest.debug.DebugRestApi;
 import org.jvalue.ceps.rest.event.EventRestApi;
 import org.jvalue.ceps.rest.notifications.NotificationRestApi;
 import org.jvalue.ceps.rest.rules.ClientAdapterManager;
+import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.RestException;
 import org.jvalue.ceps.utils.Restoreable;
 import org.restlet.Application;
@@ -31,11 +32,8 @@ import org.restlet.routing.Router;
 
 public final class CepApplication extends Application {
 
-	static final int SERVER_PORT = 8080;
-	private static final String SERVER_NAME = "http://faui2o2f.cs.fau.de:" 
-		+ SERVER_PORT + "/cep-service";
-
-	private static final String ODS_SERVER = "http://faui2o2f.cs.fau.de:8080/open-data-service";
+	private String cepsServerName = "http://faui2o2f.cs.fau.de:8080/cep-service";
+	private String odsServerName = "http://faui2o2f.cs.fau.de:8080/open-data-service";
 
 
 	private final List<RestApi> apis = new LinkedList<RestApi>();
@@ -52,6 +50,18 @@ public final class CepApplication extends Application {
 		List<String> apiCalls = new LinkedList<String>();
 		for (RestApi api : apis) apiCalls.addAll(api.getRoutes().keySet());
 		apis.add(new HelpRestApi(apiCalls));
+	}
+
+
+	public void setCepsServerName(String cepsServerName) {
+		Assert.assertNotNull(cepsServerName);
+		this.cepsServerName = cepsServerName;
+	}
+
+
+	public void setOdsServerName(String odsServerName) {
+		Assert.assertNotNull(odsServerName);
+		this.odsServerName = odsServerName;
 	}
 
 
@@ -82,7 +92,7 @@ public final class CepApplication extends Application {
 	}
 
 
-	private static void restoreState() {
+	private void restoreState() {
 		List<Restoreable> restoreables = Arrays.asList(
 				DataManager.getInstance(),
 				NotificationManager.getInstance());
@@ -91,10 +101,10 @@ public final class CepApplication extends Application {
 	}
 
 
-	private static void startSourceMonitoring() {
+	private void startSourceMonitoring() {
 		DataSource source = new DataSource(
 				"de-pegelonline", 
-				ODS_SERVER,
+				odsServerName,
 				"ods/de/pegelonline/stations/$class");
 		DataManager manager = DataManager.getInstance();
 
@@ -103,7 +113,7 @@ public final class CepApplication extends Application {
 		try {
 			manager.startMonitoring(
 					source,
-					SERVER_NAME + OdsRestHook.URL_NOTIFY_SOURCE_CHANGED,
+					cepsServerName + OdsRestHook.URL_NOTIFY_SOURCE_CHANGED,
 					OdsRestHook.PARAM_SOURCE);
 
 		} catch (RestException re) {
