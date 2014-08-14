@@ -11,8 +11,8 @@ public final class ClientFactoryTest {
 	public void testGcmClient() {
 		GcmClient client = ClientFactory.createGcmClient("dummy1", "dummy2");
 		assertNotNull(client.getClientId());
-		assertEquals("dummy1", client.getEplStmt());
-		assertEquals("dummy2", client.getDeviceId());
+		assertEquals("dummy1", client.getDeviceId());
+		assertEquals("dummy2", client.getEplStmt());
 	}
 
 }
