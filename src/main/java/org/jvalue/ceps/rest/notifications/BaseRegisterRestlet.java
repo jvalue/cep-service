@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.jvalue.ceps.adapter.ClientAdapter;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.rest.BaseRestlet;
 import org.jvalue.ceps.rest.RestletResult;
-import org.jvalue.ceps.rest.rules.ClientAdapter;
 import org.jvalue.ceps.utils.Assert;
 import org.restlet.Request;
 

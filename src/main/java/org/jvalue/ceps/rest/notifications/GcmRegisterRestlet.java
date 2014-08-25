@@ -2,10 +2,10 @@ package org.jvalue.ceps.rest.notifications;
 
 import java.util.HashSet;
 
+import org.jvalue.ceps.adapter.ClientAdapter;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.ClientFactory;
-import org.jvalue.ceps.rest.rules.ClientAdapter;
 import org.restlet.Request;
 
 

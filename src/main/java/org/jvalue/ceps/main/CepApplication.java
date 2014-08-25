@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.jvalue.ceps.adapter.ClientAdapterManager;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataSource;
 import org.jvalue.ceps.event.EventManager;
@@ -21,7 +22,6 @@ import org.jvalue.ceps.rest.data.OdsRestHook;
 import org.jvalue.ceps.rest.debug.DebugRestApi;
 import org.jvalue.ceps.rest.event.EventRestApi;
 import org.jvalue.ceps.rest.notifications.NotificationRestApi;
-import org.jvalue.ceps.rest.rules.ClientAdapterManager;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.RestException;
 import org.jvalue.ceps.utils.Restoreable;

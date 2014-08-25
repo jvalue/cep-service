@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jvalue.ceps.adapter.ClientAdapter;
+import org.jvalue.ceps.adapter.ClientAdapterManager;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.rest.RestApi;
-import org.jvalue.ceps.rest.rules.ClientAdapter;
-import org.jvalue.ceps.rest.rules.ClientAdapterManager;
 import org.jvalue.ceps.utils.Assert;
 import org.restlet.Restlet;
 

@@ -1,4 +1,4 @@
-package org.jvalue.ceps.rest.rules;
+package org.jvalue.ceps.adapter;
 
 import java.util.HashMap;
 import java.util.Map;
