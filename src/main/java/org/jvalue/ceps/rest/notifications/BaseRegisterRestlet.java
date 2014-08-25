@@ -52,7 +52,13 @@ abstract class BaseRegisterRestlet extends BaseRestlet {
 	@Override
 	protected final RestletResult doPost(Request request) {
 		String deviceId = getParameter(request, PARAM_DEVICE_ID);
-		Client client = getClient(request, deviceId, clientAdapter.toEplStmt(request));
+
+		// build client
+		Map<String, String> eplParams = new HashMap<String, String>();
+		for (String paramKey : clientAdapter.getRequiredParams()) {
+			eplParams.put(paramKey, getParameter(request, paramKey));
+		}
+		Client client = getClient(request, deviceId, clientAdapter.toEplStmt(eplParams));
 		manager.register(client);
 
 		Map<String, Object> resultData = new HashMap<String, Object>();

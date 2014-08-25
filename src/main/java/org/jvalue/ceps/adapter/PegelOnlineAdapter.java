@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-final class PegelOnlineAdapter extends ClientAdapter {
+final class PegelOnlineAdapter implements ClientAdapter {
 
 	private static final String
 		KEY_RIVER = "river",
@@ -33,7 +33,7 @@ final class PegelOnlineAdapter extends ClientAdapter {
 
 
 	@Override
-	protected String toEplStmt(Map<String, String> params) {
+	public String toEplStmt(Map<String, String> params) {
 		String river = params.get(KEY_RIVER);
 		String station = params.get(KEY_STATION);
 		double level = Double.valueOf(params.get(KEY_LEVEL));
