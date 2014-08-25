@@ -2,7 +2,7 @@ package org.jvalue.ceps.rest.notifications;
 
 import java.util.HashSet;
 
-import org.jvalue.ceps.adapter.ClientAdapter;
+import org.jvalue.ceps.adapter.EplAdapter;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.ClientFactory;
@@ -12,8 +12,8 @@ import org.restlet.Request;
 final class GcmRegisterRestlet extends BaseRegisterRestlet {
 
 
-	protected GcmRegisterRestlet(NotificationManager manager, ClientAdapter clientAdapter) {
-		super(manager, clientAdapter, new HashSet<String>());
+	protected GcmRegisterRestlet(NotificationManager manager, EplAdapter eplAdapter) {
+		super(manager, eplAdapter, new HashSet<String>());
 	}
 
 

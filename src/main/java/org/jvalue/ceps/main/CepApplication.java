@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.jvalue.ceps.adapter.ClientAdapterManager;
+import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataSource;
 import org.jvalue.ceps.event.EventManager;
@@ -40,7 +40,7 @@ public final class CepApplication extends Application {
 
 	public CepApplication() {
 		apis.add(new DataRestApi(DataManager.getInstance()));
-		apis.add(new NotificationRestApi(NotificationManager.getInstance(), new ClientAdapterManager()));
+		apis.add(new NotificationRestApi(NotificationManager.getInstance(), new EplAdapterManager()));
 		apis.add(new EventRestApi(EventManager.getInstance()));
 		apis.add(new DebugRestApi(
 					NotificationManager.getInstance(),

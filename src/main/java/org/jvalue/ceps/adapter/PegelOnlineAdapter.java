@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-final class PegelOnlineAdapter implements ClientAdapter {
+final class PegelOnlineAdapter implements EplAdapter {
 
 	private static final String
 		KEY_RIVER = "river",

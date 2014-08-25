@@ -5,17 +5,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public final class ClientAdapterManager {
+public final class EplAdapterManager {
 
-	private static final Map<String, ClientAdapter> adapters;
+	private static final Map<String, EplAdapter> adapters;
 	static {
-		Map<String, ClientAdapter> tmpAdapters = new HashMap<String, ClientAdapter>();
+		Map<String, EplAdapter> tmpAdapters = new HashMap<String, EplAdapter>();
 		tmpAdapters.put("/de/pegelonline/levelAlarm", new PegelOnlineAdapter());
 		adapters = Collections.unmodifiableMap(tmpAdapters);
 	}
 
 
-	public Map<String, ClientAdapter> getAdapters() {
+	public Map<String, EplAdapter> getAdapters() {
 		return adapters;
 	}
 

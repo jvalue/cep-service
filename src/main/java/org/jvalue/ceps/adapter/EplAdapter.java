@@ -8,7 +8,7 @@ import java.util.Set;
  * Base class for creating an epl stmt based on parameters supplied by
  * end users via the REST api.
  */
-public interface ClientAdapter {
+public interface EplAdapter {
 
 	/**
 	 * @return A epl stmt derived from user supplied parameters.

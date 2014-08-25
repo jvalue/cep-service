@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.jvalue.ceps.adapter.ClientAdapter;
+import org.jvalue.ceps.adapter.EplAdapter;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.rest.BaseRestlet;
@@ -26,26 +26,26 @@ abstract class BaseRegisterRestlet extends BaseRestlet {
 
 	private static Set<String> prepareRequiredParams(
 			Set<String> subclassParams,
-			ClientAdapter adapter) {
+			EplAdapter eplAdapter) {
 		Set<String> result = new HashSet<String>(subclassParams);
-		result.addAll(adapter.getRequiredParams());
+		result.addAll(eplAdapter.getRequiredParams());
 		result.add(PARAM_DEVICE_ID);
 		return result;
 	}
 
 
 	private final NotificationManager manager;
-	private final ClientAdapter clientAdapter;
+	private final EplAdapter eplAdapter;
 
 	protected BaseRegisterRestlet(
 			NotificationManager manager,
-			ClientAdapter clientAdapter,
+			EplAdapter eplAdapter,
 			Set<String> mandatoryQueryParams) {
 		
-		super(prepareRequiredParams(mandatoryQueryParams, clientAdapter), false);
-		Assert.assertNotNull(manager, clientAdapter);
+		super(prepareRequiredParams(mandatoryQueryParams, eplAdapter), false);
+		Assert.assertNotNull(manager, eplAdapter);
 		this.manager = manager;
-		this.clientAdapter = clientAdapter;
+		this.eplAdapter = eplAdapter;
 	}
 
 
@@ -55,10 +55,10 @@ abstract class BaseRegisterRestlet extends BaseRestlet {
 
 		// build client
 		Map<String, String> eplParams = new HashMap<String, String>();
-		for (String paramKey : clientAdapter.getRequiredParams()) {
+		for (String paramKey : eplAdapter.getRequiredParams()) {
 			eplParams.put(paramKey, getParameter(request, paramKey));
 		}
-		Client client = getClient(request, deviceId, clientAdapter.toEplStmt(eplParams));
+		Client client = getClient(request, deviceId, eplAdapter.toEplStmt(eplParams));
 		manager.register(client);
 
 		Map<String, Object> resultData = new HashMap<String, Object>();

@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jvalue.ceps.adapter.ClientAdapter;
-import org.jvalue.ceps.adapter.ClientAdapterManager;
+import org.jvalue.ceps.adapter.EplAdapter;
+import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.rest.RestApi;
 import org.jvalue.ceps.utils.Assert;
@@ -24,7 +24,7 @@ public final class NotificationRestApi implements RestApi {
 
 	public NotificationRestApi(
 			NotificationManager notificationManager, 
-			ClientAdapterManager adapterManager) {
+			EplAdapterManager adapterManager) {
 
 		Assert.assertNotNull(notificationManager, adapterManager);
 
@@ -34,7 +34,7 @@ public final class NotificationRestApi implements RestApi {
 		routes.put(PATH_UNREGISTER, new UnregisterRestlet(notificationManager));
 
 		// configurable rules
-		for (Map.Entry<String, ClientAdapter> entry : adapterManager.getAdapters().entrySet()) {
+		for (Map.Entry<String, EplAdapter> entry : adapterManager.getAdapters().entrySet()) {
 			// enable gcm registration for all
 			routes.put(
 					PATH_REGISTER + entry.getKey(), 
