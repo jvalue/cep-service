@@ -10,7 +10,7 @@ public final class ClientAdapterManager {
 	private static final Map<String, ClientAdapter> adapters;
 	static {
 		Map<String, ClientAdapter> tmpAdapters = new HashMap<String, ClientAdapter>();
-		tmpAdapters.put("/de/pegelonline/levelAlarm", new PegelonlineLevelRule());
+		tmpAdapters.put("/de/pegelonline/levelAlarm", new PegelOnlineAdapter());
 		adapters = Collections.unmodifiableMap(tmpAdapters);
 	}
 

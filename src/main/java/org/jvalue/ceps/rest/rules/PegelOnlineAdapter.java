@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-final class PegelonlineLevelRule extends ClientAdapter {
+final class PegelOnlineAdapter extends ClientAdapter {
 
 	private static final String
 		KEY_RIVER = "river",
