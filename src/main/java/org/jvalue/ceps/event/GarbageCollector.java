@@ -1,36 +1,37 @@
 package org.jvalue.ceps.event;
 
+import com.google.inject.Inject;
+
+import org.jvalue.ceps.utils.Assert;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.jvalue.ceps.utils.Assert;
+import io.dropwizard.lifecycle.Managed;
 
 
-public final class GarbageCollector {
+public final class GarbageCollector implements Managed {
 
 	private final EventManager eventManager;
 	private final long updateInterval, maxAge;
-	private boolean isRunning = false;
-
-	private ScheduledExecutorService scheduler;
+	private final ScheduledExecutorService scheduler;
 
 	/**
 	 * Times are measured in ms
 	 */
+	@Inject
 	public GarbageCollector(EventManager eventManager, long updateInterval, long maxAge) {
 		Assert.assertNotNull(eventManager);
 		this.eventManager = eventManager;
 		this.updateInterval = updateInterval;
 		this.maxAge = maxAge;
+		this.scheduler = Executors.newScheduledThreadPool(1);
 	}
 
 
-	public synchronized void start() {
-		if (isRunning) throw new IllegalStateException("already running");
-		isRunning = true;
-
-		this.scheduler = Executors.newScheduledThreadPool(1);
+	@Override
+	public void start() {
 		scheduler.scheduleAtFixedRate(
 				new CleanTask(eventManager, maxAge),
 				0,
@@ -39,15 +40,8 @@ public final class GarbageCollector {
 	}
 
 
-	public synchronized boolean isRunning() {
-		return isRunning;
-	}
-
-
-	public synchronized void stop() {
-		if (!isRunning) throw new IllegalStateException("not running");
-		isRunning = false;
-
+	@Override
+	public void stop() {
 		scheduler.shutdownNow();
 	}
 
