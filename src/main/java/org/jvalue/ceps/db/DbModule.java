@@ -14,10 +14,13 @@ public class DbModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		CouchDbInstance couchDbInstance = new StdCouchDbInstance(new StdHttpClient.Builder().build());
-		CouchDbConnector dataSourceConnector = couchDbInstance.createConnector(DataSourceRegistrationRepository.DATABASE_NAME, true);
-
 		bind(CouchDbInstance.class).toInstance(couchDbInstance);
+
+		CouchDbConnector dataSourceConnector = couchDbInstance.createConnector(DataSourceRegistrationRepository.DATABASE_NAME, true);
 		bind(CouchDbConnector.class).annotatedWith(Names.named(DataSourceRegistrationRepository.DATABASE_NAME)).toInstance(dataSourceConnector);
+
+		CouchDbConnector eventConnector = couchDbInstance.createConnector(EventRepository.DATABASE_NAME, true);
+		bind(CouchDbConnector.class).annotatedWith(Names.named(EventRepository.DATABASE_NAME)).toInstance(eventConnector);
 	}
 
 }

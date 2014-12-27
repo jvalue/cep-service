@@ -1,17 +1,18 @@
 package org.jvalue.ceps.event;
 
-import java.util.List;
-
-import org.jvalue.ceps.utils.Assert;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
+import org.ektorp.support.CouchDbDocument;
+import org.jvalue.ceps.utils.Assert;
+
+import java.util.List;
+
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class Event {
+public final class Event extends CouchDbDocument {
 
 	private final String eventId;
 	private final long timestamp;
