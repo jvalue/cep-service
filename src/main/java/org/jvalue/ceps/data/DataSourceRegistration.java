@@ -6,11 +6,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Objects;
 
+import org.ektorp.support.CouchDbDocument;
 import org.jvalue.ceps.utils.Assert;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class DataSourceRegistration {
+public final class DataSourceRegistration extends CouchDbDocument {
 
 	private final String clientId;
 	private final DataSource dataSource;

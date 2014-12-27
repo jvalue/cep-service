@@ -3,8 +3,7 @@ package org.jvalue.ceps.data;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.jvalue.ceps.db.DbAccessorFactory;
-import org.jvalue.ceps.db.JsonObjectDb;
+import org.jvalue.ceps.db.DataSourceRegistrationRepository;
 import org.jvalue.ceps.esper.DataUpdateListener;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.utils.Assert;
@@ -40,23 +39,21 @@ public final class DataManager implements Restoreable {
 
 	public static DataManager getInstance() {
 		if (instance == null) instance = new DataManager(
-				new JsonObjectDb<DataSourceRegistration>(
-					DbAccessorFactory.getCouchDbAccessor(DB_NAME), 
-					DataSourceRegistration.class),
+				null,
 				EsperManager.getInstance());
 		return instance;
 	}
 
 
-	private final JsonObjectDb<DataSourceRegistration> sourceDb;
+	private final DataSourceRegistrationRepository registrationRepository;
 	private final DataUpdateListener dataListener;
 
 	private DataManager(
-			JsonObjectDb<DataSourceRegistration> sourceDb,
+			DataSourceRegistrationRepository registrationRepository,
 			DataUpdateListener dataListener) {
 
-		Assert.assertNotNull(sourceDb, dataListener);
-		this.sourceDb = sourceDb;
+		Assert.assertNotNull(registrationRepository, dataListener);
+		this.registrationRepository = registrationRepository;
 		this.dataListener = dataListener;
 	}
 
@@ -67,7 +64,7 @@ public final class DataManager implements Restoreable {
 			String restCallbackParam) throws RestException {
 
 		Assert.assertNotNull(source, restCallbackUrl, restCallbackParam);
-		Assert.assertFalse(sourceDb.getAll().contains(source), "source already being monitored");
+		Assert.assertTrue(getRegistrationForSource(source) == null, "source already being monitored");
 
 		// get new schema from ods
 		String dataSchemaString = new RestCall.Builder(
@@ -107,7 +104,7 @@ public final class DataManager implements Restoreable {
 				clientId, 
 				source, 
 				dataSchema);
-		sourceDb.add(registration);
+		registrationRepository.add(registration);
 	}
 
 
@@ -122,7 +119,8 @@ public final class DataManager implements Restoreable {
 			.build()
 			.execute();
 
-		sourceDb.remove(registration);
+		// TODO this won't work
+		registrationRepository.remove(registration);
 	}
 
 
@@ -133,7 +131,7 @@ public final class DataManager implements Restoreable {
 
 
 	public Set<DataSourceRegistration> getAll() {
-		return new HashSet<DataSourceRegistration>(sourceDb.getAll());
+		return new HashSet<>(registrationRepository.getAll());
 	}
 
 
@@ -144,7 +142,7 @@ public final class DataManager implements Restoreable {
 
 
 	private DataSourceRegistration getRegistrationForSource(DataSource source) {
-		for (DataSourceRegistration registration : sourceDb.getAll()) {
+		for (DataSourceRegistration registration : registrationRepository.getAll()) {
 			if (registration.getDataSource().equals(source)) {
 				return registration;
 			}
@@ -156,7 +154,7 @@ public final class DataManager implements Restoreable {
 	@Override
 	public void restoreState() {
 		Log.info("Restoring state for " + DataManager.class.getSimpleName());
-		for (DataSourceRegistration registration : sourceDb.getAll()) {
+		for (DataSourceRegistration registration : registrationRepository.getAll()) {
 			dataListener.onNewDataType(
 					registration.getDataSource().getSourceId(),
 					registration.getDataSchema());
