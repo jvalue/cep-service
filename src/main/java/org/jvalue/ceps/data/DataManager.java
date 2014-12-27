@@ -1,8 +1,7 @@
 package org.jvalue.ceps.data;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.db.JsonObjectDb;
@@ -14,8 +13,9 @@ import org.jvalue.ceps.utils.RestCall;
 import org.jvalue.ceps.utils.RestException;
 import org.jvalue.ceps.utils.Restoreable;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public final class DataManager implements Restoreable {
@@ -72,23 +72,23 @@ public final class DataManager implements Restoreable {
 		// get new schema from ods
 		String dataSchemaString = new RestCall.Builder(
 				RestCall.RequestType.GET, 
-				source.getOdsUrl())
-			.path(source.getOdsSchemaUrl())
+				source.getServerBaseUrl().toString())
+			.path(source.getDataSchemaUrl())
 			.build()
 			.execute();
 
 		JsonNode dataSchema = null;
 		try {
 			dataSchema = mapper.readTree(dataSchemaString);
-			dataListener.onNewDataType(source.getOdsSourceId(), dataSchema);
+			dataListener.onNewDataType(source.getSourceId(), dataSchema);
 		} catch (IOException ioe) {
 			throw new RestException(ioe);
 		}
 
 		// register for updates
-		String jsonResult = new RestCall.Builder(RestCall.RequestType.POST, source.getOdsUrl())
+		String jsonResult = new RestCall.Builder(RestCall.RequestType.POST, source.getServerBaseUrl().toString())
 			.path(ODS_URL_REGISTRATION)
-			.parameter(ODS_PARAM_SOURCE, source.getOdsSourceId())
+			.parameter(ODS_PARAM_SOURCE, source.getSourceId())
 			.parameter(ODS_PARAM_SEND_DATA, Boolean.TRUE.toString())
 			.parameter(ODS_PARAM_CEPS_URL, restCallbackUrl)
 			.parameter(ODS_PARAM_CEPS_SOURCE, restCallbackParam)
@@ -116,7 +116,7 @@ public final class DataManager implements Restoreable {
 		DataSourceRegistration registration = getRegistrationForSource(source);
 		Assert.assertTrue(registration != null, "source not being monitored");
 
-		new RestCall.Builder(RestCall.RequestType.POST, source.getOdsUrl())
+		new RestCall.Builder(RestCall.RequestType.POST, source.getServerBaseUrl().toString())
 			.path(ODS_URL_UNREGISTRATION)
 			.parameter(ODS_PARAM_CLIENT_ID, registration.getClientId())
 			.build()
@@ -158,7 +158,7 @@ public final class DataManager implements Restoreable {
 		Log.info("Restoring state for " + DataManager.class.getSimpleName());
 		for (DataSourceRegistration registration : sourceDb.getAll()) {
 			dataListener.onNewDataType(
-					registration.getDataSource().getOdsSourceId(), 
+					registration.getDataSource().getSourceId(),
 					registration.getDataSchema());
 		}
 	}

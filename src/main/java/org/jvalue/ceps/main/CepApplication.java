@@ -1,10 +1,5 @@
 package org.jvalue.ceps.main;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataSource;
@@ -28,6 +23,13 @@ import org.jvalue.ceps.utils.Restoreable;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 public final class CepApplication extends Application {
@@ -102,22 +104,22 @@ public final class CepApplication extends Application {
 
 
 	private void startSourceMonitoring() {
-		DataSource source = new DataSource(
-				"de-pegelonline", 
-				odsServerName,
-				"ods/de/pegelonline/stations/$class");
-		DataManager manager = DataManager.getInstance();
-
-		if (manager.isBeingMonitored(source)) return;
-
 		try {
+			DataSource source = new DataSource(
+					"de-pegelonline",
+					new URL(odsServerName),
+					"ods/de/pegelonline/stations/$class");
+			DataManager manager = DataManager.getInstance();
+
+			if (manager.isBeingMonitored(source)) return;
+
 			manager.startMonitoring(
 					source,
 					cepsServerName + OdsRestHook.URL_NOTIFY_SOURCE_CHANGED,
 					OdsRestHook.PARAM_SOURCE);
 
-		} catch (RestException re) {
-			throw new IllegalStateException(re);
+		} catch (RestException | MalformedURLException e) {
+			throw new IllegalStateException(e);
 		}
 	}
 
