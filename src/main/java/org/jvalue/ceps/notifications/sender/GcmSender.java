@@ -1,14 +1,14 @@
 package org.jvalue.ceps.notifications.sender;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Inject;
 
 import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.notifications.utils.GcmUtils;
-import org.jvalue.ceps.utils.Assert;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 final class GcmSender extends NotificationSender<GcmClient> {
@@ -21,10 +21,12 @@ final class GcmSender extends NotificationSender<GcmClient> {
 
 	private final GcmUtils gcmUtils;
 
+
+	@Inject
 	GcmSender(GcmUtils gcmUtils) {
-		Assert.assertNotNull(gcmUtils);
 		this.gcmUtils = gcmUtils;
 	}
+
 
 	@Override
 	public SenderResult sendEventUpdate(

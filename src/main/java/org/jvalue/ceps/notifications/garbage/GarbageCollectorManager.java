@@ -1,16 +1,19 @@
 package org.jvalue.ceps.notifications.garbage;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import org.jvalue.ceps.notifications.NotificationManager;
+import org.jvalue.ceps.notifications.NotificationsModule;
+import org.jvalue.ceps.notifications.clients.Client;
+import org.jvalue.ceps.notifications.clients.ClientVisitor;
+import org.jvalue.ceps.utils.Log;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
-import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.notifications.clients.Client;
-import org.jvalue.ceps.notifications.clients.ClientVisitor;
-import org.jvalue.ceps.utils.Assert;
-import org.jvalue.ceps.utils.Log;
 
 
 public final class GarbageCollectorManager {
@@ -25,12 +28,12 @@ public final class GarbageCollectorManager {
 	/**
 	 * @param interval initial delay and run interval in ms
 	 */
-	public GarbageCollectorManager(
+	@Inject
+	GarbageCollectorManager(
 			NotificationManager notificationManager,
 			ClientVisitor<Void, CollectionStatus> mapper,
-			long interval) {
+			@Named(NotificationsModule.GCM_GARBAGE_COLLECTOR_PERIOD) long interval) {
 
-		Assert.assertNotNull(notificationManager, mapper);
 		this.notificationManager = notificationManager;
 		this.mapper = mapper;
 		this.interval = interval;

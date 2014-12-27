@@ -1,28 +1,25 @@
 package org.jvalue.ceps.notifications;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Inject;
 
-import org.jvalue.ceps.db.DbAccessorFactory;
 import org.jvalue.ceps.db.JsonObjectDb;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.JsonUpdateListener;
 import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.DeviceIdUpdater;
-import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
-import org.jvalue.ceps.notifications.sender.SenderFactory;
 import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.BiMap;
 import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.Restoreable;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 
 public final class NotificationManager implements JsonUpdateListener, Restoreable {
@@ -32,6 +29,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	private static NotificationManager instance;
 
 	public static synchronized NotificationManager getInstance() {
+		/*
 		if (instance == null) {
 			EsperManager esperManager = EsperManager.getInstance();
 			EventManager eventManager = EventManager.getInstance();
@@ -46,6 +44,8 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 			instance = new NotificationManager(esperManager, eventManager, sender, clientDb);
 		}
 		return instance;
+		*/
+		return null;
 	}
 
 
@@ -55,7 +55,8 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	private final EventManager eventManager;
 	private final BiMap<String, String> clientToStmtMap = new BiMap<String, String>();
 
-	private NotificationManager(
+	@Inject
+	NotificationManager(
 			EsperManager esperManager,
 			EventManager eventManager,
 			Map<Class<?>, NotificationSender<?>> sender, 

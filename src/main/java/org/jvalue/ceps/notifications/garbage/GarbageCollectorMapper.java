@@ -1,5 +1,7 @@
 package org.jvalue.ceps.notifications.garbage;
 
+import com.google.inject.Inject;
+
 import org.jvalue.ceps.notifications.clients.ClientVisitor;
 import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.utils.Assert;
@@ -9,7 +11,8 @@ public final class GarbageCollectorMapper implements ClientVisitor<Void, Collect
 
 	private final GarbageCollector gcmCollector;
 
-	public GarbageCollectorMapper(
+	@Inject
+	GarbageCollectorMapper(
 			GarbageCollector gcmCollector) {
 
 		Assert.assertNotNull(gcmCollector);

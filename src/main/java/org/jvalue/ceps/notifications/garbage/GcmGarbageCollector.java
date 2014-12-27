@@ -1,10 +1,12 @@
 package org.jvalue.ceps.notifications.garbage;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.inject.Inject;
 
 import org.jvalue.ceps.notifications.utils.GcmUtils;
 import org.jvalue.ceps.utils.Assert;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public final class GcmGarbageCollector implements GarbageCollector {
@@ -14,7 +16,8 @@ public final class GcmGarbageCollector implements GarbageCollector {
 
 	private final GcmUtils gcmUtils;
 
-	public GcmGarbageCollector(GcmUtils gcmUtils) {
+	@Inject
+	GcmGarbageCollector(GcmUtils gcmUtils) {
 		Assert.assertNotNull(gcmUtils);
 		this.gcmUtils = gcmUtils;
 	}

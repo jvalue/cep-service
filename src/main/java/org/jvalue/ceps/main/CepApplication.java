@@ -6,10 +6,6 @@ import org.jvalue.ceps.data.DataSource;
 import org.jvalue.ceps.event.EventGarbageCollector;
 import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.notifications.garbage.GarbageCollectorManager;
-import org.jvalue.ceps.notifications.garbage.GarbageCollectorMapper;
-import org.jvalue.ceps.notifications.garbage.GcmGarbageCollector;
-import org.jvalue.ceps.notifications.utils.GcmUtils;
 import org.jvalue.ceps.rest.DefaultRestlet;
 import org.jvalue.ceps.rest.HelpRestApi;
 import org.jvalue.ceps.rest.RestApi;
@@ -131,11 +127,13 @@ public final class CepApplication extends Application {
 		EventGarbageCollector collector = new EventGarbageCollector(eventManager, 3600000, 3600000);
 		collector.start();
 
+		/*
 		// try removing old clients every 3 days (exact removal interval depends on client type)
 		NotificationManager notificationManager = NotificationManager.getInstance();
 		org.jvalue.ceps.notifications.garbage.GarbageCollector gcmCollector = new GcmGarbageCollector(new GcmUtils("/googleApi.key"));
 		GarbageCollectorMapper mapper = new GarbageCollectorMapper(gcmCollector);
 		new GarbageCollectorManager(notificationManager, mapper, 259200000).startCollection();
+		*/
 	}
 
 }

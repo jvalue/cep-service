@@ -1,39 +1,34 @@
 package org.jvalue.ceps.notifications.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.jvalue.ceps.utils.Assert;
-import org.jvalue.ceps.utils.Log;
-
 import com.google.android.gcm.server.Constants;
 import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.MulticastResult;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import org.jvalue.ceps.notifications.NotificationsModule;
+import org.jvalue.ceps.utils.Log;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 
 public final class GcmUtils {
 
 	private final Sender sender;
 
-	public GcmUtils(String apiKeyResource) {
-		Assert.assertNotNull(apiKeyResource);
-		String apiKey = getApiKey(apiKeyResource);
-		if (apiKey == null) sender = null;
-		else sender = new Sender(apiKey);
+
+	@Inject
+	GcmUtils(@Named(NotificationsModule.GCM_API_KEY) String apiKey) {
+		this.sender = new Sender(apiKey);
 	}
 
 
 	public GcmResult sendMsg(String gcmId, Map<String, String> payload) {
-		if (sender == null) return new GcmResult.Builder().errorMsg("api key not set").build();
-
 		final List<String> devices = new ArrayList<String>();
 		devices.add(gcmId);
 
@@ -76,30 +71,6 @@ public final class GcmUtils {
 		}
 
 		return new GcmResult.Builder().build();
-	}
-
-
-	private String getApiKey(String resourceName) {
-		URL resourceUrl = getClass().getResource(resourceName);
-
-		String key = null;
-		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(new File(resourceUrl.toURI())));
-			key = reader.readLine();
-			if (reader.readLine() != null) Log.warn("ApiKey contains more than one line!");
-
-		} catch(Exception e) {
-			throw new IllegalArgumentException(e.getMessage());
-
-		} finally {
-			try {
-				if (reader != null) reader.close();
-			} catch(IOException ioc) {
-				Log.error(ioc.getMessage());
-			}
-		}
-		return key;
 	}
 
 
