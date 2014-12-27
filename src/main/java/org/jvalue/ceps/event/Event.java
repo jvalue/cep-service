@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Objects;
 
 import org.ektorp.support.CouchDbDocument;
 import org.jvalue.ceps.utils.Assert;
@@ -59,22 +60,16 @@ public final class Event extends CouchDbDocument {
 		if (other == null || !(other instanceof Event)) return false;
 		if (other == this) return true;
 		Event event = (Event) other;
-		return eventId.equals(event.eventId)
-			&& timestamp == event.timestamp
-			&& newEventData.equals(event.newEventData)
-			&& oldEventData.equals(event.oldEventData);
+		return Objects.equal(eventId, event.eventId)
+				&& Objects.equal(timestamp, event.timestamp)
+				&& Objects.equal(newEventData, event.newEventData)
+				&& Objects.equal(oldEventData, event.oldEventData);
 	}
 
 
 	@Override
 	public int hashCode() {
-		final int MULT = 17;
-		int hash = 13;
-		hash = hash + MULT * eventId.hashCode();
-		hash = hash + MULT * Long.valueOf(timestamp).hashCode();
-		hash = hash + MULT * newEventData.hashCode();
-		hash = hash + MULT * oldEventData.hashCode();
-		return hash;
+		return Objects.hashCode(eventId, timestamp, newEventData, oldEventData);
 	}
 
 }
