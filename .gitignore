@@ -23,3 +23,4 @@ gradle.properties
 
 # private keys --> supply your own!
 googleApi.key
+ceps-configuration.yml

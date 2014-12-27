@@ -1,6 +1,7 @@
 package org.jvalue.ceps.event;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import org.jvalue.ceps.utils.Assert;
 
@@ -11,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import io.dropwizard.lifecycle.Managed;
 
 
-public final class GarbageCollector implements Managed {
+public final class EventGarbageCollector implements Managed {
 
 	private final EventManager eventManager;
 	private final long updateInterval, maxAge;
@@ -21,7 +22,11 @@ public final class GarbageCollector implements Managed {
 	 * Times are measured in ms
 	 */
 	@Inject
-	public GarbageCollector(EventManager eventManager, long updateInterval, long maxAge) {
+	public EventGarbageCollector(
+			EventManager eventManager,
+			@Named(EventModule.EVENT_GARBAGE_COLLECTOR_PERIOD) long updateInterval,
+			@Named(EventModule.EVENT_GARBAGE_COLLECTOR_MAX_AGE) long maxAge) {
+
 		Assert.assertNotNull(eventManager);
 		this.eventManager = eventManager;
 		this.updateInterval = updateInterval;

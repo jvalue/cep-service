@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import static org.junit.Assert.assertEquals;
 
 
-public final class GarbageCollectorTest {
+public final class EventGarbageCollectorTest {
 
 	private static final long 
 		MAX_AGE = 500,
@@ -20,7 +20,7 @@ public final class GarbageCollectorTest {
 		EventManager manager = DummyEventManager.createInstance();
 		manager.onNewEvents(new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
 
-		GarbageCollector collector = new GarbageCollector(manager, UPDATE_INTERVAL, MAX_AGE);
+		EventGarbageCollector collector = new EventGarbageCollector(manager, UPDATE_INTERVAL, MAX_AGE);
 		collector.start();
 
 		Thread.sleep(150);

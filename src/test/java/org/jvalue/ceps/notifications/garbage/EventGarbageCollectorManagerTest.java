@@ -26,7 +26,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({NotificationManager.class, Client.class})
-public final class GarbageCollectorManagerTest {
+public final class EventGarbageCollectorManagerTest {
 
 	private static final String
 		DEVICE_REMOVE_1 = "remove1",

@@ -1,0 +1,3 @@
+gcmApiKey: YOUR GOOGLE API KEY HERE
+eventGarbageCollectionPeriod: 3600000
+eventGarbageCollectionMaxAge: 3600000
