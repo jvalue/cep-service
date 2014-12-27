@@ -9,6 +9,7 @@ import org.jvalue.ceps.esper.JsonUpdateListener;
 import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.DeviceIdUpdater;
+import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
 import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Assert;
@@ -16,6 +17,7 @@ import org.jvalue.ceps.utils.BiMap;
 import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.Restoreable;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -57,12 +59,13 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	NotificationManager(
 			EsperManager esperManager,
 			EventManager eventManager,
-			Map<Class<?>, NotificationSender<?>> sender, 
+			NotificationSender<GcmClient> gcmSender,
 			ClientRepository clientRepository) {
 
 		this.esperManager = esperManager;
 		this.eventManager = eventManager;
-		this.sender = sender;
+		this.sender = new HashMap<>();
+		this.sender.put(GcmClient.class, gcmSender);
 		this.clientRepository = clientRepository;
 	}
 
