@@ -1,11 +1,12 @@
 package org.jvalue.ceps.notifications.clients;
 
-import org.jvalue.ceps.utils.Assert;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.google.common.base.Objects;
+
+import org.jvalue.ceps.utils.Assert;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -50,21 +51,15 @@ public abstract class Client {
 		if (other == null || !(other instanceof Client)) return false;
 		if (other == this) return true;
 		Client client = (Client) other;
-		return clientId.equals(client.clientId)
-			&& deviceId.equals(client.deviceId)
-			&& eplStmt.equals(client.eplStmt);
+		return Objects.equal(clientId, client.clientId)
+				&& Objects.equal(deviceId, client.deviceId)
+				&& Objects.equal(eplStmt, client.eplStmt);
 	}
 
 
-	final int MULT = 17;
-
 	@Override
 	public int hashCode() {
-		int hash = 13;
-		hash = hash + MULT * clientId.hashCode();
-		hash = hash + MULT * deviceId.hashCode();
-		hash = hash + MULT * eplStmt.hashCode();
-		return hash;
+		return Objects.hashCode(clientId, deviceId, eplStmt);
 	}
 
 
