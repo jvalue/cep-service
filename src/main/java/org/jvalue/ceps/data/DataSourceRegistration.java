@@ -1,11 +1,12 @@
 package org.jvalue.ceps.data;
 
-import org.jvalue.ceps.utils.Assert;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.base.Objects;
+
+import org.jvalue.ceps.utils.Assert;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -48,20 +49,15 @@ public final class DataSourceRegistration {
 	public boolean equals(Object other) {
 		if (other == null || !(other instanceof DataSourceRegistration)) return false;
 		DataSourceRegistration registration = (DataSourceRegistration) other;
-		return registration.clientId.equals(clientId) 
-			&& registration.dataSource.equals(dataSource)
-			&& registration.dataSchema.equals(dataSchema);
+		return Objects.equal(clientId, registration.clientId)
+				&& Objects.equal(dataSource, registration.dataSource)
+				&& Objects.equal(dataSchema, registration.dataSchema);
 	}
 
 
 	@Override
 	public int hashCode() {
-		final int MULT = 17;
-		int hash = 13;
-		hash = hash + MULT * clientId.hashCode();
-		hash = hash + MULT * dataSource.hashCode();
-		hash = hash + MULT * dataSchema.hashCode();
-		return hash;
+		return Objects.hashCode(clientId, dataSource, dataSchema);
 	}
 
 }
