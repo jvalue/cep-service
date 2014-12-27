@@ -3,7 +3,7 @@ package org.jvalue.ceps.notifications;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.db.JsonObjectDb;
+import org.jvalue.ceps.db.ClientRepository;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.JsonUpdateListener;
 import org.jvalue.ceps.event.EventManager;
@@ -23,8 +23,6 @@ import java.util.Set;
 
 
 public final class NotificationManager implements JsonUpdateListener, Restoreable {
-
-	private static final String DB_NAME = "cepsClients";
 
 	private static NotificationManager instance;
 
@@ -49,24 +47,23 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	}
 
 
-	private final JsonObjectDb<Client> clientDb;
+	private final ClientRepository clientRepository;
 	private final Map<Class<?>, NotificationSender<?>> sender;
 	private final EsperManager esperManager;
 	private final EventManager eventManager;
-	private final BiMap<String, String> clientToStmtMap = new BiMap<String, String>();
+	private final BiMap<String, String> clientToStmtMap = new BiMap<>();
 
 	@Inject
 	NotificationManager(
 			EsperManager esperManager,
 			EventManager eventManager,
 			Map<Class<?>, NotificationSender<?>> sender, 
-			JsonObjectDb<Client> clientDb) {
+			ClientRepository clientRepository) {
 
-		Assert.assertNotNull(esperManager, eventManager, sender, clientDb);
 		this.esperManager = esperManager;
 		this.eventManager = eventManager;
 		this.sender = sender;
-		this.clientDb = clientDb;
+		this.clientRepository = clientRepository;
 	}
 
 
@@ -81,7 +78,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	private void register(Client client, boolean addToDb) {
 		String stmtId = esperManager.register(client.getEplStmt(), this);
 		clientToStmtMap.put(client.getClientId(), stmtId);
-		if (addToDb) clientDb.add(client);
+		if (addToDb) clientRepository.add(client);
 	}
 
 
@@ -92,8 +89,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 		esperManager.unregister(clientToStmtMap.getSecond(clientId));
 		clientToStmtMap.removeFirst(clientId);
 
-		Client client = getClientForId(clientId);
-		if (client != null) clientDb.remove(client);
+		clientRepository.remove(clientRepository.findByClientId(clientId));
 		return true;
 	}
 
@@ -101,7 +97,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	public synchronized void unregisterDevice(String deviceId) {
 		Assert.assertNotNull(deviceId);
 
-		for (Client client : clientDb.getAll()) {
+		for (Client client : clientRepository.getAll()) {
 			if (client.getDeviceId().equals(deviceId)) unregister(client.getClientId());
 		}
 	}
@@ -114,7 +110,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 
 
 	public synchronized Set<Client> getAll() {
-		return new HashSet<Client>(clientDb.getAll());
+		return new HashSet<Client>(clientRepository.getAll());
 	}
 
 
@@ -123,7 +119,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	public synchronized void onNewEvents(String eplStmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
 		String eventId = eventManager.onNewEvents(newEvents, oldEvents);
 		String clientId = clientToStmtMap.getFirst(eplStmtId);
-		Client client = getClientForId(clientId);
+		Client client = clientRepository.findByClientId(clientId);
 
 		NotificationSender s = sender.get(client.getClass());
 		SenderResult result = s.sendEventUpdate(client, eventId, newEvents, oldEvents);
@@ -140,7 +136,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 
 			case REMOVE_CLIENT:
 				Log.info("Removing client with deviceId " + result.getRemoveDeviceId());
-				for (Client removeClient : clientDb.getAll()) {
+				for (Client removeClient : clientRepository.getAll()) {
 					if (removeClient.getDeviceId().equals(result.getRemoveDeviceId())) {
 						unregister(removeClient.getClientId());
 					}
@@ -154,7 +150,7 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 				String oldDeviceId = result.getUpdateDeviceId().first;
 				String newDeviceId = result.getUpdateDeviceId().second;
 
-				for (Client updateClient : clientDb.getAll()) {
+				for (Client updateClient : clientRepository.getAll()) {
 					if (updateClient.getDeviceId().equals(oldDeviceId)) {
 						Client newClient = updateClient.accept(updater, newDeviceId);
 						unregister(updateClient.getClientId());
@@ -166,19 +162,10 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 	}
 
 
-	private Client getClientForId(String clientId) {
-		for (Client client : clientDb.getAll()) {
-			if (client.getClientId().equals(clientId))
-				return client;
-		}
-		return null;
-	}
-
-
 	@Override
 	public synchronized void restoreState() {
 		Log.info("Restoring state for " + NotificationManager.class.getSimpleName());
-		for (Client client : clientDb.getAll()) {
+		for (Client client : clientRepository.getAll()) {
 			register(client, false);
 		}
 	}

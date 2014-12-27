@@ -21,6 +21,9 @@ public class DbModule extends AbstractModule {
 
 		CouchDbConnector eventConnector = couchDbInstance.createConnector(EventRepository.DATABASE_NAME, true);
 		bind(CouchDbConnector.class).annotatedWith(Names.named(EventRepository.DATABASE_NAME)).toInstance(eventConnector);
+
+		CouchDbConnector clientConnector = couchDbInstance.createConnector(ClientRepository.DATABASE_NAME, true);
+		bind(CouchDbConnector.class).annotatedWith(Names.named(ClientRepository.DATABASE_NAME)).toInstance(clientConnector);
 	}
 
 }

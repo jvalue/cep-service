@@ -6,12 +6,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.google.common.base.Objects;
 
+import org.ektorp.support.CouchDbDocument;
 import org.jvalue.ceps.utils.Assert;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
-public abstract class Client {
+public abstract class Client extends CouchDbDocument {
 
 	/** Identifies one epl stmt. Must be unique across all stmts. */
 	private final String clientId;
