@@ -3,8 +3,10 @@ package org.jvalue.ceps.main;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import org.jvalue.ceps.data.DataModule;
 import org.jvalue.ceps.db.DbModule;
 import org.jvalue.ceps.event.EventGarbageCollector;
+import org.jvalue.ceps.event.EventModule;
 
 import javax.ws.rs.core.Context;
 
@@ -40,7 +42,10 @@ public final class CepsApplication extends Application<CepsConfig> {
 	@Context
 	public void run(CepsConfig configuration, Environment environment) {
 		Injector injector = Guice.createInjector(
-				new DbModule());
+				new ConfigModule(configuration),
+				new DbModule(),
+				new DataModule(),
+				new EventModule());
 
 		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
 	}
