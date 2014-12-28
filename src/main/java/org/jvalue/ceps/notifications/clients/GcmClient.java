@@ -7,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public final class GcmClient extends Client {
 
 	/**
-	 * THe deviceId is represented through the gcm id.
+	 * The deviceId is represented through the GCM id.
 	 */
 	@JsonCreator
-	GcmClient(
+	public GcmClient(
 			@JsonProperty("clientId") String clientId,
 			@JsonProperty("deviceId") String gcmId,
 			@JsonProperty("eplStmt") String eplStmt) {

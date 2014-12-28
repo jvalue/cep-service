@@ -7,14 +7,15 @@ import org.jvalue.ceps.adapter.EplAdapter;
 import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
-import org.jvalue.ceps.notifications.clients.ClientFactory;
+import org.jvalue.ceps.notifications.clients.GcmClient;
 
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -38,37 +39,49 @@ public final class NotificationClientRegistrationApi {
 	}
 
 
-	@POST
-	@Path("/{adapterName}")
+	@PUT
+	@Path("/{adapterName}/{clientId}")
 	public Client register(
 			@PathParam("adapterName") String adapterName,
+			@PathParam("clientId") String clientId,
 			@Valid GcmClientDescription clientDescription) {
 
-		EplAdapter adapter = assertIsValidAdapterNamee(adapterName);
+		EplAdapter adapter = assertIsValidAdapterName(adapterName);
 		for (String requiredParam : adapter.getRequiredParams()) {
 			if (!clientDescription.eplArguments.containsKey(requiredParam)) throw RestUtils.createJsonFormattedException("missing param " + requiredParam, 400);
 		}
 		if (adapter.getRequiredParams().size() != clientDescription.eplArguments.size()) throw RestUtils.createJsonFormattedException("found additional param", 400);
 
-		Client client = ClientFactory.createGcmClient(clientDescription.deviceId, adapter.toEplStmt(clientDescription.eplArguments));
-		notificationManager.register(client);
-		return client;
+		synchronized (this) {
+			if (notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("already registered", 409);
+			Client client = new GcmClient(clientId, clientDescription.deviceId, adapter.toEplStmt(clientDescription.eplArguments));
+			notificationManager.register(client);
+			return client;
+		}
 	}
 
 
-	@POST
-	@Path("/{adapterName}")
-	public void unregister(@PathParam("adapterName") String adapterName, String clientId) {
-		assertIsValidAdapterNamee(adapterName);
-		notificationManager.unregister(clientId);
+	@DELETE
+	@Path("/{adapterName}/{clientId}")
+	public void unregister(
+			@PathParam("adapterName") String adapterName,
+			@PathParam("clientId") String clientId) {
+
+		assertIsValidAdapterName(adapterName);
+
+		synchronized (this) {
+			if (!notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("not registered", 404);
+			notificationManager.unregister(clientId);
+		}
 	}
 
 
-	private EplAdapter assertIsValidAdapterNamee(String adapterName) {
+	private EplAdapter assertIsValidAdapterName(String adapterName) {
 		EplAdapter adapter = adapterManager.getByName(adapterName);
 		if (adapter == null) throw RestUtils.createNotFoundException();
 		return adapter;
 	}
+
 
 	private static final class GcmClientDescription {
 
