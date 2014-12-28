@@ -16,6 +16,7 @@ import org.jvalue.ceps.ods.OdsModule;
 import org.jvalue.ceps.rest.DataApi;
 import org.jvalue.ceps.rest.EventApi;
 import org.jvalue.ceps.rest.NotificationClientRegistrationApi;
+import org.jvalue.ceps.rest.RestModule;
 
 import javax.ws.rs.core.Context;
 
@@ -57,7 +58,8 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new EventModule(),
 				new AdapterModule(),
 				new EsperModule(),
-				new OdsModule());
+				new OdsModule(),
+				new RestModule());
 
 		// start monitoring PegelOnline
 		String sourceId = "pegelonline";
