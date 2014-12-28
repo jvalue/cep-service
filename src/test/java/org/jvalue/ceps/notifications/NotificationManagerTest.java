@@ -1,15 +1,7 @@
 package org.jvalue.ceps.notifications;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.After;
 import org.junit.Before;
@@ -17,14 +9,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jvalue.ceps.esper.DummyEsperManager;
 import org.jvalue.ceps.esper.EsperManager;
-import org.jvalue.ceps.event.DummyEventManager;
 import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.clients.DummyClient;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
 import org.jvalue.ceps.notifications.sender.SenderResult;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 public final class NotificationManagerTest {
@@ -49,17 +48,21 @@ public final class NotificationManagerTest {
 				+ dataType + ".win:length(1) where longname = 'EITZE'");
 		newDeviceId = "dummy3";
 
-		EventManager eventManager = DummyEventManager.createInstance();
+		// TODO
+		EventManager eventManager = null;
 		esperManager = DummyEsperManager.createInstance("NotificationManagerTest");
 		sender = new DummyNotificationSender();
 
 		Map<Class<?>, NotificationSender<?>> senderMap = new HashMap<>();
 		senderMap.put(DummyClient.class, sender);
 
+		/*
+		TODO
 		notificationManager = DummyNotificationManager.createInstance(
 				esperManager,
 				eventManager,
 				senderMap);
+		 */
 
 		esperManager.onNewDataType(dataType, getResource("/schema-pegelonline.json"));
 	}

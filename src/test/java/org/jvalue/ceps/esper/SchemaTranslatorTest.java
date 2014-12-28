@@ -1,8 +1,9 @@
 package org.jvalue.ceps.esper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,10 +12,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 public final class SchemaTranslatorTest {
@@ -22,7 +22,7 @@ public final class SchemaTranslatorTest {
 	@Test
 	@SuppressWarnings("rawtypes")
 	public final void testPegelOnline() throws Exception {
-		List<EventDefinition> definitions = SchemaTranslator.toEventDefinition(
+		List<EventDefinition> definitions = new SchemaTranslator().toEventDefinition(
 				"pegelonline",
 				getJsonSchema("/schema-pegelonline.json"));
 
@@ -47,7 +47,7 @@ public final class SchemaTranslatorTest {
 
 	@Test
 	public final void testPegelPortalMv() throws Exception {
-		List<EventDefinition> definitions = SchemaTranslator.toEventDefinition(
+		List<EventDefinition> definitions = new SchemaTranslator().toEventDefinition(
 				"pegelportalMv",
 				getJsonSchema("/schema-pegelportal-mv.json"));
 
@@ -64,7 +64,7 @@ public final class SchemaTranslatorTest {
 
 	@Test
 	public final void testOsm() throws Exception {
-		List<EventDefinition> definitions = SchemaTranslator.toEventDefinition(
+		List<EventDefinition> definitions = new SchemaTranslator().toEventDefinition(
 				"osm",
 				getJsonSchema("/schema-osm.json"));
 

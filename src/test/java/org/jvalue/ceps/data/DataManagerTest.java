@@ -1,29 +1,10 @@
 package org.jvalue.ceps.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.jvalue.ceps.esper.DataUpdateListener;
-import org.jvalue.ceps.utils.Log;
-import org.restlet.Application;
-import org.restlet.Component;
-import org.restlet.Request;
-import org.restlet.Response;
-import org.restlet.Restlet;
-import org.restlet.data.MediaType;
-import org.restlet.data.Protocol;
-import org.restlet.routing.Router;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
+
+import org.junit.Before;
 
 
 public final class DataManagerTest {
@@ -45,6 +26,8 @@ public final class DataManagerTest {
 		onNewDataCount = 0;
 	}
 
+	/*
+	TOOD
 
 	@Test
 	public final void testDataListener() throws Exception {
@@ -175,5 +158,6 @@ public final class DataManagerTest {
 		}
 
 	}
+	 */
 
 }

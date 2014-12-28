@@ -1,17 +1,17 @@
 package org.jvalue.ceps.esper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.junit.Test;
 
 import java.io.File;
 import java.net.URL;
 import java.util.Map;
 
-import org.junit.Test;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 public final class DataTranslatorTest {
@@ -25,7 +25,7 @@ public final class DataTranslatorTest {
 
 		URL jsonUrl = getClass().getResource("/data-pegelonline1.json");
 		JsonNode json = mapper.readTree(new File(jsonUrl.toURI())); 
-		Map<String, Object> map = DataTranslator.toMap(json.get(0));
+		Map<String, Object> map = new DataTranslator().toMap(json.get(0));
 
 		assertNotNull(map);
 		assertTrue(map.containsKey("_id"));
