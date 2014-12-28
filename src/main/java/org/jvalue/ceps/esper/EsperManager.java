@@ -3,11 +3,9 @@ package org.jvalue.ceps.esper;
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
-import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
@@ -26,8 +24,7 @@ public final class EsperManager implements DataUpdateListener {
 	private final Map<String, EPStatement> startedStatements = new HashMap<String, EPStatement>();
 
 	@Inject
-	EsperManager(@Named(EsperModule.ESPER_ENGINE_NAME) String engineName) {
-		EPServiceProvider provider = EPServiceProviderManager.getProvider(engineName);
+	EsperManager(EPServiceProvider provider) {
 		this.runtime = provider.getEPRuntime();
 		this.admin = provider.getEPAdministrator();
 	}

@@ -4,7 +4,6 @@ package org.jvalue.ceps.main;
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
 
-import org.jvalue.ceps.esper.EsperModule;
 import org.jvalue.ceps.event.EventModule;
 import org.jvalue.ceps.notifications.NotificationsModule;
 
@@ -31,8 +30,6 @@ public class ConfigModule extends AbstractModule {
 
 		bind(String.class).annotatedWith(Names.named(NotificationsModule.GCM_API_KEY)).toInstance(config.getGcmApiKey());
 		bind(long.class).annotatedWith(Names.named(NotificationsModule.GCM_GARBAGE_COLLECTOR_PERIOD)).toInstance(config.getGcmGarbageCollectorPeriod());
-
-		bind(String.class).annotatedWith(Names.named(EsperModule.ESPER_ENGINE_NAME)).toInstance(config.getEsperEngineName());
 	}
 
 }
