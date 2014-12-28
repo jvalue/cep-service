@@ -4,5 +4,5 @@ odsBaseUrl: http://localhost:8080/ods/api/v1
 gcmApiKey: YOUR API KEY HERE
 gcmGarbageCollectorPeriod: 3600000
 
-eventGarbageCollectionPeriod: 3600000
-eventGarbageCollectionMaxAge: 3600000
+eventGarbageCollectorPeriod: 3600000
+eventGarbageCollectorMaxAge: 3600000
