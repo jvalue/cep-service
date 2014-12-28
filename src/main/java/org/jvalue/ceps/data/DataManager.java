@@ -10,14 +10,15 @@ import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.RestCall;
 import org.jvalue.ceps.utils.RestException;
-import org.jvalue.ceps.utils.Restoreable;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.dropwizard.lifecycle.Managed;
 
-public final class DataManager implements Restoreable {
+
+public final class DataManager implements Managed {
 
 	private static final String DB_NAME = "cepsOdsSources";
 
@@ -152,13 +153,18 @@ public final class DataManager implements Restoreable {
 
 
 	@Override
-	public void restoreState() {
-		Log.info("Restoring state for " + DataManager.class.getSimpleName());
+	public void start() {
 		for (DataSourceRegistration registration : registrationRepository.getAll()) {
 			dataListener.onNewDataType(
 					registration.getDataSource().getSourceId(),
 					registration.getDataSchema());
 		}
+	}
+
+
+	@Override
+	public void stop() {
+		// nothing to do
 	}
 
 }

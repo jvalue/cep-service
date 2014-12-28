@@ -15,21 +15,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import io.dropwizard.lifecycle.Managed;
 
-public final class GarbageCollectorManager {
+
+public final class ClientGarbageCollectorManager implements Managed {
 
 	private final NotificationManager notificationManager;
 	private final ClientVisitor<Void, CollectionStatus> mapper;
 	private final long interval;
 
-	private boolean running = false;
 	private ScheduledExecutorService scheduler;
 
 	/**
 	 * @param interval initial delay and run interval in ms
 	 */
 	@Inject
-	GarbageCollectorManager(
+	ClientGarbageCollectorManager(
 			NotificationManager notificationManager,
 			ClientVisitor<Void, CollectionStatus> mapper,
 			@Named(NotificationsModule.GCM_GARBAGE_COLLECTOR_PERIOD) long interval) {
@@ -40,10 +41,8 @@ public final class GarbageCollectorManager {
 	}
 
 
-	public void startCollection() {
-		if (running) throw new IllegalStateException("already running");
-		running = true;
-
+	@Override
+	public void start() {
 		scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.scheduleAtFixedRate(
 				new CollectionRunnable(notificationManager, mapper),
@@ -53,19 +52,11 @@ public final class GarbageCollectorManager {
 	}
 
 
-	public void stopCollection() {
-		if (!running) throw new IllegalStateException("already running");
-		running = false;
-
+	@Override
+	public void stop() {
 		scheduler.shutdownNow();
 		scheduler = null;
 	}
-
-
-	public boolean isRunning() {
-		return running;
-	}
-
 
 
 	private static final class CollectionRunnable implements Runnable {

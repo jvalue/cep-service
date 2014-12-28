@@ -6,9 +6,9 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 
 import org.jvalue.ceps.notifications.clients.ClientVisitor;
+import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorManager;
+import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorMapper;
 import org.jvalue.ceps.notifications.garbage.CollectionStatus;
-import org.jvalue.ceps.notifications.garbage.GarbageCollectorManager;
-import org.jvalue.ceps.notifications.garbage.GarbageCollectorMapper;
 import org.jvalue.ceps.notifications.sender.SenderModule;
 
 public class NotificationsModule extends AbstractModule {
@@ -21,8 +21,8 @@ public class NotificationsModule extends AbstractModule {
 	protected void configure() {
 		install(new SenderModule());
 		bind(NotificationManager.class).in(Singleton.class);
-		bind(GarbageCollectorManager.class).in(Singleton.class);
-		bind(new TypeLiteral<ClientVisitor<Void, CollectionStatus>>() { }).to(GarbageCollectorMapper.class);
+		bind(ClientGarbageCollectorManager.class).in(Singleton.class);
+		bind(new TypeLiteral<ClientVisitor<Void, CollectionStatus>>() { }).to(ClientGarbageCollectorMapper.class);
 	}
 
 }

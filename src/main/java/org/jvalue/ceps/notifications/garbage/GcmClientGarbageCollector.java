@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public final class GcmGarbageCollector implements GarbageCollector {
+public final class GcmClientGarbageCollector implements ClientGarbageCollector {
 
 	static final String DATA_KEY_PING = "ping";
 
@@ -17,7 +17,7 @@ public final class GcmGarbageCollector implements GarbageCollector {
 	private final GcmUtils gcmUtils;
 
 	@Inject
-	GcmGarbageCollector(GcmUtils gcmUtils) {
+	GcmClientGarbageCollector(GcmUtils gcmUtils) {
 		Assert.assertNotNull(gcmUtils);
 		this.gcmUtils = gcmUtils;
 	}

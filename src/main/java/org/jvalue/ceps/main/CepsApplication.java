@@ -4,10 +4,13 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.jvalue.ceps.adapter.AdapterModule;
+import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataModule;
 import org.jvalue.ceps.db.DbModule;
 import org.jvalue.ceps.event.EventGarbageCollector;
 import org.jvalue.ceps.event.EventModule;
+import org.jvalue.ceps.notifications.NotificationManager;
+import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorManager;
 
 import javax.ws.rs.core.Context;
 
@@ -49,7 +52,10 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new EventModule(),
 				new AdapterModule());
 
+		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
+		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
+		environment.lifecycle().manage(injector.getInstance(ClientGarbageCollectorManager.class));
 	}
 
 

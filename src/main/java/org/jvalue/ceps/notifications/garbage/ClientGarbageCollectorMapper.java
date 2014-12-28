@@ -7,13 +7,13 @@ import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.utils.Assert;
 
 
-public final class GarbageCollectorMapper implements ClientVisitor<Void, CollectionStatus> {
+public final class ClientGarbageCollectorMapper implements ClientVisitor<Void, CollectionStatus> {
 
-	private final GarbageCollector gcmCollector;
+	private final ClientGarbageCollector gcmCollector;
 
 	@Inject
-	GarbageCollectorMapper(
-			GarbageCollector gcmCollector) {
+	ClientGarbageCollectorMapper(
+			ClientGarbageCollector gcmCollector) {
 
 		Assert.assertNotNull(gcmCollector);
 		this.gcmCollector = gcmCollector;

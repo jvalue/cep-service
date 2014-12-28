@@ -15,7 +15,6 @@ import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.BiMap;
 import org.jvalue.ceps.utils.Log;
-import org.jvalue.ceps.utils.Restoreable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,8 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.dropwizard.lifecycle.Managed;
 
-public final class NotificationManager implements JsonUpdateListener, Restoreable {
+
+public final class NotificationManager implements JsonUpdateListener, Managed {
 
 	private static NotificationManager instance;
 
@@ -166,11 +167,16 @@ public final class NotificationManager implements JsonUpdateListener, Restoreabl
 
 
 	@Override
-	public synchronized void restoreState() {
-		Log.info("Restoring state for " + NotificationManager.class.getSimpleName());
+	public void start() {
 		for (Client client : clientRepository.getAll()) {
 			register(client, false);
 		}
+	}
+
+
+	@Override
+	public void stop() {
+		// nothing to do
 	}
 
 }

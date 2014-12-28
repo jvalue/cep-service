@@ -14,14 +14,12 @@ import org.jvalue.ceps.rest.debug.DebugRestApi;
 import org.jvalue.ceps.rest.event.EventRestApi;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.RestException;
-import org.jvalue.ceps.utils.Restoreable;
 import org.restlet.Application;
 import org.restlet.Restlet;
 import org.restlet.routing.Router;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -83,18 +81,8 @@ public final class CepApplication extends Application {
 	@Override
 	public void start() throws Exception {
 		super.start();
-		restoreState();
 		startSourceMonitoring();
 		startGarbageCollection();
-	}
-
-
-	private void restoreState() {
-		List<Restoreable> restoreables = Arrays.asList(
-				DataManager.getInstance(),
-				NotificationManager.getInstance());
-
-		for (Restoreable restoreable : restoreables) restoreable.restoreState();
 	}
 
 

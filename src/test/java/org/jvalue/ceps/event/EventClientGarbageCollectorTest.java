@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import static org.junit.Assert.assertEquals;
 
 
-public final class EventGarbageCollectorTest {
+public final class EventClientGarbageCollectorTest {
 
 	private static final long 
 		MAX_AGE = 500,

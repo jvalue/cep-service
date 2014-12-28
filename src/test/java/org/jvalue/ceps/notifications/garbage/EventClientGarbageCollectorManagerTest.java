@@ -1,18 +1,5 @@
 package org.jvalue.ceps.notifications.garbage;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvalue.ceps.notifications.NotificationManager;
@@ -23,10 +10,23 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({NotificationManager.class, Client.class})
-public final class EventGarbageCollectorManagerTest {
+public final class EventClientGarbageCollectorManagerTest {
 
 	private static final String
 		DEVICE_REMOVE_1 = "remove1",
@@ -47,7 +47,7 @@ public final class EventGarbageCollectorManagerTest {
 		NotificationManager notificatonManager = PowerMockito.mock(NotificationManager.class);
 		when(notificatonManager.getAll()).thenReturn(dummyClients);
 
-		GarbageCollectorManager garbageManager = new GarbageCollectorManager(notificatonManager, new Mapper(), 100);
+		ClientGarbageCollectorManager garbageManager = new ClientGarbageCollectorManager(notificatonManager, new Mapper(), 100);
 
 		assertFalse(garbageManager.isRunning());
 		garbageManager.startCollection();
