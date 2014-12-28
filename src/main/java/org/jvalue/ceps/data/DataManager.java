@@ -2,6 +2,7 @@ package org.jvalue.ceps.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.inject.Inject;
 
 import org.jvalue.ceps.db.DataSourceRegistrationRepository;
 import org.jvalue.ceps.esper.DataUpdateListener;
@@ -19,8 +20,6 @@ import io.dropwizard.lifecycle.Managed;
 
 public final class DataManager implements Managed {
 
-	private static final String DB_NAME = "cepsOdsSources";
-
 	private static final String
 		ODS_URL_REGISTRATION = "notifications/rest/register",
 		ODS_URL_UNREGISTRATION = "notifications/unregister",
@@ -35,27 +34,16 @@ public final class DataManager implements Managed {
 
 
 	private static final ObjectMapper mapper = new ObjectMapper();
-	private static DataManager instance;
-
-	public static DataManager getInstance() {
-		/*
-		if (instance == null) instance = new DataManager(
-				null,
-				EsperManager.getInstance());
-		return instance;
-		*/
-		return null;
-	}
-
 
 	private final DataSourceRegistrationRepository registrationRepository;
 	private final DataUpdateListener dataListener;
 
-	private DataManager(
+
+	@Inject
+	DataManager(
 			DataSourceRegistrationRepository registrationRepository,
 			DataUpdateListener dataListener) {
 
-		Assert.assertNotNull(registrationRepository, dataListener);
 		this.registrationRepository = registrationRepository;
 		this.dataListener = dataListener;
 	}

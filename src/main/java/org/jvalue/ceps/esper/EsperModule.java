@@ -11,6 +11,7 @@ public class EsperModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(EsperManager.class).in(Singleton.class);
+		bind(DataUpdateListener.class).to(EsperManager.class);
 	}
 
 }
