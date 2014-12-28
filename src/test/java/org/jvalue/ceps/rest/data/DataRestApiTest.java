@@ -33,7 +33,7 @@ public final class DataRestApiTest {
 		DataManager manager = DummyDataManager.createInstance(new DummyDataUpdateListener());
 		Restlet restlet = new DataRestApi(manager)
 			.getRoutes()
-			.get(OdsRestHook.URL_NOTIFY_SOURCE_CHANGED);
+			.get(OdsRestHook.URL_DATA);
 		assertNotNull(restlet);
 
 		RestletTestHelper helper = new RestletTestHelper(

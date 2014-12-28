@@ -1,19 +1,15 @@
 package org.jvalue.ceps.main;
 
-import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.event.EventGarbageCollector;
 import org.jvalue.ceps.event.EventManager;
-import org.jvalue.ceps.rest.DefaultRestlet;
 import org.jvalue.ceps.rest.RestApi;
-import org.jvalue.ceps.rest.data.OdsRestHook;
 import org.jvalue.ceps.utils.Assert;
-import org.jvalue.ceps.utils.RestException;
 import org.restlet.Application;
 import org.restlet.Restlet;
+import org.restlet.routing.Router;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 
 public final class CepApplication extends Application {
@@ -55,19 +51,24 @@ public final class CepApplication extends Application {
 
 	@Override
 	public Restlet createInboundRoot() {
+		/*
 		Router router = new Router(getContext());
 
 		for (RestApi api : apis) attachRoutes(router, api);
 		router.attachDefault(new DefaultRestlet());
 
 		return router;
+		*/
+		return null;
 	}
 
 
 	private void attachRoutes(Router router, RestApi restApi) {
+		/*
 		for (Map.Entry<String, Restlet> entry : restApi.getRoutes().entrySet()) {
 			router.attach(entry.getKey(), entry.getValue());
 		}
+		*/
 	}
 
 
@@ -80,6 +81,7 @@ public final class CepApplication extends Application {
 
 
 	private void startSourceMonitoring() {
+		/*
 		try {
 			DataSource source = new DataSource(
 					"de-pegelonline",
@@ -91,12 +93,13 @@ public final class CepApplication extends Application {
 
 			manager.startMonitoring(
 					source,
-					cepsServerName + OdsRestHook.URL_NOTIFY_SOURCE_CHANGED,
+					cepsServerName + OdsRestHook.URL_DATA,
 					OdsRestHook.PARAM_SOURCE);
 
 		} catch (RestException | MalformedURLException e) {
 			throw new IllegalStateException(e);
 		}
+		*/
 	}
 
 
