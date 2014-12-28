@@ -71,22 +71,26 @@ public final class ClientGarbageCollectorManager implements Managed {
 		
 		@Override
 		public void run() {
-			Log.info("Running clients garbage collection");
-			Set<String> visitedDevices = new HashSet<String>();
+			try {
+				Log.info("Running clients garbage collection");
+				Set<String> visitedDevices = new HashSet<String>();
 
-			for (Client client : notificationManager.getAll()) {
-				String deviceId = client.getDeviceId();
-				if (visitedDevices.contains(deviceId)) continue;
+				for (Client client : notificationManager.getAll()) {
+					String deviceId = client.getDeviceId();
+					if (visitedDevices.contains(deviceId)) continue;
 
-				CollectionStatus status = client.accept(mapper, null);
-				if (status.equals(CollectionStatus.COLLECT)) {
-					Log.info("Removing device " + deviceId);
-					notificationManager.unregisterDevice(deviceId);
+					CollectionStatus status = client.accept(mapper, null);
+					if (status.equals(CollectionStatus.COLLECT)) {
+						Log.info("Removing device " + deviceId);
+						notificationManager.unregisterDevice(deviceId);
+					}
+
+					visitedDevices.add(deviceId);
 				}
-
-				visitedDevices.add(deviceId);
+				Log.info("Finished client garbage collection");
+			} catch (Throwable t) {
+				Log.error("error while running client garbage collection", t);
 			}
-			Log.info("Finished client garbage collection");
 		}
 	}
 
