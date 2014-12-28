@@ -53,9 +53,7 @@ public final class DataManager implements Managed, DataSink {
 	}
 
 
-	public void startMonitoring(
-			String sourceId) {
-
+	public void startMonitoring(String sourceId) {
 		Assert.assertNotNull(sourceId);
 		Assert.assertTrue(isBeingMonitored(sourceId), "source already being monitored");
 

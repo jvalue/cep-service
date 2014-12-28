@@ -59,6 +59,11 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new EsperModule(),
 				new OdsModule());
 
+		// start monitoring PegelOnline
+		String sourceId = "pegelonline";
+		DataManager dataManager = injector.getInstance(DataManager.class);
+		if (!dataManager.isBeingMonitored(sourceId)) dataManager.startMonitoring(sourceId);
+
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
