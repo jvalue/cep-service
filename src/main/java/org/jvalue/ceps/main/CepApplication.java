@@ -2,23 +2,16 @@ package org.jvalue.ceps.main;
 
 import org.jvalue.ceps.event.EventGarbageCollector;
 import org.jvalue.ceps.event.EventManager;
-import org.jvalue.ceps.rest.RestApi;
 import org.jvalue.ceps.utils.Assert;
-import org.restlet.Application;
-import org.restlet.Restlet;
-import org.restlet.routing.Router;
-
-import java.util.LinkedList;
-import java.util.List;
 
 
-public final class CepApplication extends Application {
+public final class CepApplication {
 
 	private String cepsServerName = "http://faui2o2f.cs.fau.de:8080/cep-service";
 	private String odsServerName = "http://faui2o2f.cs.fau.de:8080/open-data-service";
 
 
-	private final List<RestApi> apis = new LinkedList<RestApi>();
+	// private final List<RestApi> apis = new LinkedList<RestApi>();
 
 	public CepApplication() {
 		/*
@@ -49,8 +42,7 @@ public final class CepApplication extends Application {
 	}
 
 
-	@Override
-	public Restlet createInboundRoot() {
+	public void createInboundRoot() {
 		/*
 		Router router = new Router(getContext());
 
@@ -59,22 +51,19 @@ public final class CepApplication extends Application {
 
 		return router;
 		*/
-		return null;
 	}
 
 
+	/*
 	private void attachRoutes(Router router, RestApi restApi) {
-		/*
 		for (Map.Entry<String, Restlet> entry : restApi.getRoutes().entrySet()) {
 			router.attach(entry.getKey(), entry.getValue());
 		}
-		*/
 	}
+	*/
 
 
-	@Override
 	public void start() throws Exception {
-		super.start();
 		startSourceMonitoring();
 		startGarbageCollection();
 	}

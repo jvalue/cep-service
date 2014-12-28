@@ -4,7 +4,6 @@ apply plugin: 'war'
 apply plugin: 'cargo'
 
 repositories {
-	maven { url 'http://maven.restlet.org' }
 	maven { url 'https://raw.github.com/slorber/gcm-server-repository/master/releases/' }
 	mavenCentral()
 }
@@ -33,7 +32,7 @@ task wrapper(type: Wrapper) {
 }
 
 
-mainClassName = "org.jvalue.ceps.main.MainMethod"
+mainClassName = "org.jvalue.ceps.main.CepsApplication"
 
 
 dependencies {
@@ -42,16 +41,8 @@ dependencies {
     compile 'com.google.inject:guice:4.0-beta5'
     compile 'com.google.inject.extensions:guice-assistedinject:4.0-beta5'
     compile 'org.ektorp:org.ektorp:1.4.+'
-
-	compile 'org.restlet.jee:org.restlet:2.1.6'
-	compile 'org.restlet.jee:org.restlet.ext.jackson:2.1.6'
-	compile 'org.restlet.jee:org.restlet.ext.servlet:2.1.6'
-
-	compile 'org.slf4j:slf4j-api:1.7.5'
-	compile 'org.slf4j:slf4j-log4j12:1.7.5'	
 	compile 'com.espertech:esper:4.6.0'
 	compile 'com.google.android.gcm:gcm-server:1.0.2'
-
 	testCompile 'junit:junit:4.11'
 	testCompile 'org.powermock:powermock:1.5.5'
 	testCompile 'org.powermock:powermock-mockito-release-full:1.5.5'
