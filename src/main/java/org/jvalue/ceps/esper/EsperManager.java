@@ -40,12 +40,12 @@ public final class EsperManager implements DataUpdateListener {
 	}
 
 
-	public String register(String eplStatement, JsonUpdateListener listener) {
+	public String register(String eplStatement, EventUpdateListener listener) {
 		Assert.assertNotNull(eplStatement, listener);
 
 		String stmtId = UUID.randomUUID().toString();
 		EPStatement stmt = admin.createEPL(eplStatement);
-		stmt.addListener(new EsperUpdateListener(listener, stmtId));
+		stmt.addListener(new EventUpdateListenerAdapter(listener, stmtId));
 		startedStatements.put(stmtId, stmt);
 
 		return stmtId;

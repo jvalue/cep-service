@@ -1,11 +1,11 @@
 package org.jvalue.ceps.esper;
 
-import java.util.List;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.List;
 
-public interface JsonUpdateListener{
+
+public interface EventUpdateListener {
 
 	public void onNewEvents(String eplStmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents);
 

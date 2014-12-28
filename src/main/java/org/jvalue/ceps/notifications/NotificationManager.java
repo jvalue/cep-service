@@ -5,7 +5,7 @@ import com.google.inject.Inject;
 
 import org.jvalue.ceps.db.ClientRepository;
 import org.jvalue.ceps.esper.EsperManager;
-import org.jvalue.ceps.esper.JsonUpdateListener;
+import org.jvalue.ceps.esper.EventUpdateListener;
 import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.DeviceIdUpdater;
@@ -25,7 +25,7 @@ import java.util.Set;
 import io.dropwizard.lifecycle.Managed;
 
 
-public final class NotificationManager implements JsonUpdateListener, Managed {
+public final class NotificationManager implements EventUpdateListener, Managed {
 
 	private final ClientRepository clientRepository;
 	private final Map<Class<?>, NotificationSender<?>> sender;

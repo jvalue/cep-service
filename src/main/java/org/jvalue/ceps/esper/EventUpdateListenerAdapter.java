@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-final class EsperUpdateListener implements UpdateListener {
+final class EventUpdateListenerAdapter implements UpdateListener {
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 	static {
@@ -26,11 +26,11 @@ final class EsperUpdateListener implements UpdateListener {
 	}
 
 
-	private final JsonUpdateListener listener;
+	private final EventUpdateListener listener;
 	private final String eplStmtId;
 
 
-	public EsperUpdateListener(JsonUpdateListener listener, String eplStmtId) {
+	public EventUpdateListenerAdapter(EventUpdateListener listener, String eplStmtId) {
 		Assert.assertNotNull(listener, eplStmtId);
 		this.listener = listener;
 		this.eplStmtId = eplStmtId;

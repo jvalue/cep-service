@@ -108,7 +108,7 @@ public final class EsperManagerTest {
 	}
 
 
-	private class DummyUpdateListener implements JsonUpdateListener {
+	private class DummyUpdateListener implements EventUpdateListener {
 		@Override
 		public void onNewEvents(String stmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
 			assertNotNull(stmtId);
