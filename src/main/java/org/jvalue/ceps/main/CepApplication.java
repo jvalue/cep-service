@@ -1,6 +1,5 @@
 package org.jvalue.ceps.main;
 
-import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataSource;
 import org.jvalue.ceps.event.EventGarbageCollector;
@@ -13,7 +12,6 @@ import org.jvalue.ceps.rest.data.DataRestApi;
 import org.jvalue.ceps.rest.data.OdsRestHook;
 import org.jvalue.ceps.rest.debug.DebugRestApi;
 import org.jvalue.ceps.rest.event.EventRestApi;
-import org.jvalue.ceps.rest.notifications.NotificationRestApi;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.RestException;
 import org.jvalue.ceps.utils.Restoreable;
@@ -39,7 +37,7 @@ public final class CepApplication extends Application {
 
 	public CepApplication() {
 		apis.add(new DataRestApi(DataManager.getInstance()));
-		apis.add(new NotificationRestApi(NotificationManager.getInstance(), new EplAdapterManager()));
+		// apis.add(new NotificationRestApi(NotificationManager.getInstance(), new EplAdapterManager()));
 		apis.add(new EventRestApi(EventManager.getInstance()));
 		apis.add(new DebugRestApi(
 					NotificationManager.getInstance(),

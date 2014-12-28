@@ -1,15 +1,17 @@
 package org.jvalue.ceps.rest.notifications;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import org.jvalue.ceps.adapter.AdapterModule;
+import org.jvalue.ceps.adapter.EplAdapter;
+import org.jvalue.ceps.notifications.NotificationManager;
+import org.jvalue.ceps.rest.RestApi;
+import org.restlet.Restlet;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.jvalue.ceps.adapter.EplAdapter;
-import org.jvalue.ceps.adapter.EplAdapterManager;
-import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.rest.RestApi;
-import org.jvalue.ceps.utils.Assert;
-import org.restlet.Restlet;
 
 
 public final class NotificationRestApi implements RestApi {
@@ -22,25 +24,19 @@ public final class NotificationRestApi implements RestApi {
 
 	private Map<String, Restlet> routes;
 
+	@Inject
 	public NotificationRestApi(
 			NotificationManager notificationManager, 
-			EplAdapterManager adapterManager) {
+			@Named(AdapterModule.ADAPTER_PEGELONLINE) EplAdapter eplAdapter) {
 
-		Assert.assertNotNull(notificationManager, adapterManager);
 
 		Map<String, Restlet> routes = new HashMap<String, Restlet>();
 
 		// unregister is config independent
 		routes.put(PATH_UNREGISTER, new UnregisterRestlet(notificationManager));
 
-		// configurable rules
-		for (Map.Entry<String, EplAdapter> entry : adapterManager.getAdapters().entrySet()) {
-			// enable gcm registration for all
-			routes.put(
-					PATH_REGISTER + entry.getKey(), 
-					new GcmRegisterRestlet(notificationManager, entry.getValue()));
-		}
-
+		// configure rules
+		routes.put(PATH_REGISTER + "/pegelonline", new GcmRegisterRestlet(notificationManager, eplAdapter));
 		this.routes = Collections.unmodifiableMap(routes);
 	}
 

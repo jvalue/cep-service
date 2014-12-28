@@ -13,11 +13,11 @@ public interface EplAdapter {
 	/**
 	 * @return A epl stmt derived from user supplied parameters.
 	 */
-	public abstract String toEplStmt(Map<String, String> params);
+	public String toEplStmt(Map<String, String> params);
 
 	/**
 	 * @return The parameters that users are required to supply via the REST interface.
 	 */
-	public abstract Set<String> getRequiredParams();
+	public Set<String> getRequiredParams();
 
 }

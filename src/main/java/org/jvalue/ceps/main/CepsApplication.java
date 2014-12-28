@@ -3,6 +3,7 @@ package org.jvalue.ceps.main;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import org.jvalue.ceps.adapter.AdapterModule;
 import org.jvalue.ceps.data.DataModule;
 import org.jvalue.ceps.db.DbModule;
 import org.jvalue.ceps.event.EventGarbageCollector;
@@ -45,7 +46,8 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new ConfigModule(configuration),
 				new DbModule(),
 				new DataModule(),
-				new EventModule());
+				new EventModule(),
+				new AdapterModule());
 
 		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
 	}
