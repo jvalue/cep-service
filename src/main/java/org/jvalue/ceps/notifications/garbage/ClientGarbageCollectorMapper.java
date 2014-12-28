@@ -6,6 +6,10 @@ import org.jvalue.ceps.notifications.clients.ClientVisitor;
 import org.jvalue.ceps.notifications.clients.GcmClient;
 
 
+/**
+ * Maps instances of {@link org.jvalue.ceps.notifications.garbage.ClientGarbageCollector} to
+ * instances of {@link org.jvalue.ceps.notifications.clients.Client}.
+ */
 public final class ClientGarbageCollectorMapper implements ClientVisitor<Void, CollectionStatus> {
 
 	private final ClientGarbageCollector<GcmClient> gcmCollector;
