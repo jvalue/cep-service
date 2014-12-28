@@ -21,12 +21,15 @@ public final class EsperManager implements DataUpdateListener {
 
 	private final EPRuntime runtime;
 	private final EPAdministrator admin;
+	private final SchemaTranslator schemaTranslator;
+
 	private final Map<String, EPStatement> startedStatements = new HashMap<String, EPStatement>();
 
 	@Inject
-	EsperManager(EPServiceProvider provider) {
+	EsperManager(EPServiceProvider provider, SchemaTranslator schemaTranslator) {
 		this.runtime = provider.getEPRuntime();
 		this.admin = provider.getEPAdministrator();
+		this.schemaTranslator = schemaTranslator;
 	}
 
 
@@ -56,7 +59,7 @@ public final class EsperManager implements DataUpdateListener {
 	@Override
 	public void onNewDataType(String dataName, JsonNode dataSchema) {
 		Log.info("Adding datatype \"" + dataName + "\"");
-		List<EventDefinition> definitions = SchemaTranslator.toEventDefinition(dataName, dataSchema);
+		List<EventDefinition> definitions = schemaTranslator.toEventDefinition(dataName, dataSchema);
 		for (EventDefinition definition : definitions) {
 			admin.getConfiguration().addEventType(definition.getName(), definition.getSchema());
 		}

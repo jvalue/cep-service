@@ -1,5 +1,9 @@
 package org.jvalue.ceps.esper;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.jvalue.ceps.utils.Log;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,23 +11,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.jvalue.ceps.utils.Log;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
 
 final class SchemaTranslator {
 
-	private SchemaTranslator() { }
-
-
+	// TODO this probably does not work anymore with the new ODS version
 	private static final String
-		KEY_ATTRIBUTES = "attributes",
-		KEY_NAME = "name",
-		KEY_REFERENCED_OBJECTS = "referencedObjects";
+			KEY_ATTRIBUTES = "attributes",
+			KEY_NAME = "name",
+			KEY_REFERENCED_OBJECTS = "referencedObjects";
 
 
-	public static List<EventDefinition> toEventDefinition(
+	SchemaTranslator() { }
+
+
+	public List<EventDefinition> toEventDefinition(
 			String objectName,
 			JsonNode jsonObjectSchema) {
 
@@ -35,7 +36,7 @@ final class SchemaTranslator {
 	}
 
 
-	private static Map<String, Object> readSchema(
+	private Map<String, Object> readSchema(
 			String objectName,
 			JsonNode jsonObjectSchema,
 			List<EventDefinition> allObjects) {
@@ -52,7 +53,7 @@ final class SchemaTranslator {
 	}
 
 
-	private static void readAttributes(
+	private void readAttributes(
 			String objectName,
 			Map<String, Object> objectSchema, 
 			JsonNode objectAttributes) {
@@ -78,12 +79,10 @@ final class SchemaTranslator {
 			}
 
 		} else Log.error("failed to read attributes (" + objectAttributes.toString() + ")");
-
-
 	}
 
 
-	private static void readReferenceObjects(
+	private void readReferenceObjects(
 			Map<String, Object> objectSchema, 
 			JsonNode objectReferences,
 			List<EventDefinition> allObjects) {
@@ -129,7 +128,7 @@ final class SchemaTranslator {
 
 
 	@SuppressWarnings("rawtypes")
-	private static Object toObjectType(String jsonObjectType, boolean isArray) {
+	private Object toObjectType(String jsonObjectType, boolean isArray) {
 		Object type = null;
 		if (jsonObjectType.equals("java.lang.String")) type = String.class;
 		else if (jsonObjectType.equals("java.lang.Number")) type = double.class;
