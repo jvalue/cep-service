@@ -1,3 +1,8 @@
-gcmApiKey: YOUR GOOGLE API KEY HERE
+cepsBaseUrl: http://localhost:8080
+odsBaseUrl: http://localhost:8080/ods/api/v1
+
+gcmApiKey: YOUR API KEY HERE
+gcmGarbageCollectorPeriod: 3600000
+
 eventGarbageCollectionPeriod: 3600000
 eventGarbageCollectionMaxAge: 3600000
