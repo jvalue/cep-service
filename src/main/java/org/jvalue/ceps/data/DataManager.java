@@ -2,13 +2,16 @@ package org.jvalue.ceps.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 import org.jvalue.ceps.db.OdsRegistrationRepository;
 import org.jvalue.ceps.esper.DataUpdateListener;
+import org.jvalue.ceps.main.ConfigModule;
 import org.jvalue.ceps.ods.DataSourceService;
 import org.jvalue.ceps.ods.NotificationService;
 import org.jvalue.ceps.ods.OdsClient;
 import org.jvalue.ceps.ods.OdsDataSource;
+import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 
@@ -27,34 +30,38 @@ public final class DataManager implements Managed, DataSink {
 	private final OdsRegistrationRepository registrationRepository;
 	private final DataUpdateListener dataListener;
 
+	private final String cepsDataCallbackUrl;
+
 
 	@Inject
 	DataManager(
 			DataSourceService dataSourceService,
 			NotificationService notificationService,
 			OdsRegistrationRepository registrationRepository,
-			DataUpdateListener dataListener) {
+			DataUpdateListener dataListener,
+			@Named(ConfigModule.CEPS_BASE_URL) String cepsBaseUrl,
+			@Named(RestModule.URL_DATA) String dataUrl) {
 
 		this.dataSourceService = dataSourceService;
 		this.notificationService = notificationService;
 		this.registrationRepository = registrationRepository;
 		this.dataListener = dataListener;
+		this.cepsDataCallbackUrl = cepsBaseUrl + dataUrl;
 	}
 
 
 	public void startMonitoring(
-			String sourceId,
-			String restCallbackUrl,
-			String restCallbackParam) {
+			String sourceId) {
 
-		Assert.assertNotNull(sourceId, restCallbackUrl, restCallbackParam);
+		Assert.assertNotNull(sourceId);
 		Assert.assertTrue(isBeingMonitored(sourceId), "source already being monitored");
 
 		// get source / schema
 		OdsDataSource source = dataSourceService.get(sourceId);
 
 		// register for updates
-		OdsClientDescription clientDescription = new OdsClientDescription(restCallbackUrl, restCallbackParam, true);
+		// TODO!
+		OdsClientDescription clientDescription = new OdsClientDescription(cepsDataCallbackUrl, null, true);
 		OdsClient client = notificationService.register(sourceId, "ceps", clientDescription);
 
 		// store result in db

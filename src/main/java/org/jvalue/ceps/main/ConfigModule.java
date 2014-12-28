@@ -10,6 +10,10 @@ import org.jvalue.ceps.notifications.NotificationsModule;
 
 public class ConfigModule extends AbstractModule {
 
+	public static final String
+			CEPS_BASE_URL = "cepsBaseUrl",
+			ODS_BASE_URL = "odsBaseUrl";
+
 	private final CepsConfig config;
 
 	public ConfigModule(CepsConfig config) {
@@ -19,10 +23,15 @@ public class ConfigModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(long.class).annotatedWith(Names.named(EventModule.EVENT_GARBAGE_COLLECTOR_PERIOD)).toInstance(config.getEventGarbageCollectionPeriod());
-		bind(long.class).annotatedWith(Names.named(EventModule.EVENT_GARBAGE_COLLECTOR_MAX_AGE)).toInstance(config.getEventGarbageCollectionMaxAge());
+		bind(String.class).annotatedWith(Names.named(CEPS_BASE_URL)).toInstance(config.getCepsBaseUrl());
+		bind(String.class).annotatedWith(Names.named(ODS_BASE_URL)).toInstance(config.getOdsBaseUrl());
+
+		bind(long.class).annotatedWith(Names.named(EventModule.EVENT_GARBAGE_COLLECTOR_PERIOD)).toInstance(config.getEventGarbageCollectorPeriod());
+		bind(long.class).annotatedWith(Names.named(EventModule.EVENT_GARBAGE_COLLECTOR_MAX_AGE)).toInstance(config.getEventGarbageCollectorMaxAge());
+
 		bind(String.class).annotatedWith(Names.named(NotificationsModule.GCM_API_KEY)).toInstance(config.getGcmApiKey());
 		bind(long.class).annotatedWith(Names.named(NotificationsModule.GCM_GARBAGE_COLLECTOR_PERIOD)).toInstance(config.getGcmGarbageCollectorPeriod());
+
 		bind(String.class).annotatedWith(Names.named(EsperModule.ESPER_ENGINE_NAME)).toInstance(config.getEsperEngineName());
 	}
 

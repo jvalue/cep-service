@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public final class DataApi {
 
+	static final String URL_DATA = "/data";
+
 	private final DataSink dataSink;
 
 	@Inject
