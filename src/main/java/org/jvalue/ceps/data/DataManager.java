@@ -55,7 +55,7 @@ public final class DataManager implements Managed, DataSink {
 
 	public void startMonitoring(String sourceId) {
 		Assert.assertNotNull(sourceId);
-		Assert.assertTrue(isBeingMonitored(sourceId), "source already being monitored");
+		Assert.assertFalse(isBeingMonitored(sourceId), "source already being monitored");
 
 		// get source / schema
 		OdsDataSource source = odsDataSourceService.get(sourceId);
