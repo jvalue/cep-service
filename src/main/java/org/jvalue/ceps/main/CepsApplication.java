@@ -12,6 +12,7 @@ import org.jvalue.ceps.event.EventGarbageCollector;
 import org.jvalue.ceps.event.EventModule;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorManager;
+import org.jvalue.ceps.ods.OdsModule;
 import org.jvalue.ceps.rest.DataApi;
 import org.jvalue.ceps.rest.EventApi;
 import org.jvalue.ceps.rest.NotificationClientRegistrationApi;
@@ -55,7 +56,8 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new DataModule(),
 				new EventModule(),
 				new AdapterModule(),
-				new EsperModule());
+				new EsperModule(),
+				new OdsModule());
 
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
