@@ -6,6 +6,7 @@ import com.google.inject.name.Names;
 
 import org.jvalue.ceps.event.EventModule;
 import org.jvalue.ceps.notifications.NotificationsModule;
+import org.jvalue.ceps.notifications.garbage.GarbageModule;
 
 public class ConfigModule extends AbstractModule {
 
@@ -29,7 +30,7 @@ public class ConfigModule extends AbstractModule {
 		bind(long.class).annotatedWith(Names.named(EventModule.EVENT_GARBAGE_COLLECTOR_MAX_AGE)).toInstance(config.getEventGarbageCollectorMaxAge());
 
 		bind(String.class).annotatedWith(Names.named(NotificationsModule.GCM_API_KEY)).toInstance(config.getGcmApiKey());
-		bind(long.class).annotatedWith(Names.named(NotificationsModule.GCM_GARBAGE_COLLECTOR_PERIOD)).toInstance(config.getGcmGarbageCollectorPeriod());
+		bind(long.class).annotatedWith(Names.named(GarbageModule.GCM_GARBAGE_COLLECTOR_PERIOD)).toInstance(config.getGcmGarbageCollectorPeriod());
 	}
 
 }

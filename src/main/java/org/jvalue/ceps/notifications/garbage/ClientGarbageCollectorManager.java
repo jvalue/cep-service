@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.notifications.NotificationsModule;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.ClientVisitor;
 import org.jvalue.ceps.utils.Log;
@@ -33,7 +32,7 @@ public final class ClientGarbageCollectorManager implements Managed {
 	ClientGarbageCollectorManager(
 			NotificationManager notificationManager,
 			ClientVisitor<Void, CollectionStatus> mapper,
-			@Named(NotificationsModule.GCM_GARBAGE_COLLECTOR_PERIOD) long interval) {
+			@Named(GarbageModule.GCM_GARBAGE_COLLECTOR_PERIOD) long interval) {
 
 		this.notificationManager = notificationManager;
 		this.mapper = mapper;

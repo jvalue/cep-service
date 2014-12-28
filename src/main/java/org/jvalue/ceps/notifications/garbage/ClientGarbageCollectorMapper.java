@@ -4,25 +4,21 @@ import com.google.inject.Inject;
 
 import org.jvalue.ceps.notifications.clients.ClientVisitor;
 import org.jvalue.ceps.notifications.clients.GcmClient;
-import org.jvalue.ceps.utils.Assert;
 
 
 public final class ClientGarbageCollectorMapper implements ClientVisitor<Void, CollectionStatus> {
 
-	private final ClientGarbageCollector gcmCollector;
+	private final ClientGarbageCollector<GcmClient> gcmCollector;
 
 	@Inject
-	ClientGarbageCollectorMapper(
-			ClientGarbageCollector gcmCollector) {
-
-		Assert.assertNotNull(gcmCollector);
+	ClientGarbageCollectorMapper(ClientGarbageCollector<GcmClient> gcmCollector) {
 		this.gcmCollector = gcmCollector;
 	}
 
 
 	@Override
 	public CollectionStatus visit(GcmClient client, Void param) {
-		return gcmCollector.determineStatus(client.getDeviceId());
+		return gcmCollector.determineStatus(client);
 	}
 
 }
