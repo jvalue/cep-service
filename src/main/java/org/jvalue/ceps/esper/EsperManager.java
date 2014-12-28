@@ -1,42 +1,35 @@
 package org.jvalue.ceps.esper;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.jvalue.ceps.utils.Assert;
-import org.jvalue.ceps.utils.Log;
-
 import com.espertech.esper.client.EPAdministrator;
 import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPServiceProviderManager;
 import com.espertech.esper.client.EPStatement;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+
+import org.jvalue.ceps.utils.Assert;
+import org.jvalue.ceps.utils.Log;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 
 public final class EsperManager implements DataUpdateListener {
-
-	private static final String ESPER_ENGINE_NAME = "esper";
-
-	private static EsperManager instance;
-
-	public static EsperManager getInstance() {
-		if (instance == null) instance = new EsperManager(ESPER_ENGINE_NAME);
-		return instance;
-	}
-
 
 	private final EPRuntime runtime;
 	private final EPAdministrator admin;
 	private final Map<String, EPStatement> startedStatements = new HashMap<String, EPStatement>();
 
-	private EsperManager(String engineName) {
+	@Inject
+	EsperManager(@Named(EsperModule.ESPER_ENGINE_NAME) String engineName) {
 		EPServiceProvider provider = EPServiceProviderManager.getProvider(engineName);
-		runtime = provider.getEPRuntime();
-		admin = provider.getEPAdministrator();
+		this.runtime = provider.getEPRuntime();
+		this.admin = provider.getEPAdministrator();
 	}
 
 

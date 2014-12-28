@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.jvalue.ceps.db.DataSourceRegistrationRepository;
 import org.jvalue.ceps.esper.DataUpdateListener;
-import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 import org.jvalue.ceps.utils.RestCall;
@@ -39,10 +38,13 @@ public final class DataManager implements Managed {
 	private static DataManager instance;
 
 	public static DataManager getInstance() {
+		/*
 		if (instance == null) instance = new DataManager(
 				null,
 				EsperManager.getInstance());
 		return instance;
+		*/
+		return null;
 	}
 
 

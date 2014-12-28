@@ -19,6 +19,8 @@ public final class CepsConfig extends Configuration {
 	private final long eventGarbageCollectionPeriod;
 	private final long eventGarbageCollectionMaxAge;
 
+	@NotNull private final String esperEngineName;
+
 
 	@JsonCreator
 	public CepsConfig(
@@ -26,13 +28,15 @@ public final class CepsConfig extends Configuration {
 			String gcmApiKey,
 			long gcmGarbageCollectorPeriod,
 			long eventGarbageCollectionPeriod,
-			long eventGarbageCollectionMaxAge) {
+			long eventGarbageCollectionMaxAge,
+			String esperEngineName) {
 
 		this.odsUrl = odsUrl;
 		this.gcmApiKey = gcmApiKey;
 		this.gcmGarbageCollectorPeriod = gcmGarbageCollectorPeriod;
 		this.eventGarbageCollectionPeriod = eventGarbageCollectionPeriod;
 		this.eventGarbageCollectionMaxAge = eventGarbageCollectionMaxAge;
+		this.esperEngineName = esperEngineName;
 	}
 
 
@@ -58,6 +62,11 @@ public final class CepsConfig extends Configuration {
 
 	public long getEventGarbageCollectionMaxAge() {
 		return eventGarbageCollectionMaxAge;
+	}
+
+
+	public String getEsperEngineName() {
+		return esperEngineName;
 	}
 
 }

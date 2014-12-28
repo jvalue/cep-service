@@ -7,6 +7,7 @@ import org.jvalue.ceps.adapter.AdapterModule;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataModule;
 import org.jvalue.ceps.db.DbModule;
+import org.jvalue.ceps.esper.EsperModule;
 import org.jvalue.ceps.event.EventGarbageCollector;
 import org.jvalue.ceps.event.EventModule;
 import org.jvalue.ceps.notifications.NotificationManager;
@@ -53,7 +54,8 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new DbModule(),
 				new DataModule(),
 				new EventModule(),
-				new AdapterModule());
+				new AdapterModule(),
+				new EsperModule());
 
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
