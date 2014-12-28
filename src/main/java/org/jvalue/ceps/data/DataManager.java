@@ -1,128 +1,91 @@
 package org.jvalue.ceps.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.db.DataSourceRegistrationRepository;
+import org.jvalue.ceps.db.OdsRegistrationRepository;
 import org.jvalue.ceps.esper.DataUpdateListener;
+import org.jvalue.ceps.ods.DataSourceService;
+import org.jvalue.ceps.ods.NotificationService;
+import org.jvalue.ceps.ods.OdsClient;
+import org.jvalue.ceps.ods.OdsDataSource;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
-import org.jvalue.ceps.utils.RestCall;
-import org.jvalue.ceps.utils.RestException;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import io.dropwizard.lifecycle.Managed;
+
+import static org.jvalue.ceps.ods.NotificationService.OdsClientDescription;
 
 
 public final class DataManager implements Managed {
 
 	private static final String
-		ODS_URL_REGISTRATION = "notifications/rest/register",
 		ODS_URL_UNREGISTRATION = "notifications/unregister",
-		ODS_PARAM_SOURCE = "source",
-		ODS_PARAM_SEND_DATA = "sendData",
-		ODS_PARAM_CEPS_URL = "restUrl",
-		ODS_PARAM_CEPS_SOURCE = "restParam",
 		ODS_PARAM_CLIENT_ID = "clientId";
 
-	private static final String
-		ODS_KEY_CLIENTID = "clientId";
 
+	private final DataSourceService dataSourceService;
+	private final NotificationService notificationService;
 
-	private static final ObjectMapper mapper = new ObjectMapper();
-
-	private final DataSourceRegistrationRepository registrationRepository;
+	private final OdsRegistrationRepository registrationRepository;
 	private final DataUpdateListener dataListener;
 
 
 	@Inject
 	DataManager(
-			DataSourceRegistrationRepository registrationRepository,
+			DataSourceService dataSourceService,
+			NotificationService notificationService,
+			OdsRegistrationRepository registrationRepository,
 			DataUpdateListener dataListener) {
 
+		this.dataSourceService = dataSourceService;
+		this.notificationService = notificationService;
 		this.registrationRepository = registrationRepository;
 		this.dataListener = dataListener;
 	}
 
 
 	public void startMonitoring(
-			DataSource source, 
-			String restCallbackUrl, 
-			String restCallbackParam) throws RestException {
+			String sourceId,
+			String restCallbackUrl,
+			String restCallbackParam) {
 
-		Assert.assertNotNull(source, restCallbackUrl, restCallbackParam);
-		Assert.assertTrue(getRegistrationForSource(source) == null, "source already being monitored");
+		Assert.assertNotNull(sourceId, restCallbackUrl, restCallbackParam);
+		Assert.assertTrue(isBeingMonitored(sourceId), "source already being monitored");
 
-		// get new schema from ods
-		String dataSchemaString = new RestCall.Builder(
-				RestCall.RequestType.GET, 
-				source.getServerBaseUrl().toString())
-			.path(source.getDataSchemaUrl())
-			.build()
-			.execute();
-
-		JsonNode dataSchema = null;
-		try {
-			dataSchema = mapper.readTree(dataSchemaString);
-			dataListener.onNewDataType(source.getSourceId(), dataSchema);
-		} catch (IOException ioe) {
-			throw new RestException(ioe);
-		}
+		// get source / schema
+		OdsDataSource source = dataSourceService.get(sourceId);
 
 		// register for updates
-		String jsonResult = new RestCall.Builder(RestCall.RequestType.POST, source.getServerBaseUrl().toString())
-			.path(ODS_URL_REGISTRATION)
-			.parameter(ODS_PARAM_SOURCE, source.getSourceId())
-			.parameter(ODS_PARAM_SEND_DATA, Boolean.TRUE.toString())
-			.parameter(ODS_PARAM_CEPS_URL, restCallbackUrl)
-			.parameter(ODS_PARAM_CEPS_SOURCE, restCallbackParam)
-			.build()
-			.execute();
+		OdsClientDescription clientDescription = new OdsClientDescription(restCallbackUrl, restCallbackParam, true);
+		OdsClient client = notificationService.register(sourceId, "ceps", clientDescription);
 
-		String clientId;
-		try {
-			JsonNode json = mapper.readTree(jsonResult);
-			clientId = json.get(ODS_KEY_CLIENTID).asText();
-		} catch (IOException ioe) {
-			throw new RestException(ioe);
-		}
-
-		DataSourceRegistration registration = new DataSourceRegistration(
-				clientId, 
-				source, 
-				dataSchema);
+		// store result in db
+		OdsRegistration registration = new OdsRegistration(source, client);
 		registrationRepository.add(registration);
 	}
 
 
-	public void stopMonitoring(DataSource source) throws RestException {
-		Assert.assertNotNull(source);
-		DataSourceRegistration registration = getRegistrationForSource(source);
+	public void stopMonitoring(String sourceId) {
+		Assert.assertNotNull(sourceId);
+		OdsRegistration registration = getRegistrationForSourceId(sourceId);
 		Assert.assertTrue(registration != null, "source not being monitored");
 
-		new RestCall.Builder(RestCall.RequestType.POST, source.getServerBaseUrl().toString())
-			.path(ODS_URL_UNREGISTRATION)
-			.parameter(ODS_PARAM_CLIENT_ID, registration.getClientId())
-			.build()
-			.execute();
-
-		// TODO this won't work
+		notificationService.unregister(sourceId, registration.getClient().getId());
 		registrationRepository.remove(registration);
 	}
 
 
-	public boolean isBeingMonitored(DataSource source) {
-		Assert.assertNotNull(source);
-		return getRegistrationForSource(source) != null;
+	public boolean isBeingMonitored(String sourceId) {
+		Assert.assertNotNull(sourceId);
+		return getRegistrationForSourceId(sourceId) != null;
 	}
 
 
-	public Set<DataSourceRegistration> getAll() {
-		return new HashSet<>(registrationRepository.getAll());
+	public List<OdsRegistration> getAll() {
+		return registrationRepository.getAll();
 	}
 
 
@@ -132,11 +95,9 @@ public final class DataManager implements Managed {
 	}
 
 
-	private DataSourceRegistration getRegistrationForSource(DataSource source) {
-		for (DataSourceRegistration registration : registrationRepository.getAll()) {
-			if (registration.getDataSource().equals(source)) {
-				return registration;
-			}
+	private OdsRegistration getRegistrationForSourceId(String sourceId) {
+		for (OdsRegistration registration : registrationRepository.getAll()) {
+			if (registration.getDataSource().getId().equals(sourceId)) return registration;
 		}
 		return null;
 	}
@@ -144,10 +105,10 @@ public final class DataManager implements Managed {
 
 	@Override
 	public void start() {
-		for (DataSourceRegistration registration : registrationRepository.getAll()) {
+		for (OdsRegistration registration : registrationRepository.getAll()) {
 			dataListener.onNewDataType(
-					registration.getDataSource().getSourceId(),
-					registration.getDataSchema());
+					registration.getDataSource().getId(),
+					registration.getDataSource().getSchema());
 		}
 	}
 

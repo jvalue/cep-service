@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 
 
-public final class DataSourceRegistrationTest {
+public final class OdsRegistrationTest {
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -22,7 +22,7 @@ public final class DataSourceRegistrationTest {
 	public void testGet() {
 		DataSource source = new DataSource("dummy1", "dummy2", "dummy3");
 		JsonNode schema = new TextNode("schema");
-		DataSourceRegistration reg = new DataSourceRegistration("dummy", source, schema);
+		OdsRegistration reg = new OdsRegistration("dummy", source, schema);
 		assertEquals("dummy", reg.getClientId());
 		assertEquals(source, reg.getDataSource());
 		assertEquals(schema, reg.getDataSchema());
@@ -35,11 +35,11 @@ public final class DataSourceRegistrationTest {
 		DataSource source2 = new DataSource("dummy4", "dummy5", "dummy6");
 		JsonNode schema1 = new TextNode("schema1");
 		JsonNode schema2 = new TextNode("schema2");
-		DataSourceRegistration reg1 = new DataSourceRegistration("dummy", source1, schema1);
-		DataSourceRegistration reg2 = new DataSourceRegistration("dummy", source1, schema1);
-		DataSourceRegistration reg3 = new DataSourceRegistration("dummy2", source1, schema1);
-		DataSourceRegistration reg4 = new DataSourceRegistration("dummy", source2, schema1);
-		DataSourceRegistration reg5 = new DataSourceRegistration("dummy", source1, schema2);
+		OdsRegistration reg1 = new OdsRegistration("dummy", source1, schema1);
+		OdsRegistration reg2 = new OdsRegistration("dummy", source1, schema1);
+		OdsRegistration reg3 = new OdsRegistration("dummy2", source1, schema1);
+		OdsRegistration reg4 = new OdsRegistration("dummy", source2, schema1);
+		OdsRegistration reg5 = new OdsRegistration("dummy", source1, schema2);
 
 		assertEquals(reg1, reg2);
 		assertNotEquals(reg1, reg3);
@@ -57,10 +57,10 @@ public final class DataSourceRegistrationTest {
 	public void testJson() throws JsonProcessingException {
 		DataSource source = new DataSource("dummy1", "dummy2", "dummy3");
 		JsonNode schema = new TextNode("schema");
-		DataSourceRegistration reg = new DataSourceRegistration("dummy", source, schema);
+		OdsRegistration reg = new OdsRegistration("dummy", source, schema);
 		JsonNode json = mapper.valueToTree(reg);
 		assertNotNull(json);
-		assertEquals(reg, mapper.treeToValue(json, DataSourceRegistration.class));
+		assertEquals(reg, mapper.treeToValue(json, OdsRegistration.class));
 	}
 
 }

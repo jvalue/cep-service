@@ -17,9 +17,9 @@ public final class DummyDataManager {
 				DataUpdateListener.class);
 		constructor.setAccessible(true);
 		return constructor.newInstance(
-				new JsonObjectDb<DataSourceRegistration>(
+				new JsonObjectDb<OdsRegistration>(
 					new DummyDbAccessor(), 
-					DataSourceRegistration.class), 
+					OdsRegistration.class),
 				listener);
 	}
 
