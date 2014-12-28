@@ -1,6 +1,7 @@
 package org.jvalue.ceps.utils;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public final class Log {
@@ -9,43 +10,48 @@ public final class Log {
 
 
 	public static void debug(String msg) {
-		Logger.getLogger(getCallerName()).debug(msg);
+		getLogger().debug(msg);
 	}
 
+
 	public static void debug(String msg, Throwable throwable) {
-		Logger.getLogger(getCallerName()).debug(msg, throwable);
+		getLogger().debug(msg, throwable);
 	}
 
 
 	public static void info(String msg) {
-		Logger.getLogger(getCallerName()).info(msg);
+		getLogger().info(msg);
 	}
 
+
 	public static void info(String msg, Throwable throwable) {
-		Logger.getLogger(getCallerName()).info(msg, throwable);
+		getLogger().info(msg, throwable);
 	}
 
 
 	public static void warn(String msg) {
-		Logger.getLogger(getCallerName()).warn(msg);
+		getLogger().warn(msg);
 	}
 
+
 	public static void warn(String msg, Throwable throwable) {
-		Logger.getLogger(getCallerName()).warn(msg, throwable);
+		getLogger().warn(msg, throwable);
 	}
 
 
 	public static void error(String msg) {
-		Logger.getLogger(getCallerName()).error(msg);
+		getLogger().error(msg);
 	}
+
 
 	public static void error(String msg, Throwable throwable) {
-		Logger.getLogger(getCallerName()).error(msg, throwable);
+		getLogger().error(msg, throwable);
 	}
 
 
-	private static String getCallerName() {
-		return Thread.currentThread().getStackTrace()[3].getClassName();
+	private static Logger getLogger() {
+		StackTraceElement[] stackElements = Thread.currentThread().getStackTrace();
+		return LoggerFactory.getLogger(stackElements[3].getClassName());
 	}
 
 }
