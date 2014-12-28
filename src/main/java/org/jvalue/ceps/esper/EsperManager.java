@@ -21,15 +21,22 @@ public final class EsperManager implements DataUpdateListener {
 
 	private final EPRuntime runtime;
 	private final EPAdministrator admin;
+
 	private final SchemaTranslator schemaTranslator;
+	private final DataTranslator dataTranslator;
 
 	private final Map<String, EPStatement> startedStatements = new HashMap<String, EPStatement>();
 
 	@Inject
-	EsperManager(EPServiceProvider provider, SchemaTranslator schemaTranslator) {
+	EsperManager(
+			EPServiceProvider provider,
+			SchemaTranslator schemaTranslator,
+			DataTranslator dataTranslator) {
+
 		this.runtime = provider.getEPRuntime();
 		this.admin = provider.getEPAdministrator();
 		this.schemaTranslator = schemaTranslator;
+		this.dataTranslator = dataTranslator;
 	}
 
 
@@ -73,7 +80,7 @@ public final class EsperManager implements DataUpdateListener {
 
 		for (int i = 0; i < data.size(); i++) {
 			try {
-				runtime.sendEvent(DataTranslator.toMap(data.get(i)), dataName);
+				runtime.sendEvent(dataTranslator.toMap(data.get(i)), dataName);
 			} catch (IOException ioe) {
 				Log.error("failed to translate data " + dataName, ioe);
 			}

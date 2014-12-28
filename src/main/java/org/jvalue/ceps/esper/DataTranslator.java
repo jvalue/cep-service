@@ -1,12 +1,5 @@
 package org.jvalue.ceps.esper;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.jvalue.ceps.utils.Assert;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -15,11 +8,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import org.jvalue.ceps.utils.Assert;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 
 final class DataTranslator {
-
-	private DataTranslator() { }
-
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 	static {
@@ -29,8 +26,11 @@ final class DataTranslator {
 	}
 
 
+	DataTranslator() { }
+
+
 	@SuppressWarnings("unchecked")
-	public static Map<String, Object> toMap(JsonNode data) throws IOException {
+	public Map<String, Object> toMap(JsonNode data) throws IOException {
 		Assert.assertNotNull(data);
 		return mapper.readValue(data.toString(), Map.class);
 	}
@@ -48,8 +48,7 @@ final class DataTranslator {
 
 		@Override
 		@SuppressWarnings("unchecked")
-		public Map<String, Object> deserialize(JsonParser parser, DeserializationContext context) 
-				throws IOException, JsonProcessingException {
+		public Map<String, Object> deserialize(JsonParser parser, DeserializationContext context)  throws IOException {
 
 			JsonNode node = parser.getCodec().readTree(parser);
 			Assert.assertTrue(node.isObject(), "can only parse json objects");
