@@ -4,7 +4,7 @@ package org.jvalue.ceps.ods;
 import retrofit.http.GET;
 import retrofit.http.Path;
 
-public interface DataSourceService {
+public interface OdsDataSourceService {
 
 	static final String URL_DATASOURCES = "/datasources";
 

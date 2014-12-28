@@ -1,7 +1,7 @@
 package org.jvalue.ceps.ods;
 
 
-public final class OdsClient extends NotificationService.OdsClientDescription {
+public final class OdsClient extends OdsNotificationService.OdsClientDescription {
 
 	private String id;
 

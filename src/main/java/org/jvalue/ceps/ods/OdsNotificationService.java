@@ -9,9 +9,9 @@ import retrofit.http.GET;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 
-public interface NotificationService {
+public interface OdsNotificationService {
 
-	static final String URL_NOTIFICATIONS = DataSourceService.URL_DATASOURCES + "/{sourceId}/notifications";
+	static final String URL_NOTIFICATIONS = OdsDataSourceService.URL_DATASOURCES + "/{sourceId}/notifications";
 
 	@PUT(URL_NOTIFICATIONS + "/{clientId}")
 	public OdsClient register(

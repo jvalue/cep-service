@@ -23,15 +23,15 @@ public class OdsModule extends AbstractModule {
 
 	@Provides
 	@Singleton
-	DataSourceService provideDataSourceService(RestAdapter restAdapter) {
-		return restAdapter.create(DataSourceService.class);
+	OdsDataSourceService provideDataSourceService(RestAdapter restAdapter) {
+		return restAdapter.create(OdsDataSourceService.class);
 	}
 
 
 	@Provides
 	@Singleton
-	NotificationService provideNotificationService(RestAdapter restAdapter) {
-		return restAdapter.create(NotificationService.class);
+	OdsNotificationService provideNotificationService(RestAdapter restAdapter) {
+		return restAdapter.create(OdsNotificationService.class);
 	}
 
 
