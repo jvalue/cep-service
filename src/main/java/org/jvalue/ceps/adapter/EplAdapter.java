@@ -20,4 +20,10 @@ public interface EplAdapter {
 	 */
 	public Set<String> getRequiredParams();
 
+	/**
+	 * @return a human readable URL encoded name for this adapter. Will be used by the REST api to
+	 * create an endpoint for this adapter.
+	 */
+	public String getName();
+
 }

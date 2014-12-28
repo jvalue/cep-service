@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-final class PegelOnlineAdapter implements EplAdapter {
+final class PegelOnlineEplAdapter implements EplAdapter {
 
 	private static final String
 		KEY_RIVER = "river",
@@ -29,6 +29,12 @@ final class PegelOnlineAdapter implements EplAdapter {
 	@Override
 	public Set<String> getRequiredParams() {
 		return requiredParams;
+	}
+
+
+	@Override
+	public String getName() {
+		return "pegelOnline";
 	}
 
 
