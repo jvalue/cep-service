@@ -1,8 +1,6 @@
 package org.jvalue.ceps.rest;
 
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -14,6 +12,8 @@ import org.jvalue.ceps.notifications.clients.ClientFactory;
 
 import java.util.Map;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,7 +39,7 @@ public final class NotificationClientRegistrationApi {
 
 
 	@POST
-	public Client register(GcmClientDescription clientDescription) {
+	public Client register(@Valid GcmClientDescription clientDescription) {
 		Client client = ClientFactory.createGcmClient(clientDescription.deviceId, pegelOnlineAdapter.toEplStmt(clientDescription.eplArguments));
 		notificationManager.register(client);
 		return client;
@@ -54,17 +54,8 @@ public final class NotificationClientRegistrationApi {
 
 	private static final class GcmClientDescription {
 
-		private final String deviceId;
-		private final Map<String, String> eplArguments;
-
-		@JsonCreator
-		public GcmClientDescription(
-				@JsonProperty("deviceId") String deviceId,
-				@JsonProperty("eplArguments") Map<String, String> eplArguments) {
-
-			this.deviceId = deviceId;
-			this.eplArguments = eplArguments;
-		}
+		@NotNull private String deviceId;
+		@NotNull private Map<String, String> eplArguments;
 
 	}
 
