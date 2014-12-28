@@ -27,29 +27,6 @@ import io.dropwizard.lifecycle.Managed;
 
 public final class NotificationManager implements JsonUpdateListener, Managed {
 
-	private static NotificationManager instance;
-
-	public static synchronized NotificationManager getInstance() {
-		/*
-		if (instance == null) {
-			EsperManager esperManager = EsperManager.getInstance();
-			EventManager eventManager = EventManager.getInstance();
-
-			Map<Class<?>, NotificationSender<?>> sender = new HashMap<>();
-			sender.put(GcmClient.class, SenderFactory.getGcmSender());
-
-			JsonObjectDb<Client> clientDb = new JsonObjectDb<Client>(
-					DbAccessorFactory.getCouchDbAccessor(DB_NAME),
-					Client.class);
-
-			instance = new NotificationManager(esperManager, eventManager, sender, clientDb);
-		}
-		return instance;
-		*/
-		return null;
-	}
-
-
 	private final ClientRepository clientRepository;
 	private final Map<Class<?>, NotificationSender<?>> sender;
 	private final EsperManager esperManager;
