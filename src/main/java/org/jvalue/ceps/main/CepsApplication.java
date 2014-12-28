@@ -13,6 +13,7 @@ import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorManager;
 import org.jvalue.ceps.rest.DataApi;
 import org.jvalue.ceps.rest.EventApi;
+import org.jvalue.ceps.rest.NotificationClientRegistrationApi;
 
 import javax.ws.rs.core.Context;
 
@@ -61,6 +62,7 @@ public final class CepsApplication extends Application<CepsConfig> {
 
 		environment.jersey().register(injector.getInstance(DataApi.class));
 		environment.jersey().register(injector.getInstance(EventApi.class));
+		environment.jersey().register(injector.getInstance(NotificationClientRegistrationApi.class));
 	}
 
 
