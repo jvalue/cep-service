@@ -24,6 +24,9 @@ import static org.jvalue.ceps.ods.NotificationService.OdsClientDescription;
 
 public final class DataManager implements Managed, DataSink {
 
+	// Name of this HTTP client on the ODS. Might need more dynamic approach in the future.
+	private static final String ODS_CLIENT_ID = "ceps";
+
 	private final DataSourceService dataSourceService;
 	private final NotificationService notificationService;
 
@@ -60,9 +63,8 @@ public final class DataManager implements Managed, DataSink {
 		OdsDataSource source = dataSourceService.get(sourceId);
 
 		// register for updates
-		// TODO!
-		OdsClientDescription clientDescription = new OdsClientDescription(cepsDataCallbackUrl, null, true);
-		OdsClient client = notificationService.register(sourceId, "ceps", clientDescription);
+		OdsClientDescription clientDescription = new OdsClientDescription(cepsDataCallbackUrl, true);
+		OdsClient client = notificationService.register(sourceId, ODS_CLIENT_ID, clientDescription);
 
 		// store result in db
 		OdsRegistration registration = new OdsRegistration(source, client);

@@ -35,24 +35,18 @@ public interface NotificationService {
 	public static class OdsClientDescription {
 
 		private final String type = "HTTP";
-		@NotNull private String restUrl;
-		@NotNull private String sourceParam;
+		@NotNull private String callbackUrl;
 		@NotNull private boolean sendData;
 
 		public OdsClientDescription() { }
 
-		public OdsClientDescription(String restUrl, String sourceParam, boolean sendData) {
-			this.restUrl = restUrl;
-			this.sourceParam = sourceParam;
+		public OdsClientDescription(String callbackUrl, boolean sendData) {
+			this.callbackUrl = callbackUrl;
 			this.sendData = sendData;
 		}
 
-		public String getRestUrl() {
-			return restUrl;
-		}
-
-		public String getSourceParam() {
-			return sourceParam;
+		public String getCallbackUrl() {
+			return callbackUrl;
 		}
 
 		public boolean getSendData() {
