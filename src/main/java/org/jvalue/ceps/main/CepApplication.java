@@ -1,25 +1,16 @@
 package org.jvalue.ceps.main;
 
 import org.jvalue.ceps.data.DataManager;
-import org.jvalue.ceps.data.DataSource;
 import org.jvalue.ceps.event.EventGarbageCollector;
 import org.jvalue.ceps.event.EventManager;
-import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.rest.DefaultRestlet;
-import org.jvalue.ceps.rest.HelpRestApi;
 import org.jvalue.ceps.rest.RestApi;
-import org.jvalue.ceps.rest.data.DataRestApi;
 import org.jvalue.ceps.rest.data.OdsRestHook;
-import org.jvalue.ceps.rest.debug.DebugRestApi;
-import org.jvalue.ceps.rest.event.EventRestApi;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.RestException;
 import org.restlet.Application;
 import org.restlet.Restlet;
-import org.restlet.routing.Router;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +25,10 @@ public final class CepApplication extends Application {
 	private final List<RestApi> apis = new LinkedList<RestApi>();
 
 	public CepApplication() {
+		/*
 		apis.add(new DataRestApi(DataManager.getInstance()));
 		// apis.add(new NotificationRestApi(NotificationManager.getInstance(), new EplAdapterManager()));
-		apis.add(new EventRestApi(EventManager.getInstance()));
+		// apis.add(new EventRestApi(EventManager.getInstance()));
 		apis.add(new DebugRestApi(
 					NotificationManager.getInstance(),
 					DataManager.getInstance(),
@@ -45,6 +37,7 @@ public final class CepApplication extends Application {
 		List<String> apiCalls = new LinkedList<String>();
 		for (RestApi api : apis) apiCalls.addAll(api.getRoutes().keySet());
 		apis.add(new HelpRestApi(apiCalls));
+		*/
 	}
 
 
