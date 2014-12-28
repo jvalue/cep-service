@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.data.DataManager;
+import org.jvalue.ceps.data.DataSink;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -19,17 +19,17 @@ import javax.ws.rs.core.MediaType;
 @Consumes(MediaType.APPLICATION_JSON)
 public final class DataApi {
 
-	private final DataManager dataManager;
+	private final DataSink dataSink;
 
 	@Inject
-	public DataApi(DataManager dataManager) {
-		this.dataManager = dataManager;
+	public DataApi(DataSink dataSink) {
+		this.dataSink = dataSink;
 	}
 
 
 	@POST
 	public void onNewData(SourceData sourceData) {
-		dataManager.onSourceChanged(sourceData.sourceId, sourceData.data);
+		dataSink.onNewData(sourceData.sourceId, sourceData.data);
 	}
 
 

@@ -19,12 +19,7 @@ import io.dropwizard.lifecycle.Managed;
 import static org.jvalue.ceps.ods.NotificationService.OdsClientDescription;
 
 
-public final class DataManager implements Managed {
-
-	private static final String
-		ODS_URL_UNREGISTRATION = "notifications/unregister",
-		ODS_PARAM_CLIENT_ID = "clientId";
-
+public final class DataManager implements Managed, DataSink {
 
 	private final DataSourceService dataSourceService;
 	private final NotificationService notificationService;
@@ -89,7 +84,8 @@ public final class DataManager implements Managed {
 	}
 
 
-	public void onSourceChanged(String sourceId, JsonNode data) {
+	@Override
+	public void onNewData(String sourceId, JsonNode data) {
 		Log.info("Source " + sourceId + " has new data");
 		dataListener.onNewData(sourceId, data);
 	}

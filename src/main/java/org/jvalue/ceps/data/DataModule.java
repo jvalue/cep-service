@@ -9,6 +9,7 @@ public class DataModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(DataManager.class).in(Singleton.class);
+		bind(DataSink.class).to(DataManager.class);
 	}
 
 }
