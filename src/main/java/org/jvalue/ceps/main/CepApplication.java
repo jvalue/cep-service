@@ -1,7 +1,5 @@
 package org.jvalue.ceps.main;
 
-import org.jvalue.ceps.event.EventGarbageCollector;
-import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.utils.Assert;
 
 
@@ -94,9 +92,9 @@ public final class CepApplication {
 
 	private static void startGarbageCollection() {
 		// trash all events older than 3 hours (clients arent using them currently anyways ...)
-		EventManager eventManager = EventManager.getInstance();
-		EventGarbageCollector collector = new EventGarbageCollector(eventManager, 3600000, 3600000);
-		collector.start();
+		// EventManager eventManager = EventManager.getInstance();
+		// EventGarbageCollector collector = new EventGarbageCollector(eventManager, 3600000, 3600000);
+		// collector.start();
 
 		/*
 		// try removing old clients every 3 days (exact removal interval depends on client type)

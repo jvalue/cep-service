@@ -1,6 +1,7 @@
 package org.jvalue.ceps.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.inject.Inject;
 
 import org.jvalue.ceps.db.EventRepository;
 import org.jvalue.ceps.utils.Assert;
@@ -12,20 +13,10 @@ import java.util.UUID;
 
 public final class EventManager {
 
-	private static EventManager instance;
-
-	public static EventManager getInstance() {
-		if (instance == null) {
-			instance = new EventManager(null);
-		}
-		return instance;
-	}
-
-
 	private final EventRepository eventRepository;
 
-	private EventManager(EventRepository eventRepository) {
-		Assert.assertNotNull(eventRepository);
+	@Inject
+	EventManager(EventRepository eventRepository) {
 		this.eventRepository = eventRepository;
 	}
 
