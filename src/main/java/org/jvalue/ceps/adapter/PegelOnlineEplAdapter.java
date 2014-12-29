@@ -32,10 +32,10 @@ final class PegelOnlineEplAdapter extends AbstractEplAdapter {
 
 	@Override
 	protected String doToEplStmt(Map<String, Object> params) {
-		String river = (String) params.get(KEY_RIVER);
-		String station = (String) params.get(KEY_STATION);
-		double level = (double) params.get(KEY_LEVEL);
-		boolean alarmWhenAbove = (boolean) params.get(KEY_ABOVE);
+		String river = params.get(KEY_RIVER).toString();
+		String station =  params.get(KEY_STATION).toString();
+		double level = Double.valueOf(params.get(KEY_LEVEL).toString());
+		boolean alarmWhenAbove = Boolean.valueOf(params.get(KEY_ABOVE).toString());
 
 		String filter = "(longname = '" + station + "' "
 			+ "and BodyOfWater.longname = '" + river + "' "
