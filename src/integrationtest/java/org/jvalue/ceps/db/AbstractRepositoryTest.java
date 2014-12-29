@@ -4,13 +4,22 @@ package org.jvalue.ceps.db;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
+import org.ektorp.support.CouchDbDocument;
+import org.ektorp.support.CouchDbRepositorySupport;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 
-public abstract class AbstractRepositoryTest {
+import java.util.List;
+import java.util.Map;
+
+public abstract class AbstractRepositoryTest<R extends CouchDbRepositorySupport<T>, T extends CouchDbDocument> {
 
 	private final String databaseName;
 	private final CouchDbInstance couchdbInstance;
+
+	protected R repository;
 
 	public AbstractRepositoryTest(String databaseName) {
 		this.databaseName = databaseName;
@@ -20,11 +29,8 @@ public abstract class AbstractRepositoryTest {
 
 	@Before
 	public final void createDatabase() {
-		createDatabase(couchdbInstance, databaseName);
+		this.repository = doCreateDatabase(couchdbInstance, databaseName);
 	}
-
-
-	protected abstract void createDatabase(CouchDbInstance couchdbInstance, String databaseName);
 
 
 	@After
@@ -32,5 +38,26 @@ public abstract class AbstractRepositoryTest {
 		couchdbInstance.deleteDatabase(databaseName);
 	}
 
+
+	@Test
+	public void testGetAll() {
+		// insert data
+		Map<String, T> itemsMap = doSetupDataItems();
+		for (T item : itemsMap.values()) repository.add(item);
+
+		// fetch and check data
+		List<T> receivedItems = repository.getAll();
+		Assert.assertEquals(itemsMap.size(), receivedItems.size());
+		for (T item : receivedItems) Assert.assertNotNull(itemsMap.remove(doGetIdForItem(item)));
+	}
+
+
+	protected abstract R doCreateDatabase(CouchDbInstance couchdbInstance, String databaseName);
+
+
+	protected abstract Map<String, T> doSetupDataItems();
+
+
+	protected abstract String doGetIdForItem(T item);
 
 }
