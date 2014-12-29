@@ -1,14 +1,17 @@
 package org.jvalue.ceps.rest;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
+import org.apache.commons.lang3.ClassUtils;
 import org.jvalue.ceps.adapter.EplAdapter;
 import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.GcmClient;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -46,15 +49,32 @@ public final class NotificationClientRegistrationApi {
 			@PathParam("clientId") String clientId,
 			@Valid GcmClientDescription clientDescription) {
 
+		Map<String, Object> adapterArguments = new HashMap<>();
+
 		EplAdapter adapter = assertIsValidAdapterName(adapterName);
-		for (String requiredParam : adapter.getRequiredParams()) {
-			if (!clientDescription.eplArguments.containsKey(requiredParam)) throw RestUtils.createJsonFormattedException("missing param " + requiredParam, 400);
-		}
 		if (adapter.getRequiredParams().size() != clientDescription.eplArguments.size()) throw RestUtils.createJsonFormattedException("found additional param", 400);
+		for (String requiredParam : adapter.getRequiredParams().keySet()) {
+			if (!clientDescription.eplArguments.containsKey(requiredParam)) throw RestUtils.createJsonFormattedException("missing param " + requiredParam, 400);
+
+			Class<?> paramClass = adapter.getRequiredParams().get(requiredParam);
+			JsonNode suppliedParam = clientDescription.eplArguments.get(requiredParam);
+
+			// convert supplied params to correct type
+			if (ClassUtils.isAssignable(paramClass, Number.class, true) && suppliedParam.isNumber()) {
+				adapterArguments.put(requiredParam, suppliedParam.asDouble());
+			} else if (ClassUtils.isAssignable(paramClass, String.class, true) && suppliedParam.isTextual()) {
+				adapterArguments.put(requiredParam, suppliedParam.asText());
+			} else if (ClassUtils.isAssignable(paramClass, Boolean.class, true) && suppliedParam.isBoolean()) {
+				adapterArguments.put(requiredParam, suppliedParam.asBoolean());
+			} else {
+				throw RestUtils.createJsonFormattedException("invalid type for param " + requiredParam + ", should be " + paramClass.getSimpleName(), 400);
+			}
+		}
+
 
 		synchronized (this) {
 			if (notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("already registered", 409);
-			Client client = new GcmClient(clientId, clientDescription.deviceId, adapter.toEplStmt(clientDescription.eplArguments));
+			Client client = new GcmClient(clientId, clientDescription.deviceId, adapter.toEplStmt(adapterArguments));
 			notificationManager.register(client);
 			return client;
 		}
@@ -86,7 +106,7 @@ public final class NotificationClientRegistrationApi {
 	private static final class GcmClientDescription {
 
 		@NotNull private String deviceId;
-		@NotNull private Map<String, String> eplArguments;
+		@NotNull private Map<String, JsonNode> eplArguments;
 
 	}
 

@@ -1,12 +1,11 @@
 package org.jvalue.ceps.adapter;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 
-final class PegelOnlineEplAdapter implements EplAdapter {
+final class PegelOnlineEplAdapter extends AbstractEplAdapter {
 
 	private static final String
 		KEY_RIVER = "river",
@@ -14,36 +13,29 @@ final class PegelOnlineEplAdapter implements EplAdapter {
 		KEY_LEVEL = "level",
 		KEY_ABOVE = "above";
 
-	private static final Set<String> requiredParams;
+	private static final Map<String, Class<?>> requiredParams;
 
 	static {
-		Set<String> params = new HashSet<String>();
-		params.add(KEY_RIVER);
-		params.add(KEY_STATION);
-		params.add(KEY_LEVEL);
-		params.add(KEY_ABOVE);
-		requiredParams = Collections.unmodifiableSet(params);
+		Map<String, Class<?>> params = new HashMap<>();
+		params.put(KEY_RIVER, String.class);
+		params.put(KEY_STATION, String.class);
+		params.put(KEY_LEVEL, double.class);
+		params.put(KEY_ABOVE, boolean.class);
+		requiredParams = Collections.unmodifiableMap(params);
+	}
+
+
+	PegelOnlineEplAdapter() {
+		super("pegelOnline", requiredParams);
 	}
 
 
 	@Override
-	public Set<String> getRequiredParams() {
-		return requiredParams;
-	}
-
-
-	@Override
-	public String getName() {
-		return "pegelOnline";
-	}
-
-
-	@Override
-	public String toEplStmt(Map<String, String> params) {
-		String river = params.get(KEY_RIVER);
-		String station = params.get(KEY_STATION);
-		double level = Double.valueOf(params.get(KEY_LEVEL));
-		boolean alarmWhenAbove = Boolean.valueOf(params.get(KEY_ABOVE));
+	protected String doToEplStmt(Map<String, Object> params) {
+		String river = (String) params.get(KEY_RIVER);
+		String station = (String) params.get(KEY_STATION);
+		double level = (double) params.get(KEY_LEVEL);
+		boolean alarmWhenAbove = (boolean) params.get(KEY_ABOVE);
 
 		String filter = "(longname = '" + station + "' "
 			+ "and BodyOfWater.longname = '" + river + "' "
