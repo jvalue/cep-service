@@ -6,6 +6,8 @@ import com.espertech.esper.client.EPServiceProviderManager;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
+import org.jvalue.ceps.data.DataUpdateListener;
+
 public class EsperModule extends AbstractModule {
 
 	@Override

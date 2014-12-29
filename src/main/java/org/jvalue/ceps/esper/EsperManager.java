@@ -7,6 +7,7 @@ import com.espertech.esper.client.EPStatement;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
+import org.jvalue.ceps.data.DataUpdateListener;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 
@@ -64,9 +65,9 @@ public final class EsperManager implements DataUpdateListener {
 
 
 	@Override
-	public void onNewDataType(String dataName, JsonNode dataSchema) {
-		Log.info("Adding datatype \"" + dataName + "\"");
-		List<EventDefinition> definitions = schemaTranslator.toEventDefinition(dataName, dataSchema);
+	public void onSourceAdded(String sourceId, JsonNode schema) {
+		Log.info("Adding datatype \"" + sourceId + "\"");
+		List<EventDefinition> definitions = schemaTranslator.toEventDefinition(sourceId, schema);
 		for (EventDefinition definition : definitions) {
 			admin.getConfiguration().addEventType(definition.getName(), definition.getSchema());
 		}
@@ -74,15 +75,29 @@ public final class EsperManager implements DataUpdateListener {
 
 
 	@Override
-	public void onNewData(String dataName, JsonNode data) {
-		Assert.assertNotNull(dataName, data);
+	public void onSourceRemoved(String sourceId, JsonNode schema) {
+		// TODO remove from Esper engine?
+	}
+
+
+	@Override
+	public void onRestoreSources(Map<String, JsonNode> sources) {
+		for (Map.Entry<String, JsonNode> entry : sources.entrySet()) {
+			onSourceAdded(entry.getKey(), entry.getValue());
+		}
+	}
+
+
+	@Override
+	public void onNewSourceData(String sourceId, JsonNode data) {
+		Assert.assertNotNull(sourceId, data);
 		Assert.assertTrue(data.isArray());
 
 		for (int i = 0; i < data.size(); i++) {
 			try {
-				runtime.sendEvent(dataTranslator.toMap(data.get(i)), dataName);
+				runtime.sendEvent(dataTranslator.toMap(data.get(i)), sourceId);
 			} catch (IOException ioe) {
-				Log.error("failed to translate data " + dataName, ioe);
+				Log.error("failed to translate data " + sourceId, ioe);
 			}
 		}
 	}

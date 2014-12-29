@@ -64,7 +64,7 @@ public final class NotificationManagerTest {
 				senderMap);
 		 */
 
-		esperManager.onNewDataType(dataType, getResource("/schema-pegelonline.json"));
+		esperManager.onSourceAdded(dataType, getResource("/schema-pegelonline.json"));
 	}
 
 
@@ -138,7 +138,7 @@ public final class NotificationManagerTest {
 
 	private void testResult(SenderResult.Status status) throws Exception {
 		sender.setStatus(status);
-		esperManager.onNewData(dataType, getResource("/data-pegelonline1.json"));
+		esperManager.onNewSourceData(dataType, getResource("/data-pegelonline1.json"));
 		assertEquals(1, sendEventUpdateCount);
 	}
 

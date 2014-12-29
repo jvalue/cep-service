@@ -46,15 +46,15 @@ public final class EsperManagerTest {
 		JsonNode schema = getResource("/schema-pegelonline.json");
 		JsonNode data = getResource("/data-pegelonline1.json");
 
-		manager.onNewDataType(dataType, schema);
+		manager.onSourceAdded(dataType, schema);
 		String regId = manager.register(eplStmt, new DummyUpdateListener());
-		manager.onNewData(dataType, data);
+		manager.onNewSourceData(dataType, data);
 
 		assertNotNull(regId);
 		assertEquals(1, updateCount);
 
 		manager.unregister(regId);
-		manager.onNewData(dataType, data);
+		manager.onNewSourceData(dataType, data);
 
 		assertEquals(1, updateCount);
 
@@ -90,14 +90,14 @@ public final class EsperManagerTest {
 			data[i] = getResource("/data-pegelonline" + (i+1) + ".json");
 		}
 
-		manager.onNewDataType(dataType, schema);
+		manager.onSourceAdded(dataType, schema);
 		manager.register(eplStmt, new DummyUpdateListener());
 
-		manager.onNewData(dataType, data[0]);
-		manager.onNewData(dataType, data[1]);
+		manager.onNewSourceData(dataType, data[0]);
+		manager.onNewSourceData(dataType, data[1]);
 		assertEquals(0, updateCount);
-		manager.onNewData(dataType, data[2]);
-		manager.onNewData(dataType, data[3]);
+		manager.onNewSourceData(dataType, data[2]);
+		manager.onNewSourceData(dataType, data[3]);
 		assertEquals(1, updateCount);
 	}
 

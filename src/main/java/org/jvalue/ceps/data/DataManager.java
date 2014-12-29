@@ -5,17 +5,18 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import org.jvalue.ceps.db.OdsRegistrationRepository;
-import org.jvalue.ceps.esper.DataUpdateListener;
 import org.jvalue.ceps.main.ConfigModule;
-import org.jvalue.ceps.ods.OdsDataSourceService;
-import org.jvalue.ceps.ods.OdsNotificationService;
 import org.jvalue.ceps.ods.OdsClient;
 import org.jvalue.ceps.ods.OdsDataSource;
+import org.jvalue.ceps.ods.OdsDataSourceService;
+import org.jvalue.ceps.ods.OdsNotificationService;
 import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.dropwizard.lifecycle.Managed;
 
@@ -67,6 +68,9 @@ public final class DataManager implements Managed, DataSink {
 		// store result in db
 		OdsRegistration registration = new OdsRegistration(source, client);
 		registrationRepository.add(registration);
+
+		// notify listener
+		dataListener.onSourceAdded(sourceId, source.getSchema());
 	}
 
 
@@ -77,6 +81,7 @@ public final class DataManager implements Managed, DataSink {
 
 		odsNotificationService.unregister(sourceId, registration.getClient().getId());
 		registrationRepository.remove(registration);
+		dataListener.onSourceRemoved(sourceId, registration.getDataSource().getSchema());
 	}
 
 
@@ -94,7 +99,7 @@ public final class DataManager implements Managed, DataSink {
 	@Override
 	public void onNewData(String sourceId, JsonNode data) {
 		Log.info("Source " + sourceId + " has new data");
-		dataListener.onNewData(sourceId, data);
+		dataListener.onNewSourceData(sourceId, data);
 	}
 
 
@@ -108,11 +113,11 @@ public final class DataManager implements Managed, DataSink {
 
 	@Override
 	public void start() {
+		Map<String, JsonNode> sources = new HashMap<>();
 		for (OdsRegistration registration : registrationRepository.getAll()) {
-			dataListener.onNewDataType(
-					registration.getDataSource().getId(),
-					registration.getDataSource().getSchema());
+			sources.put(registration.getDataSource().getId(), registration.getDataSource().getSchema());
 		}
+		dataListener.onRestoreSources(sources);
 	}
 
 
