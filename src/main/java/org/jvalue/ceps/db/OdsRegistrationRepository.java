@@ -9,7 +9,7 @@ import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.View;
 import org.jvalue.ceps.data.OdsRegistration;
 
-@View( name = "all", map = "function(doc) { if (doc.clientId && doc.dataSource ) emit(null, doc)}")
+@View( name = "all", map = "function(doc) { if (doc.client && doc.dataSource ) emit(null, doc)}")
 public final class OdsRegistrationRepository extends CouchDbRepositorySupport<OdsRegistration> {
 
 	static final String DATABASE_NAME = "sources";

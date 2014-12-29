@@ -11,6 +11,11 @@ public final class OdsDataSource {
 
 	public OdsDataSource() { }
 
+	public OdsDataSource(String id, JsonNode schema) {
+		this.id = id;
+		this.schema = schema;
+	}
+
 	public String getId() {
 		return id;
 	}
