@@ -1,163 +1,162 @@
 package org.jvalue.ceps.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.TextNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.jvalue.ceps.db.OdsRegistrationRepository;
+import org.jvalue.ceps.ods.OdsClient;
+import org.jvalue.ceps.ods.OdsDataSource;
+import org.jvalue.ceps.ods.OdsDataSourceService;
+import org.jvalue.ceps.ods.OdsNotificationService;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Verifications;
+import mockit.integration.junit4.JMockit;
+
+import static org.jvalue.ceps.ods.OdsNotificationService.OdsClientDescription;
+
+@RunWith(JMockit.class)
 public final class DataManagerTest {
 
-	private static final ObjectMapper mapper = new ObjectMapper();
+	private final String sourceId = "someSourceId";
 
-	private static final String DATA_NAME = "dummy";
-	private static final JsonNode DATA_TYPE = new TextNode("type");
-	private static final JsonNode DATA_VALUE = new TextNode("value");
+	@Mocked private OdsDataSourceService sourceService;
+	@Mocked private OdsNotificationService notificationService;
+	@Mocked private OdsRegistrationRepository repository;
+	@Mocked private DataUpdateListener updateListener;
 
-	private int onNewDataType = 0;
-	private int onNewDataCount = 0;
+	private final String cepsBaseUrl = "http://localhost:8080";
+	private final String dataUrl = "/data";
 
+	private DataManager dataManager;
+
+	@Mocked private OdsDataSource source;
+	@Mocked private OdsClient client;
+
+	private final ObjectNode sourceSchema = new ObjectNode(JsonNodeFactory.instance);
+	{
+		sourceSchema.put("key", "value");
+	}
 
 
 	@Before
-	public final void resetCounters() {
-		onNewDataType = 0;
-		onNewDataCount = 0;
-	}
-
-	/*
-	TOOD
-
-	@Test
-	public final void testDataListener() throws Exception {
-		DataManager manager = DummyDataManager.createInstance(new DummyDataUpdateListener());
-		manager.onSourceChanged(DATA_NAME, DATA_VALUE);
-
-		assertEquals(0, onNewDataType);
-		assertEquals(1, onNewDataCount);
-
-		manager.onSourceChanged(DATA_NAME, DATA_VALUE);
-
-		assertEquals(0, onNewDataType);
-		assertEquals(2, onNewDataCount);
+	public void setupDataManager() {
+		dataManager = new DataManager(
+				sourceService,
+				notificationService,
+				repository,
+				updateListener,
+				cepsBaseUrl,
+				dataUrl);
 	}
 
 
 	@Test
-	public final void testMonitoring() throws Exception {
+	public void testStartMonitoring() {
+		setupSource();
+		new Expectations() {{
+			sourceService.get(anyString);
+			result = source;
 
-		final String CALLBACK_URL = "dummyUrl";
-		final String CALLBACK_PARAM = "dummyParam";
+			notificationService.register(anyString, anyString, (OdsClientDescription) any);
+			result = client;
+		}};
 
-		final String ODS_REGISTER = "notifications/rest/register";
-		final String ODS_UNREGISTER = "notifications/unregister";
-		final String ODS_SCHEMA = "schema";
+		dataManager.startMonitoring(sourceId);
 
-		final String KEY_CLIENTID = "clientId";
+		new Verifications() {{
+			sourceService.get(sourceId);
+			times = 1;
 
-		Application application = new Application() {
+			OdsClientDescription clientDescription;
+			notificationService.register(sourceId, anyString, clientDescription = withCapture());
 
-			@Override
-			public Restlet createInboundRoot() {
-				Router router =new Router(getContext());
-				router.attachDefault(new Restlet() {
+			Assert.assertEquals(cepsBaseUrl + dataUrl, clientDescription.getCallbackUrl());
+			Assert.assertEquals(true, clientDescription.getSendData());
 
-					private int callCount = 0;
-
-					@Override
-					public void handle(Request request, Response response) {
-
-						switch(callCount) {
-							case 0:
-								assertTrue(request.getResourceRef().getPath()
-									.contains(ODS_SCHEMA));
-
-								response.setEntity(
-									DATA_TYPE.toString(), 
-									MediaType.APPLICATION_JSON);
-
-								callCount++;
-								break;
-
-							case 1:
-								try {
-									assertTrue(request.getResourceRef().getPath()
-										.contains(ODS_REGISTER));
-									Map<String, Object> result = new HashMap<String, Object>();
-									result.put(KEY_CLIENTID, "dummyClientId");
-									response.setEntity(
-											mapper.valueToTree(result).toString(), 
-											MediaType.APPLICATION_JSON);
-									callCount++;
-								} catch (Exception e) {
-									Log.info("fail", e);
-								}
-
-								break;
-
-							case 2:
-								assertTrue(request.getResourceRef().getPath()
-									.contains(ODS_UNREGISTER));
-								callCount++;
-								assertEquals(
-										"dummyClientId", 
-										request.getResourceRef().getQueryAsForm()
-											.getFirst(KEY_CLIENTID).getValue());
-								break;
-
-							default:
-								fail();
-						}
-					}
-				});
-
-				return router;
-			}
-		};
-
-		Component component = new Component();
-		component.getServers().add(Protocol.HTTP, 8184);
-		component.getDefaultHost().attach(application);
-		component.start();
-
-		DataManager manager = DummyDataManager.createInstance(new DummyDataUpdateListener());
-		DataSource source = new DataSource(DATA_NAME, "http://localhost:8184", ODS_SCHEMA);
-
-		assertFalse(manager.isBeingMonitored(source));
-
-		manager.startMonitoring(source, CALLBACK_URL, CALLBACK_PARAM);
-
-		assertTrue(manager.isBeingMonitored(source));
-		assertEquals(1, onNewDataType);
-		assertEquals(0, onNewDataCount);
-
-		manager.stopMonitoring(source);
-
-		assertFalse(manager.isBeingMonitored(source));
-		assertEquals(1, onNewDataType);
-		assertEquals(0, onNewDataCount);
-
+			updateListener.onSourceAdded(sourceId, sourceSchema);
+			times = 1;
+		}};
 	}
 
 
-	private class DummyDataUpdateListener implements DataUpdateListener {
+	@Test
+	public void testStopMonitoring() {
+		setupSource();
+		new Expectations() {{
+			List<OdsRegistration> registrations = new LinkedList<>();
+			registrations.add(new OdsRegistration(source, client));
 
-		@Override
-		public void onNewDataType(String name, JsonNode schema) {
-			assertEquals(DATA_NAME, name);
-			assertEquals(DATA_TYPE, schema);
-			onNewDataType++;
-		}
+			repository.getAll();
+			result = registrations;
+		}};
 
-		@Override
-		public void onNewData(String name, JsonNode data) {
-			assertEquals(DATA_NAME, name);
-			assertEquals(DATA_VALUE, data);
-			onNewDataCount++;
-		}
+		dataManager.stopMonitoring(sourceId);
 
+		new Verifications() {{
+			notificationService.unregister(sourceId, anyString);
+
+			updateListener.onSourceRemoved(sourceId, sourceSchema); times = 1;
+		}};
 	}
-	 */
+
+
+	@Test
+	public void testOnNewData() {
+		final ObjectNode data = new ObjectNode(JsonNodeFactory.instance);
+		data.put("key", "value");
+
+		dataManager.onNewData(sourceId, data);
+
+		new Verifications() {{
+			updateListener.onNewSourceData(sourceId, data);
+		}};
+	}
+
+
+	@Test
+	public  void testStart() {
+		setupSource();
+		new Expectations() {{
+			List<OdsRegistration> registrations = new LinkedList<>();
+			registrations.add(new OdsRegistration(source, client));
+
+			repository.getAll();
+			result = registrations;
+		}};
+
+		dataManager.start();
+
+		new Verifications() {{
+			Map<String, JsonNode> sources;
+			updateListener.onRestoreSources(sources = withCapture());
+
+			Assert.assertTrue(sources.containsKey(sourceId));
+			Assert.assertEquals(sourceSchema, sources.get(sourceId));
+		}};
+	}
+
+
+	private void setupSource() {
+		new Expectations() {{
+			source.getSchema();
+			result = sourceSchema;
+			source.getId();
+			minTimes = 0;
+			result = sourceId;
+		}};
+	}
+
+
 
 }

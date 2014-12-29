@@ -56,7 +56,7 @@ public final class DataManager implements Managed, DataSink {
 
 	public void startMonitoring(String sourceId) {
 		Assert.assertNotNull(sourceId);
-		Assert.assertFalse(isBeingMonitored(sourceId), "source already being monitored");
+		if (isBeingMonitored(sourceId)) throw new IllegalStateException("source already being monitored");
 
 		// get source / schema
 		OdsDataSource source = odsDataSourceService.get(sourceId);
@@ -77,7 +77,7 @@ public final class DataManager implements Managed, DataSink {
 	public void stopMonitoring(String sourceId) {
 		Assert.assertNotNull(sourceId);
 		OdsRegistration registration = getRegistrationForSourceId(sourceId);
-		Assert.assertTrue(registration != null, "source not being monitored");
+		if (registration == null) throw new IllegalStateException("source not being monitored");
 
 		odsNotificationService.unregister(sourceId, registration.getClient().getId());
 		registrationRepository.remove(registration);
