@@ -56,3 +56,21 @@ dependencies {
 tasks.withType(Compile) {
 	options.compilerArgs << "-Xlint:unchecked"
 }
+
+
+sourceSets {
+    integrationTest {
+        java.srcDir file('src/integrationtest/java')
+        resources.srcDir file('src/integrationtest/resouces')
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+
+task integrationTest(type: Test) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+build.dependsOn integrationTest
