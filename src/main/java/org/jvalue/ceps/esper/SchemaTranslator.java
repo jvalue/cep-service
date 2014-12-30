@@ -132,7 +132,7 @@ final class SchemaTranslator {
 		Object type = null;
 		if (jsonObjectType.equals("java.lang.String")) type = String.class;
 		else if (jsonObjectType.equals("java.lang.Number")) type = double.class;
-		else if (jsonObjectType.equals("Null")) type = "Null";
+		else if (jsonObjectType.equals("Null")) type = "regIdNull";
 		else Log.error("failed to parse object type " + jsonObjectType);
 
 		if (isArray) {

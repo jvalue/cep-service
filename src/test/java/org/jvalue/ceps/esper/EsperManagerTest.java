@@ -1,122 +1,100 @@
 package org.jvalue.ceps.esper;
 
+import com.espertech.esper.client.EPServiceProvider;
+import com.espertech.esper.client.EPServiceProviderManager;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Verifications;
+import mockit.integration.junit4.JMockit;
 
 
+@RunWith(JMockit.class)
 public final class EsperManagerTest {
 
-	private static final ObjectMapper mapper = new ObjectMapper();
-	private static final String dataType = "pegelonline";
+	private static final String SCHEMA_NAME = "someSchema";
 
-	private int updateCount = 0;
+	@Mocked SchemaTranslator schemaTranslator;
+	@Mocked DataTranslator dataTranslator;
 
+	@Mocked EventUpdateListener updateListener;
+
+
+	private EsperManager esperManager;
+	private EPServiceProvider epServiceProvider;
 
 	@Before
-	public final void resetCounter() {
-		updateCount = 0;
+	public void setupManager() {
+		epServiceProvider = EPServiceProviderManager.getProvider(EsperManagerTest.class.getSimpleName());
+		esperManager = new EsperManager(epServiceProvider, schemaTranslator, dataTranslator);
+	}
+
+
+	@After
+	public void tearDownManager() {
+		epServiceProvider.destroy();
 	}
 
 
 	@Test
-	public void testEventUpdates() throws Exception {
+	@SuppressWarnings("unchecked")
+	public void testOnNewData() throws Exception {
+		new Expectations() {{
+			schemaTranslator.toEventDefinition(SCHEMA_NAME, (JsonNode) any);
+			result = createDummySchema(SCHEMA_NAME);
 
-		EsperManager manager = DummyEsperManager.createInstance("EsperManagerTest");
-		assertNotNull(manager);
+			dataTranslator.toMap((JsonNode) any);
+			result = createDummyData();
+		}};
 
-		String eplStmt = 
-			"select timeseries[0] from "
-			+ dataType 
-			+ ".win:length(1) where "
-			+ "longname = 'EITZE' "
-			+ "and BodyOfWater.longname = 'ALLER' "
-			+ "and timeseries[0].shortname = 'W'";
+		String eplStmt =
+				"select * from "
+				+ SCHEMA_NAME
+				+ ".win:length(1) where attribute1 = 'some value'";
 
-		JsonNode schema = getResource("/schema-pegelonline.json");
-		JsonNode data = getResource("/data-pegelonline1.json");
+		final int dataItems = 3;
+		ArrayNode dummyJsonData = new ArrayNode(JsonNodeFactory.instance);
+		for (int i = 0; i < dataItems; ++i) dummyJsonData.add(0);
 
-		manager.onSourceAdded(dataType, schema);
-		String regId = manager.register(eplStmt, new DummyUpdateListener());
-		// manager.onNewSourceData(dataType, data);
+		esperManager.onSourceAdded(SCHEMA_NAME, new ObjectNode(JsonNodeFactory.instance));
+		final String regId = esperManager.register(eplStmt, updateListener);
+		esperManager.onNewSourceData(SCHEMA_NAME, dummyJsonData);
 
-		assertNotNull(regId);
-		assertEquals(1, updateCount);
-
-		manager.unregister(regId);
-		// manager.onNewSourceData(dataType, data);
-
-		assertEquals(1, updateCount);
-
+		Assert.assertNotNull(regId);
+		new Verifications() {{
+			updateListener.onNewEvents(regId, (List<JsonNode>) any, (List<JsonNode>) any);
+			times = dataItems;
+		}};
 	}
 
 
-	@Test
-	public void testComplexEventUpdate() throws Exception {
-
-		EsperManager manager = DummyEsperManager.createInstance("EsperManagerComplexTest");
-		assertNotNull(manager);
-
-		String station = "EITZE";
-		String river = "ALLER";
-		String filter = "(longname = '" + station + "' " 
-			+ "and BodyOfWater.longname = '" + river + "' "
-			+ "and timeseries.firstof(i => i.shortname = 'W') is not null)";
-		double level = 300;
-
-		String eplStmt = 
-			"select a, b from pattern [every "
-			+ "a=" + dataType + filter + " -> b=" + dataType + filter + "] "
-			+ "where "
-			+ "a.timeseries.firstof(i => i.shortname = 'W' and i.currentMeasurement.value <= " + level + ") "
-			+ "is not null and "
-			+ "b.timeseries.firstof(i => i.shortname = 'W' and i.currentMeasurement.value > " + level + ") "
-			+ " is not null";
-
-		JsonNode schema = getResource("/schema-pegelonline.json");
-		int dataCount = 4;
-		JsonNode[] data = new JsonNode[dataCount];
-		for (int i = 0; i < dataCount; i++) {
-			data[i] = getResource("/data-pegelonline" + (i+1) + ".json");
-		}
-
-		manager.onSourceAdded(dataType, schema);
-		manager.register(eplStmt, new DummyUpdateListener());
-
-		// manager.onNewSourceData(dataType, data[0]);
-		// manager.onNewSourceData(dataType, data[1]);
-		assertEquals(0, updateCount);
-		// manager.onNewSourceData(dataType, data[2]);
-		// manager.onNewSourceData(dataType, data[3]);
-		assertEquals(1, updateCount);
+	private EventDefinition createDummySchema(String schemaName) {
+		Map<String, Object> schema = new HashMap<>();
+		schema.put("attribute1", String.class);
+		schema.put("attribute2", double.class);
+		return new EventDefinition(schemaName, schema);
 	}
 
 
-	private JsonNode getResource(String resourceName) throws Exception {
-		URL url = getClass().getResource(resourceName);
-		return mapper.readTree(new File(url.toURI()));
-	}
-
-
-	private class DummyUpdateListener implements EventUpdateListener {
-		@Override
-		public void onNewEvents(String stmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
-			assertNotNull(stmtId);
-			assertNotNull(newEvents);
-			assertNotNull(oldEvents);
-			assertTrue(newEvents.size() > 0);
-			updateCount++;
-		}
+	private Map<String, Object> createDummyData() {
+		Map<String, Object> data = new HashMap<>();
+		data.put("attribute1", "some value");
+		data.put("attribute2", 1234);
+		return data;
 	}
 
 }

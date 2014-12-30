@@ -7,7 +7,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.jvalue.ceps.esper.DummyEsperManager;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.clients.DummyClient;
@@ -50,7 +49,7 @@ public final class NotificationManagerTest {
 
 		// TODO
 		EventManager eventManager = null;
-		esperManager = DummyEsperManager.createInstance("NotificationManagerTest");
+		// esperManager = DummyEsperManager.createInstance("NotificationManagerTest");
 		sender = new DummyNotificationSender();
 
 		Map<Class<?>, NotificationSender<?>> senderMap = new HashMap<>();
