@@ -1,83 +1,93 @@
-package org.jvalue.ceps.notifications.sender; 
+package org.jvalue.ceps.notifications.sender;
+
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.jvalue.ceps.notifications.clients.Client;
+
+import java.util.List;
 
 public final class NotificationSenderTest {
 
-	/*
+	private final NotificationSender<Client> sender = new DummyNotificationSender();
+
 	@Test
 	public final void testSuccessResult() {
-
-		DummyNotificationSender sender = new DummyNotificationSender();
-
 		SenderResult success = sender.getSuccessResult();
-		assertNotNull(success);
-		assertEquals(success.getStatus(), SenderResult.Status.SUCCESS);
-		assertNull(success.getRemoveDeviceId());
-		assertNull(success.getUpdateDeviceId());
-		assertNull(success.getErrorMsg());
-		assertNull(success.getErrorCause());
+		Assert.assertNotNull(success);
+		Assert.assertEquals(success.getStatus(), SenderResult.Status.SUCCESS);
+		Assert.assertNull(success.getRemoveDeviceId());
+		Assert.assertNull(success.getUpdateDeviceId());
+		Assert.assertNull(success.getErrorMsg());
+		Assert.assertNull(success.getErrorCause());
 
 	}
 
 
 	@Test
 	public final void testErrorMsgResult() {
-
-		DummyNotificationSender sender = new DummyNotificationSender();
-
 		SenderResult error = sender.getErrorResult("error");
-		assertNotNull(error);
-		assertEquals(error.getStatus(), SenderResult.Status.ERROR);
-		assertEquals(error.getErrorMsg(), "error");
-		assertNull(error.getRemoveDeviceId());
-		assertNull(error.getUpdateDeviceId());
-		assertNull(error.getErrorCause());
+		Assert.assertNotNull(error);
+		Assert.assertEquals(error.getStatus(), SenderResult.Status.ERROR);
+		Assert.assertEquals(error.getErrorMsg(), "error");
+		Assert.assertNull(error.getRemoveDeviceId());
+		Assert.assertNull(error.getUpdateDeviceId());
+		Assert.assertNull(error.getErrorCause());
 
 	}
 
 
 	@Test
 	public final void testErrorCauseResult() {
-
-		DummyNotificationSender sender = new DummyNotificationSender();
 		Exception exception = new RuntimeException("error");
-
 		SenderResult error = sender.getErrorResult(exception);
-		assertNotNull(error);
-		assertEquals(error.getStatus(), SenderResult.Status.ERROR);
-		assertEquals(error.getErrorCause(), exception);
-		assertNull(error.getRemoveDeviceId());
-		assertNull(error.getUpdateDeviceId());
-		assertNull(error.getErrorMsg());
-
+		Assert.assertNotNull(error);
+		Assert.assertEquals(error.getStatus(), SenderResult.Status.ERROR);
+		Assert.assertEquals(error.getErrorCause(), exception);
+		Assert.assertNull(error.getRemoveDeviceId());
+		Assert.assertNull(error.getUpdateDeviceId());
+		Assert.assertNull(error.getErrorMsg());
 	}
 
 
 	@Test
 	public final void testClientResults() {
-
-		DummyNotificationSender sender = new DummyNotificationSender();
-
 		String oldDeviceId = "idOld";
 		String newDeviceId = "idNew";
 
 		SenderResult result = sender.getRemoveClientResult(oldDeviceId);
-		assertNotNull(result);
-		assertEquals(SenderResult.Status.REMOVE_CLIENT, result.getStatus());
-		assertEquals(oldDeviceId, result.getRemoveDeviceId());
-		assertNull(result.getUpdateDeviceId());
-		assertNull(result.getErrorCause());
-		assertNull(result.getErrorMsg());
+		Assert.assertNotNull(result);
+		Assert.assertEquals(SenderResult.Status.REMOVE_CLIENT, result.getStatus());
+		Assert.assertEquals(oldDeviceId, result.getRemoveDeviceId());
+		Assert.assertNull(result.getUpdateDeviceId());
+		Assert.assertNull(result.getErrorCause());
+		Assert.assertNull(result.getErrorMsg());
 
 		result = sender.getUpdateClientResult(oldDeviceId, newDeviceId);
-		assertNotNull(result);
-		assertEquals(SenderResult.Status.UPDATE_CLIENT, result.getStatus());
-		assertNull(result.getRemoveDeviceId());
-		assertEquals(oldDeviceId, result.getUpdateDeviceId().first);
-		assertEquals(newDeviceId, result.getUpdateDeviceId().second);
-		assertNull(result.getErrorCause());
-		assertNull(result.getErrorMsg());
+		Assert.assertNotNull(result);
+		Assert.assertEquals(SenderResult.Status.UPDATE_CLIENT, result.getStatus());
+		Assert.assertNull(result.getRemoveDeviceId());
+		Assert.assertEquals(oldDeviceId, result.getUpdateDeviceId().first);
+		Assert.assertEquals(newDeviceId, result.getUpdateDeviceId().second);
+		Assert.assertNull(result.getErrorCause());
+		Assert.assertNull(result.getErrorMsg());
 
 	}
 
-	*/
+
+	private static final class DummyNotificationSender extends NotificationSender<Client> {
+
+		@Override
+		public SenderResult sendEventUpdate(
+				Client client,
+				String eventId,
+				List<JsonNode> newEvents,
+				List<JsonNode> oldEvents) {
+
+			return null;
+		}
+
+	}
+
 }
