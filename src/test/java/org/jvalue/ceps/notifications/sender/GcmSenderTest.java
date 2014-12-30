@@ -1,128 +1,130 @@
 package org.jvalue.ceps.notifications.sender;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.notifications.utils.GcmUtils;
 
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.jvalue.ceps.notifications.clients.GcmClient;
-import org.jvalue.ceps.notifications.utils.GcmUtils;
-import org.mockito.ArgumentCaptor;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-
-import com.fasterxml.jackson.databind.JsonNode;
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Verifications;
+import mockit.integration.junit4.JMockit;
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({GcmUtils.class, GcmClient.class, GcmUtils.GcmResult.class})
+@RunWith(JMockit.class)
 public final class GcmSenderTest {
 
+	private static final String
+			CLIENT_ID = "clientId",
+			DEVICE_ID = "deviceId",
+			EVENT_ID = "eventId";
 
-	@Test
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	public final void testPayload() {
-		GcmUtils utils = PowerMockito.mock(GcmUtils.class);
-		GcmUtils.GcmResult result = getResult(true, null, false, null, null);
-		when(utils.sendMsg(any(String.class), any(Map.class))).thenReturn(result);
+	private static final GcmClient client = new GcmClient(CLIENT_ID, DEVICE_ID, "eplStmt");
 
-		GcmSender sender = new GcmSender(utils);
-		String EVENT_ID = "someEventId";
 
-		SenderResult senderResult = sender.sendEventUpdate(
-				getGcmClient(), 
-				EVENT_ID, 
-				new LinkedList<JsonNode>(), 
-				new LinkedList<JsonNode>());
-		assertEquals(SenderResult.Status.SUCCESS, senderResult.getStatus());
+	@Mocked private GcmUtils gcmUtils;
+	@Mocked private GcmUtils.GcmResult gcmResult;
 
-		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
-		verify(utils).sendMsg(eq(DEVICE_ID), captor.capture());
+	private GcmSender sender;
 
-		assertEquals(CLIENT_ID, captor.getValue().get(GcmSender.DATA_KEY_CLIENT_ID));
-		assertEquals(EVENT_ID, captor.getValue().get(GcmSender.DATA_KEY_EVENT_ID));
+
+	@Before
+	public void setupSender() {
+		sender = new GcmSender(gcmUtils);
+
+		new Expectations() {{
+			gcmUtils.sendMsg(anyString, (Map) any);
+			result = gcmResult;
+		}};
 	}
 
 
 	@Test
-	public final void testErrorResult() {
-		String errorMsg = "some fail";
-		SenderResult result = testResult(getResult(false, errorMsg, false, null, null));
-		assertEquals(SenderResult.Status.ERROR, result.getStatus());
-		assertEquals(errorMsg, result.getErrorMsg());
-
-		IOException exception = new IOException("booom");
-		result = testResult(getResult(false, null, false, null, exception));
-		assertEquals(SenderResult.Status.ERROR, result.getStatus());
-		assertEquals(exception, result.getErrorCause());
-	}
-
-
-	@Test
-	public final void testUpdateResult() {
-		String newId = "someNewGcmId";
-		SenderResult result = testResult(getResult(false, null, false, newId, null));
-		assertEquals(SenderResult.Status.UPDATE_CLIENT, result.getStatus());
-		assertEquals(DEVICE_ID, result.getUpdateDeviceId().first);
-		assertEquals(newId, result.getUpdateDeviceId().second);
-	}
-
-
-	@Test
-	public final void testRemoveResult() {
-		SenderResult result = testResult(getResult(false, null, true, null, null));
-		assertEquals(SenderResult.Status.REMOVE_CLIENT, result.getStatus());
-		assertEquals(DEVICE_ID, result.getRemoveDeviceId());
-	}
-
-
 	@SuppressWarnings("unchecked")
-	private SenderResult testResult(GcmUtils.GcmResult gcmResult) {
-		GcmUtils utils = PowerMockito.mock(GcmUtils.class);
-		when(utils.sendMsg(any(String.class), any(Map.class))).thenReturn(gcmResult);
+	public void testPayload() {
+		new Expectations() {{
+			gcmResult.isSuccess();
+			result = true;
+		}};
 
-		return new GcmSender(utils).sendEventUpdate(
-				getGcmClient(), 
-				"someEventId", 
-				new LinkedList<JsonNode>(), 
-				new LinkedList<JsonNode>());
+		SenderResult senderResult = sender.sendEventUpdate(client, EVENT_ID, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
+
+		Assert.assertEquals(SenderResult.Status.SUCCESS, senderResult.getStatus());
+		new Verifications() {{
+			Map<String, String> payload;
+			gcmUtils.sendMsg(DEVICE_ID, payload = withCapture());
+			times = 1;
+
+			Assert.assertEquals(EVENT_ID, payload.get("event"));
+			Assert.assertEquals(CLIENT_ID, payload.get("client"));
+		}};
 	}
 
 
-	public GcmUtils.GcmResult getResult(
-			boolean success,
-			String errorMsg,
-			boolean notRegistered,
-			String newGcmId,
-			IOException exception) {
+	@Test
+	public void testErrorString() {
+		String errorMsg = "some fail";
+		SenderResult result = setupResult(false, errorMsg, false, null, null);
 
-		GcmUtils.GcmResult result = PowerMockito.mock(GcmUtils.GcmResult.class);
-		when(result.isSuccess()).thenReturn(success);
-		when(result.getErrorMsg()).thenReturn(errorMsg);
-		when(result.isNotRegistered()).thenReturn(notRegistered);
-		when(result.getNewGcmId()).thenReturn(newGcmId);
-		when(result.getException()).thenReturn(exception);
-		return result;
+		Assert.assertEquals(SenderResult.Status.ERROR, result.getStatus());
+		Assert.assertEquals(errorMsg, result.getErrorMsg());
 	}
 
 
-	private static final String 
-		CLIENT_ID = "someClientId",
-		DEVICE_ID = "someDeviceId";
+	@Test
+	public void testErrorException() {
+		IOException exception = new IOException("booom");
+		SenderResult result = setupResult(false, null, false, null, exception);
 
-	private GcmClient getGcmClient() {
-		GcmClient client = PowerMockito.mock(GcmClient.class);
-		when(client.getClientId()).thenReturn(CLIENT_ID);
-		when(client.getDeviceId()).thenReturn(DEVICE_ID);
-		return client;
+		Assert.assertEquals(SenderResult.Status.ERROR, result.getStatus());
+		Assert.assertEquals(exception, result.getErrorCause());
+	}
+
+
+	@Test
+	public void testUpdateResult() {
+		String newId = "someNewGcmId";
+		SenderResult result = setupResult(false, null, false, newId, null);
+
+		Assert.assertEquals(SenderResult.Status.UPDATE_CLIENT, result.getStatus());
+		Assert.assertEquals(DEVICE_ID, result.getUpdateDeviceId().first);
+		Assert.assertEquals(newId, result.getUpdateDeviceId().second);
+	}
+
+
+	@Test
+	public void testRemoveResult() {
+		SenderResult result = setupResult(false, null, true, null, null);
+
+		Assert.assertEquals(SenderResult.Status.REMOVE_CLIENT, result.getStatus());
+		Assert.assertEquals(DEVICE_ID, result.getRemoveDeviceId());
+	}
+
+
+	private SenderResult setupResult(
+			final boolean success,
+			final String errorMsg,
+			final boolean notRegistered,
+			final String newGcmId,
+			final IOException exception) {
+
+		new Expectations() {{
+			gcmResult.isSuccess(); result = success; minTimes = 0;
+			gcmResult.getErrorMsg(); result = errorMsg; minTimes = 0;
+			gcmResult.isNotRegistered(); result = notRegistered; minTimes = 0;
+			gcmResult.getNewGcmId(); result = newGcmId; minTimes = 0;
+			gcmResult.getException(); returns(exception); minTimes = 0;
+		}};
+
+		return sender.sendEventUpdate(client, EVENT_ID, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
 	}
 
 }

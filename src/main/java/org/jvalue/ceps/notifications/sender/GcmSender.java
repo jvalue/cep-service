@@ -13,7 +13,7 @@ import java.util.Map;
 
 final class GcmSender extends NotificationSender<GcmClient> {
 
-	static final String 
+	private static final String
 		DATA_KEY_CLIENT_ID = "client",
 		DATA_KEY_EVENT_ID = "event",
 		DATA_KEY_DEBUG = "debug";
