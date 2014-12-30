@@ -1,19 +1,8 @@
 package org.jvalue.ceps.notifications.sender; 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.List;
-
-import org.junit.Test;
-import org.jvalue.ceps.notifications.clients.DummyClient;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
-
 public final class NotificationSenderTest {
 
+	/*
 	@Test
 	public final void testSuccessResult() {
 
@@ -90,19 +79,5 @@ public final class NotificationSenderTest {
 
 	}
 
-
-	private static final class DummyNotificationSender extends NotificationSender<DummyClient> {
-
-		@Override
-		public SenderResult sendEventUpdate(
-				DummyClient client,
-				String eventId,
-				List<JsonNode> newEvents,
-				List<JsonNode> oldEvent) {
-
-			throw new UnsupportedOperationException("not supported");
-		}
-
-	}
-
+	*/
 }
