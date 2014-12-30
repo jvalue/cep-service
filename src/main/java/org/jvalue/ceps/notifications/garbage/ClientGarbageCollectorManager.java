@@ -45,7 +45,7 @@ public final class ClientGarbageCollectorManager implements Managed {
 		scheduler = Executors.newScheduledThreadPool(1);
 		scheduler.scheduleAtFixedRate(
 				new CollectionRunnable(notificationManager, mapper),
-				interval,
+				0,
 				interval,
 				TimeUnit.MILLISECONDS);
 	}

@@ -6,25 +6,22 @@ import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.ClientVisitor;
 import org.jvalue.ceps.notifications.clients.GcmClient;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Verifications;
+import mockit.integration.junit4.JMockit;
 
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({NotificationManager.class, Client.class})
+@RunWith(JMockit.class)
 public final class ClientGarbageCollectorManagerTest {
+
+	@Mocked private NotificationManager notificationManager;
+	@Mocked private ClientVisitor<Void, CollectionStatus> mapper;
 
 	private static final String
 		DEVICE_REMOVE_1 = "remove1",
@@ -34,46 +31,32 @@ public final class ClientGarbageCollectorManagerTest {
 
 	@Test
 	public void testCollection() throws Exception {
-		final long interval = 100;
+		new Expectations() {{
+			List<Client> clients = new LinkedList<>();
+			GcmClient client1 = new GcmClient("clientId1", DEVICE_REMOVE_1, "eplStmt");
+			GcmClient client2 = new GcmClient("clientId2", DEVICE_REMOVE_2, "eplStmt");
+			GcmClient client3 = new GcmClient("clientId3", DEVICE_RETAIN, "eplStmt");
+			clients.addAll(Arrays.asList(client1, client2, client3));
 
-		Set<Client> dummyClients = new HashSet<Client>();
-		dummyClients.add(createClient(DEVICE_REMOVE_1, CollectionStatus.COLLECT));
-		dummyClients.add(createClient(DEVICE_REMOVE_2, CollectionStatus.COLLECT));
-		dummyClients.add(createClient(DEVICE_RETAIN, CollectionStatus.RETAIN));
-		dummyClients.add(createClient(DEVICE_REMOVE_1, CollectionStatus.COLLECT));
+			notificationManager.getAll();
+			result = clients;
 
-		NotificationManager notificatonManager = PowerMockito.mock(NotificationManager.class);
-		when(notificatonManager.getAll()).thenReturn(dummyClients);
+			mapper.visit(client1, null); result = CollectionStatus.COLLECT;
+			mapper.visit(client2, null); result = CollectionStatus.COLLECT;
+			mapper.visit(client3, null); result = CollectionStatus.RETAIN;
+		}};
 
-		ClientGarbageCollectorManager garbageManager = new ClientGarbageCollectorManager(notificatonManager, new Mapper(), 100);
+		ClientGarbageCollectorManager collectorManager = new ClientGarbageCollectorManager(notificationManager, mapper, 500);
+		collectorManager.start();
+		Thread.sleep(200);
+		collectorManager.stop();
 
-		garbageManager.start();
-		Thread.sleep((long) (interval * 1.5));
-		garbageManager.stop();
-
-		verify(notificatonManager, times(1)).unregisterDevice(eq(DEVICE_REMOVE_1));
-		verify(notificatonManager, times(1)).unregisterDevice(eq(DEVICE_REMOVE_2));
-		verify(notificatonManager, never()).unregisterDevice(eq(DEVICE_RETAIN));
+		new Verifications() {{
+			notificationManager.unregisterDevice(DEVICE_REMOVE_1); times = 1;
+			notificationManager.unregisterDevice(DEVICE_REMOVE_2); times = 1;
+			notificationManager.unregisterDevice(DEVICE_RETAIN); times = 0;
+		}};
 	}
 
-
-	@SuppressWarnings("unchecked")
-	private Client createClient(String deviceId, CollectionStatus status) {
-		Client client = PowerMockito.mock(Client.class);
-		when(client.getDeviceId()).thenReturn(deviceId);
-		when(client.getClientId()).thenReturn(UUID.randomUUID().toString());
-		when(client.getEplStmt()).thenReturn(UUID.randomUUID().toString());
-		when(client.accept(any(ClientVisitor.class), any())).thenReturn(status);
-		return client;
-	}
-
-
-	private static final class Mapper implements ClientVisitor<Void, CollectionStatus> {
-
-		@Override
-		public CollectionStatus visit(GcmClient client, Void param) {
-			throw new UnsupportedOperationException("stub");
-		}
-	}
 }
 

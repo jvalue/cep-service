@@ -16,11 +16,10 @@ import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.BiMap;
 import org.jvalue.ceps.utils.Log;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import io.dropwizard.lifecycle.Managed;
 
@@ -90,8 +89,8 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 	}
 
 
-	public synchronized Set<Client> getAll() {
-		return new HashSet<Client>(clientRepository.getAll());
+	public synchronized Collection<Client> getAll() {
+		return clientRepository.getAll();
 	}
 
 
