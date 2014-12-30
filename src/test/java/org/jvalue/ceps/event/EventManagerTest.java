@@ -1,34 +1,45 @@
 package org.jvalue.ceps.event;
 
-import org.junit.Test;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.jvalue.ceps.db.EventRepository;
+
+import java.util.LinkedList;
+
+import mockit.Mocked;
+import mockit.Verifications;
+import mockit.integration.junit4.JMockit;
+
+@RunWith(JMockit.class)
 public final class EventManagerTest {
 
+	@Mocked private EventRepository eventRepository;
+
+	private EventManager eventManager;
+
+	@Before
+	public void setupEventManager() {
+		this.eventManager = new EventManager(eventRepository);
+	}
+
+
 	@Test
-	public void testCrud() throws Exception {
-		/*
-		TODO
-		EventManager manager = DummyEventManager.createInstance();
+	public void testOnNewEvents() {
+		final String eventId = eventManager.onNewEvents(new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
 
-		assertTrue(manager.getAll().isEmpty());
-		assertNull(manager.getEvent("dummy"));
-
-		String eventId = manager.onNewEvents(new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
-
-		assertNotNull(eventId);
-		assertNotNull(manager.getEvent(eventId));
-		assertTrue(manager.getEvent(eventId).getOldEventData().isEmpty());
-		assertTrue(manager.getEvent(eventId).getNewEventData().isEmpty());
-		assertEquals(eventId, manager.getEvent(eventId).getEventId());
-		assertTrue(manager.getEvent(eventId).getTimestamp() <= System.currentTimeMillis());
-		assertTrue(manager.getAll().contains(manager.getEvent(eventId)));
-		assertEquals(1, manager.getAll().size());
-
-		manager.removeEvent(eventId);
-
-		assertNull(manager.getEvent(eventId));
-		assertTrue(manager.getAll().isEmpty());
-		 */
+		Assert.assertNotNull(eventId);
+		new Verifications() {{
+			Event event;
+			eventRepository.add(event = withCapture());
+			Assert.assertEquals(eventId, event.getEventId());
+			Assert.assertNotNull(event.getOldEventData());
+			Assert.assertNotNull(event.getNewEventData());
+			Assert.assertTrue(event.getTimestamp() > 0);
+		}};
 	}
 
 }

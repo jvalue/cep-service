@@ -38,14 +38,14 @@ public final class EventApi {
 	@GET
 	@Path("/{eventId}")
 	public Event get(@PathParam("eventId") String eventId) {
-		return eventManager.getEvent(eventId);
+		return eventManager.get(eventId);
 	}
 
 
 	@DELETE
 	@Path("/{eventId}")
 	public void remove(@PathParam("eventId") String eventId) {
-		eventManager.removeEvent(eventId);
+		eventManager.remove(eventId);
 	}
 
 }

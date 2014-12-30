@@ -41,7 +41,7 @@ public final class EventGarbageCollectorTest {
 
 		new Verifications() {{
 			List<String> removedEventIds = new LinkedList<>();
-			eventManager.removeEvent(withCapture(removedEventIds));
+			eventManager.remove(withCapture(removedEventIds));
 			times = 2;
 
 			Assert.assertTrue(removedEventIds.contains("someId1"));
