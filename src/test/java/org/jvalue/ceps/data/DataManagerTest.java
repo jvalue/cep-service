@@ -1,6 +1,7 @@
 package org.jvalue.ceps.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -113,8 +114,9 @@ public final class DataManagerTest {
 
 	@Test
 	public void testOnNewData() {
-		final ObjectNode data = new ObjectNode(JsonNodeFactory.instance);
-		data.put("key", "value");
+		final ArrayNode data = new ArrayNode(JsonNodeFactory.instance);
+		data.add("value1");
+		data.add("value2");
 
 		dataManager.onNewData(sourceId, data);
 

@@ -3,7 +3,7 @@ package org.jvalue.ceps.rest;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.data.DataSink;
@@ -38,12 +38,12 @@ public final class DataApi {
 	private static final class SourceData {
 
 		private final String sourceId;
-		private final JsonNode data;
+		private final ArrayNode data;
 
 		@JsonCreator
 		public SourceData(
 				@JsonProperty("sourceId") String sourceId,
-				@JsonProperty("data") JsonNode data) {
+				@JsonProperty("data") ArrayNode data) {
 
 			this.sourceId = sourceId;
 			this.data = data;

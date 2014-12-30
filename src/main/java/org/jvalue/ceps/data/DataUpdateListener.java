@@ -1,6 +1,7 @@
 package org.jvalue.ceps.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import java.util.Map;
 
@@ -21,9 +22,9 @@ public interface DataUpdateListener {
 	public void onSourceRemoved(String sourceId, JsonNode schema);
 
 	/**
-	 * Called when new data for source comes availabe.
+	 * Called when new data for source comes available..
 	 */
-	public void onNewSourceData(String sourceId, JsonNode data);
+	public void onNewSourceData(String sourceId, ArrayNode data);
 
 	/**
 	 * Used to restore previously added sources.

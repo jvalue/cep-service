@@ -138,7 +138,8 @@ public final class NotificationManagerTest {
 
 	private void testResult(SenderResult.Status status) throws Exception {
 		sender.setStatus(status);
-		esperManager.onNewSourceData(dataType, getResource("/data-pegelonline1.json"));
+		// esperManager.onNewSourceData(dataType, getResource("/data-pegelonline1.json"));
+		// TODO
 		assertEquals(1, sendEventUpdateCount);
 	}
 

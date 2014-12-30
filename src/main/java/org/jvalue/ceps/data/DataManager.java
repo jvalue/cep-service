@@ -1,6 +1,7 @@
 package org.jvalue.ceps.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
@@ -97,7 +98,7 @@ public final class DataManager implements Managed, DataSink {
 
 
 	@Override
-	public void onNewData(String sourceId, JsonNode data) {
+	public void onNewData(String sourceId, ArrayNode data) {
 		Log.info("Source " + sourceId + " has new data");
 		dataListener.onNewSourceData(sourceId, data);
 	}

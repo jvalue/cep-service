@@ -5,6 +5,7 @@ import com.espertech.esper.client.EPRuntime;
 import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.data.DataUpdateListener;
@@ -89,10 +90,8 @@ public final class EsperManager implements DataUpdateListener {
 
 
 	@Override
-	public void onNewSourceData(String sourceId, JsonNode data) {
+	public void onNewSourceData(String sourceId, ArrayNode data) {
 		Assert.assertNotNull(sourceId, data);
-		Assert.assertTrue(data.isArray());
-
 		for (int i = 0; i < data.size(); i++) {
 			try {
 				runtime.sendEvent(dataTranslator.toMap(data.get(i)), sourceId);
