@@ -33,4 +33,10 @@ public final class ClientRepository extends CouchDbRepositorySupport<Client> {
 		throw new IllegalStateException("found more than one client for clientId " + clientId);
 	}
 
+
+	@GenerateView
+	public List<Client> findByDeviceId(String deviceId) {
+		return queryView("by_deviceId", deviceId);
+	}
+
 }
