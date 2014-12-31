@@ -30,7 +30,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 	private final Map<Class<?>, NotificationSender<?>> sender;
 	private final EsperManager esperManager;
 	private final EventManager eventManager;
-	private final BiMap<String, String> clientToStmtMap = new BiMap<>();
+	private final BiMap<String, String> clientToRegistrationIdMap = new BiMap<>(); // kept in memory es Esper rules are in memory too
 
 	@Inject
 	NotificationManager(
@@ -56,18 +56,18 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 
 	private void register(Client client, boolean addToDb) {
-		String stmtId = esperManager.register(client.getEplStmt(), this);
-		clientToStmtMap.put(client.getClientId(), stmtId);
+		String registrationId = esperManager.register(client.getEplStmt(), this);
+		clientToRegistrationIdMap.put(client.getClientId(), registrationId);
 		if (addToDb) clientRepository.add(client);
 	}
 
 
 	public synchronized boolean unregister(String clientId) {
 		Assert.assertNotNull(clientId);
-		if (!clientToStmtMap.containsFirst(clientId)) return false;
+		if (!clientToRegistrationIdMap.containsFirst(clientId)) return false;
 
-		esperManager.unregister(clientToStmtMap.getSecond(clientId));
-		clientToStmtMap.removeFirst(clientId);
+		esperManager.unregister(clientToRegistrationIdMap.getSecond(clientId));
+		clientToRegistrationIdMap.removeFirst(clientId);
 
 		clientRepository.remove(clientRepository.findByClientId(clientId));
 		return true;
@@ -85,7 +85,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 	public synchronized boolean isRegistered(String clientId) {
 		Assert.assertNotNull(clientId);
-		return clientToStmtMap.containsFirst(clientId);
+		return clientToRegistrationIdMap.containsFirst(clientId);
 	}
 
 
@@ -96,9 +96,9 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 	@Override
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public synchronized void onNewEvents(String eplStmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
+	public synchronized void onNewEvents(String registrationId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
 		String eventId = eventManager.onNewEvents(newEvents, oldEvents);
-		String clientId = clientToStmtMap.getFirst(eplStmtId);
+		String clientId = clientToRegistrationIdMap.getFirst(registrationId);
 		Client client = clientRepository.findByClientId(clientId);
 
 		NotificationSender s = sender.get(client.getClass());

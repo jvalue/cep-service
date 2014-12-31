@@ -45,23 +45,23 @@ public final class EsperManager implements DataUpdateListener {
 	public String register(String eplStatement, EventUpdateListener listener) {
 		Assert.assertNotNull(eplStatement, listener);
 
-		String stmtId = UUID.randomUUID().toString();
+		String registrationId = UUID.randomUUID().toString();
 		EPStatement stmt = admin.createEPL(eplStatement);
-		stmt.addListener(new EventUpdateListenerAdapter(listener, stmtId));
-		startedStatements.put(stmtId, stmt);
+		stmt.addListener(new EventUpdateListenerAdapter(listener, registrationId));
+		startedStatements.put(registrationId, stmt);
 
-		return stmtId;
+		return registrationId;
 	}
 
 
-	public void unregister(String registerId) {
-		Assert.assertNotNull(registerId);
+	public void unregister(String registrationId) {
+		Assert.assertNotNull(registrationId);
 
-		EPStatement stmt = startedStatements.get(registerId);
+		EPStatement stmt = startedStatements.get(registrationId);
 		if (stmt == null) throw new IllegalArgumentException("not registered");
 
 		stmt.destroy();
-		startedStatements.remove(registerId);
+		startedStatements.remove(registrationId);
 	}
 
 
@@ -78,6 +78,7 @@ public final class EsperManager implements DataUpdateListener {
 	@Override
 	public void onSourceRemoved(String sourceId, JsonNode schema) {
 		// TODO remove from Esper engine?
+		throw new UnsupportedOperationException("not implemented");
 	}
 
 

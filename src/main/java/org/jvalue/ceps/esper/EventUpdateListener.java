@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface EventUpdateListener {
 
-	public void onNewEvents(String eplStmtId, List<JsonNode> newEvents, List<JsonNode> oldEvents);
+	public void onNewEvents(String registrationId, List<JsonNode> newEvents, List<JsonNode> oldEvents);
 
 }

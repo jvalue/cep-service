@@ -1,11 +1,5 @@
 package org.jvalue.ceps.esper;
 
-import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.jvalue.ceps.utils.Assert;
-
 import com.espertech.esper.client.EventBean;
 import com.espertech.esper.client.EventType;
 import com.espertech.esper.client.UpdateListener;
@@ -17,6 +11,12 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.jvalue.ceps.utils.Assert;
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
 
 final class EventUpdateListenerAdapter implements UpdateListener {
 
@@ -27,19 +27,19 @@ final class EventUpdateListenerAdapter implements UpdateListener {
 
 
 	private final EventUpdateListener listener;
-	private final String eplStmtId;
+	private final String registrationId;
 
 
-	public EventUpdateListenerAdapter(EventUpdateListener listener, String eplStmtId) {
-		Assert.assertNotNull(listener, eplStmtId);
+	public EventUpdateListenerAdapter(EventUpdateListener listener, String registrationId) {
+		Assert.assertNotNull(listener, registrationId);
 		this.listener = listener;
-		this.eplStmtId = eplStmtId;
+		this.registrationId = registrationId;
 	}
 
 
 	@Override
 	public void update(EventBean[] newEvents, EventBean[] oldEvents) {
-		listener.onNewEvents(eplStmtId, toJson(newEvents), toJson(oldEvents));
+		listener.onNewEvents(registrationId, toJson(newEvents), toJson(oldEvents));
 	}
 
 
