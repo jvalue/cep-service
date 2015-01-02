@@ -21,7 +21,7 @@ import java.util.Map;
 
 import io.dropwizard.lifecycle.Managed;
 
-import static org.jvalue.ceps.ods.OdsNotificationService.OdsClientDescription;
+import org.jvalue.ceps.ods.OdsClientDescription;
 
 
 public final class DataManager implements Managed, DataSink {

@@ -1,13 +1,21 @@
 package org.jvalue.ceps.ods;
 
 
-public final class OdsClient extends OdsNotificationService.OdsClientDescription {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-	private String id;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class OdsClient extends OdsClientDescription {
 
-	public OdsClient() { }
+	private final String id;
 
-	public OdsClient(String id, String callbackUrl, boolean sendData) {
+	@JsonCreator
+	public OdsClient(
+			@JsonProperty("id") String id,
+			@JsonProperty("callbackUrl") String callbackUrl,
+			@JsonProperty("sendData") boolean sendData) {
+
 		super(callbackUrl, sendData);
 		this.id = id;
 	}

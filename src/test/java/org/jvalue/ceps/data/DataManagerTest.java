@@ -24,7 +24,7 @@ import mockit.Mocked;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
 
-import static org.jvalue.ceps.ods.OdsNotificationService.OdsClientDescription;
+import org.jvalue.ceps.ods.OdsClientDescription;
 
 @RunWith(JMockit.class)
 public final class DataManagerTest {

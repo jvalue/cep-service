@@ -1,27 +1,28 @@
 package org.jvalue.ceps.ods;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class OdsDataSource {
+public final class OdsDataSource extends OdsDataSourceDescription {
 
-	private String id;
-	private JsonNode schema;
+	private final String id;
 
-	public OdsDataSource() { }
+	@JsonCreator
+	public OdsDataSource(
+			@JsonProperty("id") String id,
+			@JsonProperty("schema") JsonNode schema,
+			@JsonProperty("domainIdKey") String domainIdKey,
+			@JsonProperty("metaData") OdsDataSourceMetaData metaData) {
 
-	public OdsDataSource(String id, JsonNode schema) {
+		super(schema, domainIdKey, metaData);
 		this.id = id;
-		this.schema = schema;
 	}
 
 	public String getId() {
 		return id;
-	}
-
-	public JsonNode getSchema() {
-		return schema;
 	}
 
 }

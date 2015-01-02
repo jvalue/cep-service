@@ -1,8 +1,6 @@
 package org.jvalue.ceps.ods;
 
 
-import javax.validation.constraints.NotNull;
-
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -30,30 +28,6 @@ public interface OdsNotificationService {
 	public OdsClient unregister(
 			@Path("sourceId") String sourceId,
 			@Path("clientId") String clientId);
-
-
-	public static class OdsClientDescription {
-
-		private final String type = "HTTP";
-		@NotNull private String callbackUrl;
-		@NotNull private boolean sendData;
-
-		public OdsClientDescription() { }
-
-		public OdsClientDescription(String callbackUrl, boolean sendData) {
-			this.callbackUrl = callbackUrl;
-			this.sendData = sendData;
-		}
-
-		public String getCallbackUrl() {
-			return callbackUrl;
-		}
-
-		public boolean getSendData() {
-			return sendData;
-		}
-
-	}
 
 
 }

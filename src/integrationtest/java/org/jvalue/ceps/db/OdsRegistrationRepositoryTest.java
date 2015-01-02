@@ -8,6 +8,7 @@ import org.ektorp.CouchDbInstance;
 import org.jvalue.ceps.data.OdsRegistration;
 import org.jvalue.ceps.ods.OdsClient;
 import org.jvalue.ceps.ods.OdsDataSource;
+import org.jvalue.ceps.ods.OdsDataSourceMetaData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +47,7 @@ public final class OdsRegistrationRepositoryTest extends AbstractRepositoryTest<
 
 
 	private OdsRegistration createRegistration(String sourceId) {
-		OdsDataSource source = new OdsDataSource(sourceId, new ObjectNode(JsonNodeFactory.instance));
+		OdsDataSource source = new OdsDataSource(sourceId, new ObjectNode(JsonNodeFactory.instance), "someDomainKey", new OdsDataSourceMetaData());
 		OdsClient client = new OdsClient("someClientId", "someCallbackUrl", true);
 		return new OdsRegistration(source, client);
 	}
