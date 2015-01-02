@@ -47,7 +47,11 @@ public final class OdsRegistrationRepositoryTest extends AbstractRepositoryTest<
 
 
 	private OdsRegistration createRegistration(String sourceId) {
-		OdsDataSource source = new OdsDataSource(sourceId, new ObjectNode(JsonNodeFactory.instance), "someDomainKey", new OdsDataSourceMetaData());
+		OdsDataSource source = new OdsDataSource(
+				sourceId,
+				new ObjectNode(JsonNodeFactory.instance),
+				"someDomainKey",
+				new OdsDataSourceMetaData("", "", "", "", "", "", ""));
 		OdsClient client = new OdsClient("someClientId", "someCallbackUrl", true);
 		return new OdsRegistration(source, client);
 	}
