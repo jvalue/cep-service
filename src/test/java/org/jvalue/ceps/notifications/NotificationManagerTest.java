@@ -1,175 +1,236 @@
 package org.jvalue.ceps.notifications;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.jvalue.ceps.db.ClientRepository;
 import org.jvalue.ceps.esper.EsperManager;
+import org.jvalue.ceps.esper.EventUpdateListener;
+import org.jvalue.ceps.event.EventManager;
+import org.jvalue.ceps.notifications.clients.Client;
+import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.notifications.sender.NotificationSender;
+import org.jvalue.ceps.notifications.sender.SenderResult;
+import org.jvalue.ceps.utils.Pair;
+
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+import mockit.Expectations;
+import mockit.Mocked;
+import mockit.Verifications;
+import mockit.integration.junit4.JMockit;
 
 
+@RunWith(JMockit.class)
 public final class NotificationManagerTest {
 
-	private static final ObjectMapper mapper = new ObjectMapper();
+	private static final String
+			CLIENT_ID = "someClientId",
+			DEVICE_ID = "someDeviceId",
+			EPL_STMT = "someEplStmt",
+			EVENT_ID = "someEventId";
 
-	private static final String dataType = "pegelonline";
+	@Mocked private EsperManager esperManager;
+	@Mocked private EventManager eventManager;
+	@Mocked private NotificationSender<GcmClient> gcmSender;
+	@Mocked private ClientRepository clientRepository;
+	@Mocked private SenderResult senderResult;
 
-	private static String newDeviceId;
+	private NotificationManager notificationManager;
 
-	private static EsperManager esperManager;
-	private static NotificationManager notificationManager;
-
-	private  static int sendEventUpdateCount = 0;
-
-	@BeforeClass
-	public static void setup() throws Exception {
-
-		/*
-		client = new DummyClient("dummy", "dumm2", "select * from " 
-				+ dataType + ".win:length(1) where longname = 'EITZE'");
-		newDeviceId = "dummy3";
-
-		// TODO
-		EventManager eventManager = null;
-		// esperManager = DummyEsperManager.createInstance("NotificationManagerTest");
-		sender = new DummyNotificationSender();
-
-		Map<Class<?>, NotificationSender<?>> senderMap = new HashMap<>();
-		senderMap.put(DummyClient.class, sender);
-
-		notificationManager = DummyNotificationManager.createInstance(
-				esperManager,
-				eventManager,
-				senderMap);
-
-		esperManager.onSourceAdded(dataType, getResource("/schema-pegelonline.json"));
-		*/
-	}
-
+	private final Client client = new GcmClient(CLIENT_ID, DEVICE_ID, EPL_STMT);
 
 	@Before
-	public void registerClient() {
-		/*
-		assertFalse(notificationManager.isRegistered(client.getClientId()));
+	public void setupNotificationManager() {
+		this.notificationManager = new NotificationManager(esperManager, eventManager, gcmSender, clientRepository);
+		this.client.setId("someDbId");
+		this.client.setRevision("someDbRevision");
+	}
+
+
+	@Test
+	public void testRegister() {
 		notificationManager.register(client);
-		assertTrue(notificationManager.isRegistered(client.getClientId()));
-		*/
-	}
 
-
-	@After
-	public void unregisterClients() {
-		/*
-		assertTrue(notificationManager.isRegistered(client.getClientId()));
-		notificationManager.unregister(client.getClientId());
-		assertFalse(notificationManager.isRegistered(client.getClientId()));
-		*/
-	}
-
-	/*
-
-	@After
-	public void resetSendEventUpdateCount() {
-		sendEventUpdateCount = 0;
+		new Verifications() {{
+			esperManager.register(EPL_STMT, notificationManager);
+			clientRepository.add(client);
+		}};
 	}
 
 
 	@Test
-	public void testSuccess() throws Exception {
-		testResult(SenderResult.Status.SUCCESS);
-	}
+	public void testUnregister() {
+		final String registrationId = "someRegId";
+		new Expectations() {{
+			esperManager.register(anyString, (EventUpdateListener) any);
+			result = registrationId;
 
+			clientRepository.findByClientId(CLIENT_ID);
+			result = client;
+		}};
 
-	@Test
-	public void testError() throws Exception {
-		testResult(SenderResult.Status.ERROR);
-	}
-
-
-	@Test
-	public void testRemoveClient() throws Exception {
-		testResult(SenderResult.Status.REMOVE_CLIENT);
-		assertFalse(notificationManager.isRegistered(client.getClientId()));
 		notificationManager.register(client);
-	}
+		notificationManager.unregister(CLIENT_ID);
 
-
-	@Test
-	public void testUpdateClient() throws Exception {
-		assertTrue(notificationManager.isRegistered(client.getClientId()));
-		assertEquals(1, notificationManager.getAll().size());
-		assertEquals(client.getDeviceId(), notificationManager.getAll().iterator().next().getDeviceId());
-
-		testResult(SenderResult.Status.UPDATE_CLIENT);
-
-		assertTrue(notificationManager.isRegistered(client.getClientId()));
-		assertEquals(1, notificationManager.getAll().size());
-		assertEquals(newDeviceId, notificationManager.getAll().iterator().next().getDeviceId());
-
-		notificationManager.unregister(client.getClientId());
-		notificationManager.register(client);
+		new Verifications() {{
+			esperManager.unregister(registrationId);
+			clientRepository.remove(client);
+		}};
 	}
 
 
 	@Test
 	public void testUnregisterDevice() {
-		notificationManager.unregisterDevice(client.getDeviceId());
-		assertFalse(notificationManager.isRegistered(client.getClientId()));
-		registerClient();
+		new Expectations() {{
+			clientRepository.findByDeviceId(DEVICE_ID);
+			result = Arrays.asList(client);
+
+			clientRepository.findByClientId(CLIENT_ID);
+			result = client;
+
+			esperManager.register(anyString, (EventUpdateListener) any);
+			result = "someRegId";
+		}};
+
+		notificationManager.register(client);
+		notificationManager.unregisterDevice(DEVICE_ID);
+
+		new Verifications() {{
+			clientRepository.remove(client);
+		}};
+	}
+
+
+	@Test
+	public void testGetAll() {
+		notificationManager.getAll();
+
+		new Verifications() {{
+			clientRepository.getAll();
+		}};
+	}
+
+
+	@Test
+	public void testStart() {
+		new Expectations() {{
+			clientRepository.getAll();
+			result = Arrays.asList(client);
+		}};
+
+		notificationManager.start();
+
+		new Verifications() {{
+			esperManager.register(EPL_STMT, notificationManager);
+			clientRepository.add(client); times = 0;
+		}};
+	}
+
+
+	@Test
+	public void testIsRegistered() {
+		Assert.assertFalse(notificationManager.isRegistered(CLIENT_ID));
+		notificationManager.register(client);
+		Assert.assertTrue(notificationManager.isRegistered(CLIENT_ID));
+		notificationManager.unregister(CLIENT_ID);
+		Assert.assertFalse(notificationManager.isRegistered(CLIENT_ID));
 	}
 
 
 
-	private void testResult(SenderResult.Status status) throws Exception {
-		sender.setStatus(status);
-		// esperManager.onNewSourceData(dataType, getResource("/data-pegelonline1.json"));
-		// TODO
-		assertEquals(1, sendEventUpdateCount);
+
+	@Test
+	public void testSuccess() {
+		new Expectations() {{
+			senderResult.getStatus(); result = SenderResult.Status.SUCCESS;
+		}};
+		testResult(senderResult);
 	}
 
 
-	private static JsonNode getResource(String name) throws Exception {
-		URL url = NotificationManagerTest.class.getResource(name);
-		return mapper.readTree(new File(url.toURI()));
+	@Test
+	public void testError() {
+		new Expectations() {{
+			senderResult.getStatus(); result = SenderResult.Status.ERROR;
+		}};
+		testResult(senderResult);
 	}
 
 
-	private static final class DummyNotificationSender extends NotificationSender<DummyClient> {
+	@Test
+	public void testRemoveClient() {
+		new Expectations() {{
+			senderResult.getStatus();
+			result = SenderResult.Status.REMOVE_CLIENT;
 
-		private SenderResult.Status status;
+			senderResult.getRemoveDeviceId();
+			result = DEVICE_ID;
+		}};
 
-		public void setStatus(SenderResult.Status status) {
-			this.status = status;
-		}
+		testResult(senderResult);
 
-		@Override
-		public SenderResult sendEventUpdate(
-				DummyClient client, 
-				String eventId, 
-				List<JsonNode> newEvents, 
-				List<JsonNode> oldEvents) {
-
-			assertEquals(NotificationManagerTest.client, client);
-			assertNotNull(newEvents);
-			assertNotNull(oldEvents);
-
-			sendEventUpdateCount++;
-
-			switch(status) {
-				case SUCCESS:
-					return getSuccessResult();
-				case UPDATE_CLIENT:
-					System.out.println("called test update");
-					return getUpdateClientResult(client.getDeviceId(), newDeviceId);
-				case REMOVE_CLIENT:
-					return getRemoveClientResult(client.getDeviceId());
-				case ERROR:
-					return getErrorResult("error");
-			}
-			return null;
-		}
-
+		new Verifications() {{
+			notificationManager.unregisterDevice(DEVICE_ID);
+		}};
 	}
-	*/
+
+
+	@Test
+	public void testUpdateClient() {
+		final String newDeviceId = "someNewDeviceId";
+		new Expectations() {{
+			senderResult.getStatus();
+			result = SenderResult.Status.UPDATE_CLIENT;
+
+			senderResult.getUpdateDeviceId();
+			result = new Pair<>(DEVICE_ID, newDeviceId);
+		}};
+
+		testResult(senderResult);
+
+		new Verifications() {{
+			Client newClient;
+			clientRepository.update(newClient = withCapture());
+
+			Assert.assertEquals(newDeviceId, newClient.getDeviceId());
+			Assert.assertEquals(CLIENT_ID, newClient.getClientId());
+			Assert.assertEquals(EPL_STMT, newClient.getEplStmt());
+		}};
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private void testResult(final SenderResult senderResult) {
+		final String registrationId = "someRegId";
+		new Expectations() {{
+			esperManager.register(anyString, (EventUpdateListener) any);
+			result = registrationId;
+
+			eventManager.onNewEvents((List) any, (List) any);
+			result = EVENT_ID;
+
+			clientRepository.findByClientId(CLIENT_ID);
+			result = client;
+			clientRepository.findByDeviceId(DEVICE_ID);
+			result = Arrays.asList(client); minTimes = 0;
+
+			gcmSender.sendEventUpdate((GcmClient) any, anyString, (List) any, (List) any);
+			result = senderResult;
+		}};
+
+		notificationManager.register(client);
+		notificationManager.onNewEvents(registrationId, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
+
+		new Verifications() {{
+			gcmSender.sendEventUpdate((GcmClient) client, EVENT_ID, (List) any, (List) any);
+			times = 1;
+		}};
+	}
 
 }

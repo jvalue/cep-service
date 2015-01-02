@@ -66,6 +66,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 		Assert.assertNotNull(clientId);
 		if (!clientToRegistrationIdMap.containsFirst(clientId)) return false;
 
+		System.out.println("regId = " + clientToRegistrationIdMap.getSecond(clientId));
 		esperManager.unregister(clientToRegistrationIdMap.getSecond(clientId));
 		clientToRegistrationIdMap.removeFirst(clientId);
 
@@ -77,8 +78,8 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 	public synchronized void unregisterDevice(String deviceId) {
 		Assert.assertNotNull(deviceId);
 
-		for (Client client : clientRepository.getAll()) {
-			if (client.getDeviceId().equals(deviceId)) unregister(client.getClientId());
+		for (Client client : clientRepository.findByDeviceId(deviceId)) {
+			unregister(client.getClientId());
 		}
 	}
 
@@ -116,10 +117,8 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 			case REMOVE_CLIENT:
 				Log.info("Removing client with deviceId " + result.getRemoveDeviceId());
-				for (Client removeClient : clientRepository.getAll()) {
-					if (removeClient.getDeviceId().equals(result.getRemoveDeviceId())) {
-						unregister(removeClient.getClientId());
-					}
+				for (Client removeClient : clientRepository.findByDeviceId(result.getRemoveDeviceId())) {
+					unregister(removeClient.getClientId());
 				}
 				break;
 
@@ -130,12 +129,11 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 				String oldDeviceId = result.getUpdateDeviceId().first;
 				String newDeviceId = result.getUpdateDeviceId().second;
 
-				for (Client updateClient : clientRepository.getAll()) {
-					if (updateClient.getDeviceId().equals(oldDeviceId)) {
-						Client newClient = updateClient.accept(updater, newDeviceId);
-						unregister(updateClient.getClientId());
-						register(newClient);
-					}
+				for (Client updateClient : clientRepository.findByDeviceId(oldDeviceId)) {
+					Client newClient = updateClient.accept(updater, newDeviceId);
+					newClient.setId(client.getId());
+					newClient.setRevision(client.getRevision());
+					clientRepository.update(newClient);
 				}
 				break;
 		}
