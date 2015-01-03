@@ -1,6 +1,7 @@
 package org.jvalue.ceps.ods;
 
 
+import retrofit.client.Response;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
@@ -25,7 +26,7 @@ public interface OdsNotificationService {
 
 
 	@DELETE(URL_NOTIFICATIONS + "/{clientId}")
-	public OdsClient unregister(
+	public Response unregister(
 			@Path("sourceId") String sourceId,
 			@Path("clientId") String clientId);
 
