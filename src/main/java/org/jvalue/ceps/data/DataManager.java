@@ -7,13 +7,15 @@ import com.google.inject.name.Named;
 
 import org.jvalue.ceps.db.OdsRegistrationRepository;
 import org.jvalue.ceps.main.ConfigModule;
-import org.jvalue.ceps.ods.OdsClient;
-import org.jvalue.ceps.ods.OdsDataSource;
-import org.jvalue.ceps.ods.OdsDataSourceService;
-import org.jvalue.ceps.ods.OdsNotificationService;
 import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
+import org.jvalue.ods.api.notifications.ClientDescription;
+import org.jvalue.ods.api.notifications.HttpClient;
+import org.jvalue.ods.api.notifications.HttpClientDescription;
+import org.jvalue.ods.api.notifications.NotificationApi;
+import org.jvalue.ods.api.sources.DataSource;
+import org.jvalue.ods.api.sources.DataSourceApi;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,16 +23,14 @@ import java.util.Map;
 
 import io.dropwizard.lifecycle.Managed;
 
-import org.jvalue.ceps.ods.OdsClientDescription;
-
 
 public final class DataManager implements Managed, DataSink {
 
 	// Name of this HTTP client on the ODS. Might need more dynamic approach in the future.
 	private static final String ODS_CLIENT_ID = "ceps";
 
-	private final OdsDataSourceService odsDataSourceService;
-	private final OdsNotificationService odsNotificationService;
+	private final DataSourceApi odsDataSourceApi;
+	private final NotificationApi odsNotificationApi;
 
 	private final OdsRegistrationRepository registrationRepository;
 	private final DataUpdateListener dataListener;
@@ -40,15 +40,15 @@ public final class DataManager implements Managed, DataSink {
 
 	@Inject
 	DataManager(
-			OdsDataSourceService odsDataSourceService,
-			OdsNotificationService odsNotificationService,
+			DataSourceApi odsDataSourceApi,
+			NotificationApi odsNotificationApi,
 			OdsRegistrationRepository registrationRepository,
 			DataUpdateListener dataListener,
 			@Named(ConfigModule.CEPS_BASE_URL) String cepsBaseUrl,
 			@Named(RestModule.URL_DATA) String dataUrl) {
 
-		this.odsDataSourceService = odsDataSourceService;
-		this.odsNotificationService = odsNotificationService;
+		this.odsDataSourceApi = odsDataSourceApi;
+		this.odsNotificationApi = odsNotificationApi;
 		this.registrationRepository = registrationRepository;
 		this.dataListener = dataListener;
 		this.cepsDataCallbackUrl = cepsBaseUrl + dataUrl;
@@ -60,11 +60,11 @@ public final class DataManager implements Managed, DataSink {
 		if (isBeingMonitored(sourceId)) throw new IllegalStateException("source already being monitored");
 
 		// get source / schema
-		OdsDataSource source = odsDataSourceService.get(sourceId);
+		DataSource source = odsDataSourceApi.get(sourceId);
 
 		// register for updates
-		OdsClientDescription clientDescription = new OdsClientDescription(cepsDataCallbackUrl, true);
-		OdsClient client = odsNotificationService.register(sourceId, ODS_CLIENT_ID, clientDescription);
+		ClientDescription clientDescription = new HttpClientDescription(cepsDataCallbackUrl, true);
+		HttpClient client = (HttpClient) odsNotificationApi.register(sourceId, ODS_CLIENT_ID, clientDescription);
 
 		// store result in db
 		OdsRegistration registration = new OdsRegistration(source, client);
@@ -80,7 +80,7 @@ public final class DataManager implements Managed, DataSink {
 		OdsRegistration registration = getRegistrationForSourceId(sourceId);
 		if (registration == null) throw new IllegalStateException("source not being monitored");
 
-		odsNotificationService.unregister(sourceId, registration.getClient().getId());
+		odsNotificationApi.unregister(sourceId, registration.getClient().getId());
 		registrationRepository.remove(registration);
 		dataListener.onSourceRemoved(sourceId, registration.getDataSource().getSchema());
 	}

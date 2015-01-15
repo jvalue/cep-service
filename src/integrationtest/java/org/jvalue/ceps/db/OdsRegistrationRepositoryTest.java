@@ -1,14 +1,15 @@
 package org.jvalue.ceps.db;
 
 
+import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.ektorp.CouchDbInstance;
 import org.jvalue.ceps.data.OdsRegistration;
-import org.jvalue.ceps.ods.OdsClient;
-import org.jvalue.ceps.ods.OdsDataSource;
-import org.jvalue.ceps.ods.OdsDataSourceMetaData;
+import org.jvalue.ods.api.notifications.HttpClient;
+import org.jvalue.ods.api.sources.DataSource;
+import org.jvalue.ods.api.sources.DataSourceMetaData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,12 +48,12 @@ public final class OdsRegistrationRepositoryTest extends AbstractRepositoryTest<
 
 
 	private OdsRegistration createRegistration(String sourceId) {
-		OdsDataSource source = new OdsDataSource(
+		DataSource source = new DataSource(
 				sourceId,
+				JsonPointer.compile("/someDomainKey"),
 				new ObjectNode(JsonNodeFactory.instance),
-				"someDomainKey",
-				new OdsDataSourceMetaData("", "", "", "", "", "", ""));
-		OdsClient client = new OdsClient("someClientId", "someCallbackUrl", true);
+				new DataSourceMetaData("", "", "", "", "", "", ""));
+		HttpClient client = new HttpClient("someClientId", "someCallbackUrl", true);
 		return new OdsRegistration(source, client);
 	}
 

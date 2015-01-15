@@ -1,5 +1,6 @@
 package org.jvalue.ceps.data;
 
+import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -10,10 +11,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvalue.ceps.db.OdsRegistrationRepository;
-import org.jvalue.ceps.ods.OdsClient;
-import org.jvalue.ceps.ods.OdsDataSource;
-import org.jvalue.ceps.ods.OdsDataSourceService;
-import org.jvalue.ceps.ods.OdsNotificationService;
+import org.jvalue.ods.api.notifications.ClientDescription;
+import org.jvalue.ods.api.notifications.HttpClient;
+import org.jvalue.ods.api.notifications.HttpClientDescription;
+import org.jvalue.ods.api.notifications.NotificationApi;
+import org.jvalue.ods.api.sources.DataSource;
+import org.jvalue.ods.api.sources.DataSourceApi;
+import org.jvalue.ods.api.sources.DataSourceMetaData;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,15 +28,17 @@ import mockit.Mocked;
 import mockit.Verifications;
 import mockit.integration.junit4.JMockit;
 
-import org.jvalue.ceps.ods.OdsClientDescription;
-
 @RunWith(JMockit.class)
 public final class DataManagerTest {
 
 	private final String sourceId = "someSourceId";
+	private final ObjectNode sourceSchema = new ObjectNode(JsonNodeFactory.instance);
+	{
+		sourceSchema.put("key", "value");
+	}
 
-	@Mocked private OdsDataSourceService sourceService;
-	@Mocked private OdsNotificationService notificationService;
+	@Mocked private DataSourceApi sourceApi;
+	@Mocked private NotificationApi notificationApi;
 	@Mocked private OdsRegistrationRepository repository;
 	@Mocked private DataUpdateListener updateListener;
 
@@ -41,20 +47,20 @@ public final class DataManagerTest {
 
 	private DataManager dataManager;
 
-	@Mocked private OdsDataSource source;
-	@Mocked private OdsClient client;
+	private final DataSource source = new DataSource(
+			sourceId,
+			JsonPointer.compile("/id"),
+			sourceSchema,
+			new DataSourceMetaData("", "", "", "", "", "", ""));
+	private final HttpClient client = new HttpClient("id", "http://localhost", false);
 
-	private final ObjectNode sourceSchema = new ObjectNode(JsonNodeFactory.instance);
-	{
-		sourceSchema.put("key", "value");
-	}
 
 
 	@Before
 	public void setupDataManager() {
 		dataManager = new DataManager(
-				sourceService,
-				notificationService,
+				sourceApi,
+				notificationApi,
 				repository,
 				updateListener,
 				cepsBaseUrl,
@@ -64,23 +70,22 @@ public final class DataManagerTest {
 
 	@Test
 	public void testStartMonitoring() {
-		setupSource();
 		new Expectations() {{
-			sourceService.get(anyString);
+			sourceApi.get(anyString);
 			result = source;
 
-			notificationService.register(anyString, anyString, (OdsClientDescription) any);
+			notificationApi.register(anyString, anyString, (ClientDescription) any);
 			result = client;
 		}};
 
 		dataManager.startMonitoring(sourceId);
 
 		new Verifications() {{
-			sourceService.get(sourceId);
+			sourceApi.get(sourceId);
 			times = 1;
 
-			OdsClientDescription clientDescription;
-			notificationService.register(sourceId, anyString, clientDescription = withCapture());
+			HttpClientDescription clientDescription;
+			notificationApi.register(sourceId, anyString, clientDescription = withCapture());
 
 			Assert.assertEquals(cepsBaseUrl + dataUrl, clientDescription.getCallbackUrl());
 			Assert.assertEquals(true, clientDescription.getSendData());
@@ -93,7 +98,6 @@ public final class DataManagerTest {
 
 	@Test
 	public void testStopMonitoring() {
-		setupSource();
 		new Expectations() {{
 			List<OdsRegistration> registrations = new LinkedList<>();
 			registrations.add(new OdsRegistration(source, client));
@@ -105,7 +109,7 @@ public final class DataManagerTest {
 		dataManager.stopMonitoring(sourceId);
 
 		new Verifications() {{
-			notificationService.unregister(sourceId, anyString);
+			notificationApi.unregister(sourceId, anyString);
 
 			updateListener.onSourceRemoved(sourceId, sourceSchema); times = 1;
 		}};
@@ -128,7 +132,6 @@ public final class DataManagerTest {
 
 	@Test
 	public  void testStart() {
-		setupSource();
 		new Expectations() {{
 			List<OdsRegistration> registrations = new LinkedList<>();
 			registrations.add(new OdsRegistration(source, client));
@@ -147,18 +150,5 @@ public final class DataManagerTest {
 			Assert.assertEquals(sourceSchema, sources.get(sourceId));
 		}};
 	}
-
-
-	private void setupSource() {
-		new Expectations() {{
-			source.getSchema();
-			result = sourceSchema;
-			source.getId();
-			minTimes = 0;
-			result = sourceId;
-		}};
-	}
-
-
 
 }

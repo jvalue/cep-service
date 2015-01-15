@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.ektorp.support.CouchDbDocument;
-import org.jvalue.ceps.ods.OdsClient;
-import org.jvalue.ceps.ods.OdsDataSource;
+import org.jvalue.ods.api.notifications.HttpClient;
+import org.jvalue.ods.api.sources.DataSource;
 
 
 /**
@@ -13,25 +13,25 @@ import org.jvalue.ceps.ods.OdsDataSource;
  */
 public final class OdsRegistration extends CouchDbDocument {
 
-	private final OdsClient client;
-	private final OdsDataSource dataSource;
+	private final HttpClient client;
+	private final DataSource dataSource;
 
 	@JsonCreator
 	public OdsRegistration(
-			@JsonProperty("dataSource") OdsDataSource dataSource,
-			@JsonProperty("client") OdsClient client) {
+			@JsonProperty("dataSource") DataSource dataSource,
+			@JsonProperty("client") HttpClient client) {
 
 		this.client = client;
 		this.dataSource = dataSource;
 	}
 
 
-	public OdsDataSource getDataSource() {
+	public DataSource getDataSource() {
 		return dataSource;
 	}
 
 
-	public OdsClient getClient() {
+	public HttpClient getClient() {
 		return client;
 	}
 
