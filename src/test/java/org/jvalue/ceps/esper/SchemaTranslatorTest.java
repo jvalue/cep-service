@@ -3,6 +3,7 @@ package org.jvalue.ceps.esper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
@@ -16,13 +17,21 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-
 public final class SchemaTranslatorTest {
+
+	private static final ObjectMapper mapper = new ObjectMapper();
+
+	private SchemaTranslator translator;
+
+	@Before
+	public void setupTranslator() {
+		this.translator = new SchemaTranslator();
+	}
 
 	@Test
 	@SuppressWarnings("rawtypes")
 	public final void testPegelOnline() throws Exception {
-		List<EventDefinition> definitions = new SchemaTranslator().toEventDefinition(
+		List<EventDefinition> definitions = translator.toEventDefinition(
 				"pegelonline",
 				getJsonSchema("/schema-pegelonline.json"));
 
@@ -38,47 +47,12 @@ public final class SchemaTranslatorTest {
 		assertTrue(definition.getSchema().containsKey("uuid"));
 		assertTrue(definition.getSchema().containsKey("km"));
 		assertTrue(definition.getSchema().containsKey("agency"));
-		assertTrue(((Map) definition.getSchema().get("BodyOfWater")).containsKey("longname"));
-		assertTrue(((Map) definition.getSchema().get("BodyOfWater")).containsKey("shortname"));
-		assertEquals(((Map) definition.getSchema().get("BodyOfWater")).get("longname"), String.class);
+		assertTrue(((Map) definition.getSchema().get("water")).containsKey("longname"));
+		assertTrue(((Map) definition.getSchema().get("water")).containsKey("shortname"));
+		assertEquals(((Map) definition.getSchema().get("water")).get("longname"), String.class);
 		assertEquals(definition.getSchema().get("timeseries").getClass(), String.class);
 	}
 
-
-	@Test
-	public final void testPegelPortalMv() throws Exception {
-		List<EventDefinition> definitions = new SchemaTranslator().toEventDefinition(
-				"pegelportalMv",
-				getJsonSchema("/schema-pegelportal-mv.json"));
-
-		assertNotNull(definitions);
-		assertEquals(1, definitions.size());
-
-		EventDefinition definition = definitions.get(0);
-		assertEquals("pegelportalMv", definition.getName());
-		assertTrue(definition.getSchema().containsKey("timestamp"));
-		assertTrue(definition.getSchema().containsKey("water"));
-		assertTrue(definition.getSchema().containsKey("level"));
-	}
-
-
-	@Test
-	public final void testOsm() throws Exception {
-		List<EventDefinition> definitions = new SchemaTranslator().toEventDefinition(
-				"osm",
-				getJsonSchema("/schema-osm.json"));
-
-		assertNotNull(definitions);
-		assertEquals(1, definitions.size());
-
-		EventDefinition definition = definitions.get(0);
-		assertEquals("osm", definition.getName());
-		assertTrue(definition.getSchema().containsKey("longitude"));
-		assertTrue(definition.getSchema().containsKey("latitude"));
-	}
-
-
-	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private JsonNode getJsonSchema(String resourceName) throws Exception {
 		URL schemaUrl = getClass().getResource(resourceName);
