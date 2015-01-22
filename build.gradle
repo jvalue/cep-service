@@ -35,6 +35,11 @@ task wrapper(type: Wrapper) {
 mainClassName = "org.jvalue.ceps.main.CepsApplication"
 
 
+run() {
+    args 'server', 'ceps-configuration.yml'
+}
+
+
 dependencies {
     cargo 'org.codehaus.cargo:cargo-ant:1.4.5'
     compile 'io.dropwizard:dropwizard-core:0.8.0-rc1'
