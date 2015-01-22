@@ -11,6 +11,7 @@ import org.jvalue.ceps.esper.EsperModule;
 import org.jvalue.ceps.event.EventGarbageCollector;
 import org.jvalue.ceps.event.EventModule;
 import org.jvalue.ceps.notifications.NotificationManager;
+import org.jvalue.ceps.notifications.NotificationsModule;
 import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorManager;
 import org.jvalue.ceps.ods.OdsModule;
 import org.jvalue.ceps.rest.DataApi;
@@ -53,7 +54,8 @@ public final class CepsApplication extends Application<CepsConfig> {
 	public void run(CepsConfig configuration, Environment environment) {
 		Injector injector = Guice.createInjector(
 				new ConfigModule(configuration),
-				new DbModule(),
+				new DbModule(configuration.getCouchDb()),
+				new NotificationsModule(),
 				new DataModule(),
 				new EventModule(),
 				new AdapterModule(),

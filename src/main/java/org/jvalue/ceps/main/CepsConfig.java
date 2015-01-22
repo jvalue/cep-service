@@ -4,6 +4,8 @@ package org.jvalue.ceps.main;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.jvalue.ceps.db.CouchDbConfig;
+
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -23,6 +25,8 @@ public final class CepsConfig extends Configuration {
 	private final long eventGarbageCollectorPeriod;
 	private final long eventGarbageCollectorMaxAge;
 
+	@NotNull private final CouchDbConfig couchDb;
+
 
 	@JsonCreator
 	public CepsConfig(
@@ -32,7 +36,8 @@ public final class CepsConfig extends Configuration {
 			@JsonProperty("gcmApiKey") String gcmApiKey,
 			@JsonProperty("gcmGarbageCollectorPeriod") long gcmGarbageCollectorPeriod,
 			@JsonProperty("eventGarbageCollectorPeriod") long eventGarbageCollectorPeriod,
-			@JsonProperty("eventGarbageCollectorMaxAge") long eventGarbageCollectorMaxAge) {
+			@JsonProperty("eventGarbageCollectorMaxAge") long eventGarbageCollectorMaxAge,
+			@JsonProperty("couchDb") CouchDbConfig couchDb) {
 
 		this.cepsBaseUrl = cepsBaseUrl;
 		this.odsBaseUrl = odsBaseUrl;
@@ -41,6 +46,7 @@ public final class CepsConfig extends Configuration {
 		this.gcmGarbageCollectorPeriod = gcmGarbageCollectorPeriod;
 		this.eventGarbageCollectorPeriod = eventGarbageCollectorPeriod;
 		this.eventGarbageCollectorMaxAge = eventGarbageCollectorMaxAge;
+		this.couchDb = couchDb;
 	}
 
 
@@ -76,6 +82,11 @@ public final class CepsConfig extends Configuration {
 
 	public long getEventGarbageCollectorMaxAge() {
 		return eventGarbageCollectorMaxAge;
+	}
+
+
+	public CouchDbConfig getCouchDb() {
+		return couchDb;
 	}
 
 }
