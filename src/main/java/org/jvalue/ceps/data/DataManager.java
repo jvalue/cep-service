@@ -99,7 +99,7 @@ public final class DataManager implements Managed, DataSink {
 
 	@Override
 	public void onNewData(String sourceId, ArrayNode data) {
-		Log.info("Source " + sourceId + " has new data");
+		Log.info("Source " + sourceId + " has new data (" + data.size() + " items)");
 		dataListener.onNewSourceData(sourceId, data);
 	}
 
