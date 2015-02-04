@@ -11,11 +11,11 @@ public final class GcmClient extends Client {
 	 */
 	@JsonCreator
 	public GcmClient(
-			@JsonProperty("clientId") String clientId,
+			@JsonProperty("id") String id,
 			@JsonProperty("deviceId") String gcmId,
 			@JsonProperty("eplStmt") String eplStmt) {
 
-		super(clientId, gcmId, eplStmt);
+		super(id, gcmId, eplStmt);
 	}
 
 

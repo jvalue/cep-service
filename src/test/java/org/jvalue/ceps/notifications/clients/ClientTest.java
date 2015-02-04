@@ -10,7 +10,7 @@ public final class ClientTest {
 	@Test
 	public void testGet() {
 		Client client = new DummyClient("dummy1", "dummy2", "dummy3");
-		assertEquals("dummy1", client.getClientId());
+		assertEquals("dummy1", client.getId());
 		assertEquals("dummy2", client.getDeviceId());
 		assertEquals("dummy3", client.getEplStmt());
 	}

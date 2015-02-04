@@ -5,33 +5,32 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.google.common.base.Objects;
 
-import org.ektorp.support.CouchDbDocument;
 import org.jvalue.ceps.utils.Assert;
 
 
 @JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
-public abstract class Client extends CouchDbDocument {
+public abstract class Client {
 
 	/** Identifies one epl stmt. Must be unique across all stmts. */
-	private final String clientId;
+	private final String id;
 	/** Identifies one device. Mutliple epl stmts can be mapped to one deviceId. */
 	private final String deviceId;
 	private final String eplStmt;
 
 	Client(
-			String clientId,
+			String id,
 			String deviceId,
 			String eplStmt) {
 
-		Assert.assertNotNull(clientId, deviceId, eplStmt);
-		this.clientId = clientId;
+		Assert.assertNotNull(id, deviceId, eplStmt);
+		this.id = id;
 		this.deviceId = deviceId;
 		this.eplStmt = eplStmt;
 	}
 
 
-	public final String getClientId() {
-		return clientId;
+	public final String getId() {
+		return id;
 	}
 
 
@@ -50,7 +49,7 @@ public abstract class Client extends CouchDbDocument {
 		if (other == null || !(other instanceof Client)) return false;
 		if (other == this) return true;
 		Client client = (Client) other;
-		return Objects.equal(clientId, client.clientId)
+		return Objects.equal(id, client.id)
 				&& Objects.equal(deviceId, client.deviceId)
 				&& Objects.equal(eplStmt, client.eplStmt);
 	}
@@ -58,7 +57,7 @@ public abstract class Client extends CouchDbDocument {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(clientId, deviceId, eplStmt);
+		return Objects.hashCode(id, deviceId, eplStmt);
 	}
 
 

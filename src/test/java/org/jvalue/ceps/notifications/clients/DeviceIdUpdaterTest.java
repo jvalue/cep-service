@@ -16,7 +16,7 @@ public final class DeviceIdUpdaterTest {
 		GcmClient oldClient = new GcmClient(CLIENT_ID, DEVICE_ID_OLD, EPL_STMT);
 		Client newClient = oldClient.accept(new DeviceIdUpdater(), DEVICE_ID_NEW);
 
-		Assert.assertEquals(CLIENT_ID, newClient.getClientId());
+		Assert.assertEquals(CLIENT_ID, newClient.getId());
 		Assert.assertEquals(DEVICE_ID_NEW, newClient.getDeviceId());
 		Assert.assertEquals(EPL_STMT, newClient.getEplStmt());
 	}

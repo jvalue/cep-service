@@ -37,7 +37,7 @@ final class GcmSender extends NotificationSender<GcmClient> {
 
 		// gather data
 		Map<String,String> payload = new HashMap<String,String>();
-		payload.put(DATA_KEY_CLIENT_ID, client.getClientId());
+		payload.put(DATA_KEY_CLIENT_ID, client.getId());
 		payload.put(DATA_KEY_EVENT_ID, eventId);
 		payload.put(DATA_KEY_DEBUG, Boolean.TRUE.toString());
 

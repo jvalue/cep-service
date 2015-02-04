@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public final class EventRepositoryTest extends AbstractRepositoryTest<EventRepository, Event> {
+public final class EventRepositoryTest extends AbstractRepositoryTest_Old<EventRepository, Event> {
 
 	private static final String
 			EVENT_ID_1 = "eventId1",

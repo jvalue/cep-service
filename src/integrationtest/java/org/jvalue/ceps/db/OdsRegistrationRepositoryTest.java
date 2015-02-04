@@ -14,7 +14,7 @@ import org.jvalue.ods.api.sources.DataSourceMetaData;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class OdsRegistrationRepositoryTest extends AbstractRepositoryTest<OdsRegistrationRepository, OdsRegistration> {
+public final class OdsRegistrationRepositoryTest extends AbstractRepositoryTest_Old<OdsRegistrationRepository, OdsRegistration> {
 
 	private static final String
 			SOURCE_ID_1 = "sourceId1",

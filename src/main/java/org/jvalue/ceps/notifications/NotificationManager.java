@@ -57,7 +57,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 	private void register(Client client, boolean addToDb) {
 		String registrationId = esperManager.register(client.getEplStmt(), this);
-		clientToRegistrationIdMap.put(client.getClientId(), registrationId);
+		clientToRegistrationIdMap.put(client.getId(), registrationId);
 		if (addToDb) clientRepository.add(client);
 	}
 
@@ -70,7 +70,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 		esperManager.unregister(clientToRegistrationIdMap.getSecond(clientId));
 		clientToRegistrationIdMap.removeFirst(clientId);
 
-		clientRepository.remove(clientRepository.findByClientId(clientId));
+		clientRepository.remove(clientRepository.findById(clientId));
 		return true;
 	}
 
@@ -79,7 +79,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 		Assert.assertNotNull(deviceId);
 
 		for (Client client : clientRepository.findByDeviceId(deviceId)) {
-			unregister(client.getClientId());
+			unregister(client.getId());
 		}
 	}
 
@@ -100,7 +100,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 	public synchronized void onNewEvents(String registrationId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
 		String eventId = eventManager.onNewEvents(newEvents, oldEvents);
 		String clientId = clientToRegistrationIdMap.getFirst(registrationId);
-		Client client = clientRepository.findByClientId(clientId);
+		Client client = clientRepository.findById(clientId);
 
 		NotificationSender s = sender.get(client.getClass());
 		SenderResult result = s.sendEventUpdate(client, eventId, newEvents, oldEvents);
@@ -110,7 +110,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 				break;
 
 			case ERROR:
-				Log.error("Failed to send notification to client " + client.getClientId());
+				Log.error("Failed to send notification to client " + client.getId());
 				if (result.getErrorCause() != null) Log.error("cause", result.getErrorCause() );
 				else Log.error(result.getErrorMsg());
 				break;
@@ -118,12 +118,12 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 			case REMOVE_CLIENT:
 				Log.info("Removing client with deviceId " + result.getRemoveDeviceId());
 				for (Client removeClient : clientRepository.findByDeviceId(result.getRemoveDeviceId())) {
-					unregister(removeClient.getClientId());
+					unregister(removeClient.getId());
 				}
 				break;
 
 			case UPDATE_CLIENT:
-				Log.info("Updating client " + client.getClientId());
+				Log.info("Updating client " + client.getId());
 
 				DeviceIdUpdater updater = new DeviceIdUpdater();
 				String oldDeviceId = result.getUpdateDeviceId().first;
@@ -131,8 +131,6 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 				for (Client updateClient : clientRepository.findByDeviceId(oldDeviceId)) {
 					Client newClient = updateClient.accept(updater, newDeviceId);
-					newClient.setId(client.getId());
-					newClient.setRevision(client.getRevision());
 					clientRepository.update(newClient);
 				}
 				break;

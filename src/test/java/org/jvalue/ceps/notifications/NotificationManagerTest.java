@@ -48,8 +48,6 @@ public final class NotificationManagerTest {
 	@Before
 	public void setupNotificationManager() {
 		this.notificationManager = new NotificationManager(esperManager, eventManager, gcmSender, clientRepository);
-		this.client.setId("someDbId");
-		this.client.setRevision("someDbRevision");
 	}
 
 
@@ -71,7 +69,7 @@ public final class NotificationManagerTest {
 			esperManager.register(anyString, (EventUpdateListener) any);
 			result = registrationId;
 
-			clientRepository.findByClientId(CLIENT_ID);
+			clientRepository.findById(CLIENT_ID);
 			result = client;
 		}};
 
@@ -91,7 +89,7 @@ public final class NotificationManagerTest {
 			clientRepository.findByDeviceId(DEVICE_ID);
 			result = Arrays.asList(client);
 
-			clientRepository.findByClientId(CLIENT_ID);
+			clientRepository.findById(CLIENT_ID);
 			result = client;
 
 			esperManager.register(anyString, (EventUpdateListener) any);
@@ -199,7 +197,7 @@ public final class NotificationManagerTest {
 			clientRepository.update(newClient = withCapture());
 
 			Assert.assertEquals(newDeviceId, newClient.getDeviceId());
-			Assert.assertEquals(CLIENT_ID, newClient.getClientId());
+			Assert.assertEquals(CLIENT_ID, newClient.getId());
 			Assert.assertEquals(EPL_STMT, newClient.getEplStmt());
 		}};
 	}
@@ -215,7 +213,7 @@ public final class NotificationManagerTest {
 			eventManager.onNewEvents((List) any, (List) any);
 			result = EVENT_ID;
 
-			clientRepository.findByClientId(CLIENT_ID);
+			clientRepository.findById(CLIENT_ID);
 			result = client;
 			clientRepository.findByDeviceId(DEVICE_ID);
 			result = Arrays.asList(client); minTimes = 0;
