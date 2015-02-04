@@ -67,7 +67,7 @@ public final class DataManager implements Managed, DataSink {
 		HttpClient client = (HttpClient) odsNotificationApi.register(sourceId, ODS_CLIENT_ID, clientDescription);
 
 		// store result in db
-		OdsRegistration registration = new OdsRegistration(source, client);
+		OdsRegistration registration = new OdsRegistration(sourceId, source, client);
 		registrationRepository.add(registration);
 
 		// notify listener

@@ -100,7 +100,7 @@ public final class DataManagerTest {
 	public void testStopMonitoring() {
 		new Expectations() {{
 			List<OdsRegistration> registrations = new LinkedList<>();
-			registrations.add(new OdsRegistration(source, client));
+			registrations.add(new OdsRegistration(sourceId, source, client));
 
 			repository.getAll();
 			result = registrations;
@@ -134,7 +134,7 @@ public final class DataManagerTest {
 	public  void testStart() {
 		new Expectations() {{
 			List<OdsRegistration> registrations = new LinkedList<>();
-			registrations.add(new OdsRegistration(source, client));
+			registrations.add(new OdsRegistration(sourceId, source, client));
 
 			repository.getAll();
 			result = registrations;
