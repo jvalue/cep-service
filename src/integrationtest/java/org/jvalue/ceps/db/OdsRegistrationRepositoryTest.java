@@ -4,22 +4,17 @@ package org.jvalue.ceps.db;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.ektorp.CouchDbInstance;
 import org.jvalue.ceps.data.OdsRegistration;
+import org.jvalue.common.db.DbConnectorFactory;
 import org.jvalue.common.db.RepositoryAdapter;
 import org.jvalue.ods.api.notifications.HttpClient;
 import org.jvalue.ods.api.sources.DataSource;
 
 public final class OdsRegistrationRepositoryTest extends AbstractRepositoryAdapterTest<OdsRegistration> {
 
-	public OdsRegistrationRepositoryTest() {
-		super(OdsRegistrationRepositoryTest.class.getSimpleName());
-	}
-
-
 	@Override
-	protected RepositoryAdapter<?, ?, OdsRegistration> doCreateAdapter(CouchDbInstance couchDbInstance, String databaseName) {
-		return new OdsRegistrationRepository(couchDbInstance.createConnector(databaseName, true));
+	protected RepositoryAdapter<?, ?, OdsRegistration> doCreateAdapter(DbConnectorFactory connectorFactory) {
+		return new OdsRegistrationRepository(connectorFactory.createConnector(getClass().getSimpleName(), true));
 	}
 
 

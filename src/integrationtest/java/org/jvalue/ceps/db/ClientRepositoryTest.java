@@ -1,25 +1,20 @@
 package org.jvalue.ceps.db;
 
 
-import org.ektorp.CouchDbInstance;
 import org.junit.Assert;
 import org.junit.Test;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.common.db.DbConnectorFactory;
 import org.jvalue.common.db.RepositoryAdapter;
 
 import java.util.List;
 
 public final class ClientRepositoryTest extends AbstractRepositoryAdapterTest<Client> {
 
-	public ClientRepositoryTest() {
-		super(ClientRepositoryTest.class.getSimpleName());
-	}
-
-
 	@Override
-	protected RepositoryAdapter<?, ?, Client> doCreateAdapter(CouchDbInstance couchDbInstance, String databaseName) {
-		return new ClientRepository(couchDbInstance.createConnector(databaseName, true));
+	protected RepositoryAdapter<?, ?, Client> doCreateAdapter(DbConnectorFactory connectorFactory) {
+		return new ClientRepository(connectorFactory.createConnector(getClass().getSimpleName(), true));
 	}
 
 

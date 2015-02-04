@@ -9,6 +9,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
 import org.jvalue.common.db.CouchDbConfig;
+import org.jvalue.common.db.DbConnectorFactory;
 
 import java.net.MalformedURLException;
 
@@ -29,15 +30,15 @@ public class DbModule extends AbstractModule {
 					.username(couchDbConfig.getUsername())
 					.password(couchDbConfig.getPassword())
 					.build());
-			bind(CouchDbInstance.class).toInstance(couchDbInstance);
+			DbConnectorFactory connectorFactory = new DbConnectorFactory(couchDbInstance, couchDbConfig.getDbPrefix());
 
-			CouchDbConnector dataSourceConnector = couchDbInstance.createConnector(OdsRegistrationRepository.DATABASE_NAME, true);
+			CouchDbConnector dataSourceConnector = connectorFactory.createConnector(OdsRegistrationRepository.DATABASE_NAME, true);
 			bind(CouchDbConnector.class).annotatedWith(Names.named(OdsRegistrationRepository.DATABASE_NAME)).toInstance(dataSourceConnector);
 
-			CouchDbConnector eventConnector = couchDbInstance.createConnector(EventRepository.DATABASE_NAME, true);
+			CouchDbConnector eventConnector = connectorFactory.createConnector(EventRepository.DATABASE_NAME, true);
 			bind(CouchDbConnector.class).annotatedWith(Names.named(EventRepository.DATABASE_NAME)).toInstance(eventConnector);
 
-			CouchDbConnector clientConnector = couchDbInstance.createConnector(ClientRepository.DATABASE_NAME, true);
+			CouchDbConnector clientConnector = connectorFactory.createConnector(ClientRepository.DATABASE_NAME, true);
 			bind(CouchDbConnector.class).annotatedWith(Names.named(ClientRepository.DATABASE_NAME)).toInstance(clientConnector);
 		} catch (MalformedURLException mue) {
 			throw new RuntimeException(mue);

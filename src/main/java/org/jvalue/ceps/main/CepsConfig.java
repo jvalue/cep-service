@@ -8,6 +8,7 @@ import org.jvalue.common.db.CouchDbConfig;
 
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import io.dropwizard.Configuration;
@@ -25,7 +26,7 @@ public final class CepsConfig extends Configuration {
 	private final long eventGarbageCollectorPeriod;
 	private final long eventGarbageCollectorMaxAge;
 
-	@NotNull private final CouchDbConfig couchDb;
+	@NotNull @Valid private final CouchDbConfig couchDb;
 
 
 	@JsonCreator

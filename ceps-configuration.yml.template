@@ -14,6 +14,7 @@ couchDb:
   url: http://localhost:5984/
   username: ADMIN_USERNAME
   password: ADMIN_PASSWORD
+  dbPrefix: ceps
 
 server:
   applicationContextPath: /ceps/api/v1

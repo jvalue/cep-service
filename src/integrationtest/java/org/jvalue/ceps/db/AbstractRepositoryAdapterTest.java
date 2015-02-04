@@ -1,10 +1,10 @@
 package org.jvalue.ceps.db;
 
 
-import org.ektorp.CouchDbInstance;
 import org.ektorp.DocumentNotFoundException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.jvalue.common.db.DbConnectorFactory;
 import org.jvalue.common.db.RepositoryAdapter;
 
 import java.util.List;
@@ -13,14 +13,9 @@ public abstract class AbstractRepositoryAdapterTest<T> extends AbstractRepositor
 
 	protected RepositoryAdapter<?, ?, T> repository;
 
-	public AbstractRepositoryAdapterTest(String databaseName) {
-		super(databaseName);
-	}
-
-
 	@Override
-	protected final void doCreateDatabase(CouchDbInstance couchDbInstance, String databaseName) {
-		this.repository = doCreateAdapter(couchDbInstance, databaseName);
+	protected final void doCreateDatabase(DbConnectorFactory dbConnectorFactory) {
+		this.repository = doCreateAdapter(dbConnectorFactory);
 	}
 
 
@@ -74,6 +69,6 @@ public abstract class AbstractRepositoryAdapterTest<T> extends AbstractRepositor
 	}
 
 
-	protected abstract RepositoryAdapter<?, ?, T> doCreateAdapter(CouchDbInstance couchDbInstance, String databaseName);
+	protected abstract RepositoryAdapter<?, ?, T> doCreateAdapter(DbConnectorFactory connectorFactory);
 	protected abstract T doCreateValue(String id, String data);
 }
