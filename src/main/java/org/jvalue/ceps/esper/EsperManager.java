@@ -77,8 +77,12 @@ public final class EsperManager implements DataUpdateListener {
 
 	@Override
 	public void onSourceRemoved(String sourceId, JsonNode schema) {
-		// TODO remove from Esper engine?
-		throw new UnsupportedOperationException("not implemented");
+		List<EventDefinition> definitions = schemaTranslator.toEventDefinition(sourceId, schema);
+		for (EventDefinition definition : definitions) {
+			int stmtCount = admin.getConfiguration().getEventTypeNameUsedBy(definition.getName()).size();
+			if (stmtCount > 0) Log.warn("Removing event definition " + definition.getName() + " while " + stmtCount + " statement were still using it");
+			admin.getConfiguration().removeEventType(definition.getName(), true);
+		}
 	}
 
 
