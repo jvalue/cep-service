@@ -10,6 +10,7 @@ import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.clients.Client;
 import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.common.rest.RestUtils;
 
 import java.util.HashMap;
 import java.util.Map;
