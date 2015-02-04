@@ -1,4 +1,4 @@
-cepsBaseUrl: http://localhost:8080
+cepsBaseUrl: http://localhost:8080/ceps/api/v1
 odsBaseUrl: http://localhost:8080/ods/api/v1
 
 odsSources:
@@ -14,3 +14,6 @@ couchDb:
   url: http://localhost:5984/
   username: ADMIN_USERNAME
   password: ADMIN_PASSWORD
+
+server:
+  applicationContextPath: /ceps/api/v1
