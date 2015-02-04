@@ -1,9 +1,6 @@
 cepsBaseUrl: http://localhost:8080/ceps/api/v1
 odsBaseUrl: http://localhost:8080/ods/api/v1
 
-odsSources:
-  - pegelonline
-
 gcmApiKey: GCM_API_KEY
 gcmGarbageCollectorPeriod: 3600000
 

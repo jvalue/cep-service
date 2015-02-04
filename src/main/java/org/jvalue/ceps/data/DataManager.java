@@ -55,7 +55,7 @@ public final class DataManager implements Managed, DataSink {
 	}
 
 
-	public void startMonitoring(String sourceId) {
+	public OdsRegistration startMonitoring(String sourceId) {
 		Assert.assertNotNull(sourceId);
 		if (isBeingMonitored(sourceId)) throw new IllegalStateException("source already being monitored");
 
@@ -72,6 +72,8 @@ public final class DataManager implements Managed, DataSink {
 
 		// notify listener
 		dataListener.onSourceAdded(sourceId, source.getSchema());
+
+		return registration;
 	}
 
 
@@ -94,6 +96,11 @@ public final class DataManager implements Managed, DataSink {
 
 	public List<OdsRegistration> getAll() {
 		return registrationRepository.getAll();
+	}
+
+
+	public OdsRegistration get(String sourceId) {
+		return registrationRepository.findById(sourceId);
 	}
 
 

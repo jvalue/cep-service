@@ -18,6 +18,7 @@ import org.jvalue.ceps.rest.DataApi;
 import org.jvalue.ceps.rest.EventApi;
 import org.jvalue.ceps.rest.NotificationClientRegistrationApi;
 import org.jvalue.ceps.rest.RestModule;
+import org.jvalue.ceps.rest.SourcesApi;
 
 import javax.ws.rs.core.Context;
 
@@ -63,12 +64,6 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new OdsModule(),
 				new RestModule());
 
-		// start monitoring sources
-		DataManager dataManager = injector.getInstance(DataManager.class);
-		for (String sourceId : configuration.getOdsSources()) {
-			if (!dataManager.isBeingMonitored(sourceId)) dataManager.startMonitoring(sourceId);
-		}
-
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
@@ -77,6 +72,7 @@ public final class CepsApplication extends Application<CepsConfig> {
 		environment.jersey().register(injector.getInstance(DataApi.class));
 		environment.jersey().register(injector.getInstance(EventApi.class));
 		environment.jersey().register(injector.getInstance(NotificationClientRegistrationApi.class));
+		environment.jersey().register(injector.getInstance(SourcesApi.class));
 	}
 
 
