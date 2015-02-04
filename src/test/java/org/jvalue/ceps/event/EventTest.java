@@ -25,7 +25,7 @@ public final class EventTest {
 		List<JsonNode> oldData = createEventData("oldDummy");
 		long timestamp = System.currentTimeMillis();
 		Event event = new Event("dummy", timestamp, newData, oldData);
-		assertEquals("dummy", event.getEventId());
+		assertEquals("dummy", event.getId());
 		assertEquals(timestamp, event.getTimestamp());
 		assertEquals(newData, event.getNewEventData());
 		assertEquals(oldData, event.getOldEventData());

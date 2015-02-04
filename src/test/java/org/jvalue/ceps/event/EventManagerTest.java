@@ -35,7 +35,7 @@ public final class EventManagerTest {
 		new Verifications() {{
 			Event event;
 			eventRepository.add(event = withCapture());
-			Assert.assertEquals(eventId, event.getEventId());
+			Assert.assertEquals(eventId, event.getId());
 			Assert.assertNotNull(event.getOldEventData());
 			Assert.assertNotNull(event.getNewEventData());
 			Assert.assertTrue(event.getTimestamp() > 0);

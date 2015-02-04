@@ -67,7 +67,7 @@ public final class EventGarbageCollector implements Managed {
 			long currentTimestamp = System.currentTimeMillis();
 			for (Event event : eventManager.getAll()) {
 				if (currentTimestamp - event.getTimestamp() >= maxAge)
-					eventManager.remove(event.getEventId());
+					eventManager.remove(event.getId());
 			}
 		}
 

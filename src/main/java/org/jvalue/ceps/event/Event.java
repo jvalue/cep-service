@@ -5,36 +5,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Objects;
 
-import org.ektorp.support.CouchDbDocument;
 import org.jvalue.ceps.utils.Assert;
 
 import java.util.List;
 
 
-public final class Event extends CouchDbDocument {
+public final class Event {
 
-	private final String eventId;
+	private final String id;
 	private final long timestamp;
 	private final List<JsonNode> newEventData;
 	private final List<JsonNode> oldEventData;
 
 	@JsonCreator
 	public Event(
-			@JsonProperty("eventId") String eventId,
+			@JsonProperty("id") String id,
 			@JsonProperty("timestamp") long timestamp,
 			@JsonProperty("newEventData") List<JsonNode> newEventData,
 			@JsonProperty("oldEventData") List<JsonNode> oldEventData) {
 
-		Assert.assertNotNull(eventId, newEventData, oldEventData);;
-		this.eventId = eventId;
+		Assert.assertNotNull(id, newEventData, oldEventData);;
+		this.id = id;
 		this.timestamp = timestamp;
 		this.newEventData = newEventData;
 		this.oldEventData = oldEventData;
 	}
 
 
-	public String getEventId() {
-		return eventId;
+	public String getId() {
+		return id;
 	}
 
 
@@ -58,7 +57,7 @@ public final class Event extends CouchDbDocument {
 		if (other == null || !(other instanceof Event)) return false;
 		if (other == this) return true;
 		Event event = (Event) other;
-		return Objects.equal(eventId, event.eventId)
+		return Objects.equal(id, event.id)
 				&& Objects.equal(timestamp, event.timestamp)
 				&& Objects.equal(newEventData, event.newEventData)
 				&& Objects.equal(oldEventData, event.oldEventData);
@@ -67,7 +66,7 @@ public final class Event extends CouchDbDocument {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(eventId, timestamp, newEventData, oldEventData);
+		return Objects.hashCode(id, timestamp, newEventData, oldEventData);
 	}
 
 }

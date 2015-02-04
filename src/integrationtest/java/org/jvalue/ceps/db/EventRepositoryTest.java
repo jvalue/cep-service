@@ -2,21 +2,16 @@ package org.jvalue.ceps.db;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.ektorp.CouchDbInstance;
-import org.junit.Assert;
-import org.junit.Test;
 import org.jvalue.ceps.event.Event;
+import org.jvalue.common.db.RepositoryAdapter;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.Arrays;
 
-public final class EventRepositoryTest extends AbstractRepositoryTest_Old<EventRepository, Event> {
-
-	private static final String
-			EVENT_ID_1 = "eventId1",
-			EVENT_ID_2 = "eventId2";
+public final class EventRepositoryTest extends AbstractRepositoryAdapterTest<Event> {
 
 
 	public EventRepositoryTest() {
@@ -24,36 +19,21 @@ public final class EventRepositoryTest extends AbstractRepositoryTest_Old<EventR
 	}
 
 
-	@Test
-	public void testFindByEventId() {
-		Map<String, Event> events = doSetupDataItems();
-		for (Event event : events.values()) repository.add(event);
-
-		for (Map.Entry<String, Event> entry : events.entrySet()) {
-			Event event = repository.findByEventId(entry.getKey());
-			Assert.assertEquals(entry.getValue(), event);
-		}
-	}
-
-
 	@Override
-	protected EventRepository doCreateDatabase(CouchDbInstance couchDbInstance, String databaseName) {
+	protected RepositoryAdapter<?, ?, Event> doCreateAdapter(CouchDbInstance couchDbInstance, String databaseName) {
 		return new EventRepository(couchDbInstance.createConnector(databaseName, true));
 	}
 
 
 	@Override
-	protected Map<String, Event> doSetupDataItems() {
-		Map<String, Event> events = new HashMap<>();
-		events.put(EVENT_ID_1, new Event(EVENT_ID_1, 1234, new LinkedList<JsonNode>(), new LinkedList<JsonNode>()));
-		events.put(EVENT_ID_2, new Event(EVENT_ID_2, 5678, new LinkedList<JsonNode>(), new LinkedList<JsonNode>()));
-		return events;
-	}
-
-
-	@Override
-	protected String doGetIdForItem(Event client) {
-		return client.getEventId();
+	protected Event doCreateValue(String id, String data) {
+		ObjectNode jsonData = new ObjectNode(JsonNodeFactory.instance);
+		jsonData.put("someKey", data);
+		return new Event(
+				id,
+				1201,
+				Arrays.asList((JsonNode) jsonData),
+				Arrays.asList((JsonNode) jsonData));
 	}
 
 }

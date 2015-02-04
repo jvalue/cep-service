@@ -34,13 +34,13 @@ public final class EventManager {
 
 	public Event get(String eventId) {
 		Assert.assertNotNull(eventId);
-		return eventRepository.findByEventId(eventId);
+		return eventRepository.findById(eventId);
 	}
 
 
 	public void remove(String eventId) {
 		Assert.assertNotNull(eventId);
-		Event event = eventRepository.findByEventId(eventId);
+		Event event = eventRepository.findById(eventId);
 		eventRepository.remove(event);
 	}
 
