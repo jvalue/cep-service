@@ -1,31 +1,46 @@
 package org.jvalue.ceps.notifications.clients;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.google.common.base.Objects;
 
-import org.jvalue.ceps.utils.Assert;
 
-
-@JsonTypeInfo(use=Id.CLASS, include=As.PROPERTY, property="class")
+@JsonTypeInfo(
+		use = Id.NAME,
+		include = As.PROPERTY,
+		property = "type",
+		visible = true
+)
+@JsonSubTypes({
+		@JsonSubTypes.Type(value = HttpClient.class, name = HttpClient.CLIENT_TYPE),
+		@JsonSubTypes.Type(value = GcmClient.class, name = GcmClient.CLIENT_TYPE)
+})
 public abstract class Client {
 
+	private final String type;
 	/** Identifies one epl stmt. Must be unique across all stmts. */
 	private final String id;
-	/** Identifies one device. Mutliple epl stmts can be mapped to one deviceId. */
+	/** Identifies one device. Multiple epl stmts can be mapped to one deviceId. */
 	private final String deviceId;
 	private final String eplStmt;
 
 	Client(
+			String type,
 			String id,
 			String deviceId,
 			String eplStmt) {
 
-		Assert.assertNotNull(id, deviceId, eplStmt);
+		this.type = type;
 		this.id = id;
 		this.deviceId = deviceId;
 		this.eplStmt = eplStmt;
+	}
+
+
+	public String getType() {
+		return type;
 	}
 
 

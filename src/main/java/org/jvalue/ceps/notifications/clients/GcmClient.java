@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class GcmClient extends Client {
 
+	public static final String CLIENT_TYPE = "GCM";
+
 	/**
 	 * The deviceId is represented through the GCM id.
 	 */
@@ -15,7 +17,7 @@ public final class GcmClient extends Client {
 			@JsonProperty("deviceId") String gcmId,
 			@JsonProperty("eplStmt") String eplStmt) {
 
-		super(id, gcmId, eplStmt);
+		super(CLIENT_TYPE, id, gcmId, eplStmt);
 	}
 
 

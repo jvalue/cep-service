@@ -39,7 +39,7 @@ public final class ClientTest {
 	private static final class DummyClient extends Client {
 
 		public DummyClient(String clientId, String deviceId, String eplStmt) {
-			super(clientId, deviceId, eplStmt);
+			super("someType", clientId, deviceId, eplStmt);
 		}
 
 

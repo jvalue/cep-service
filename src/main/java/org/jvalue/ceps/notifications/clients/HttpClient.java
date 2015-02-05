@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public final class HttpClient extends Client {
 
+	public static final String CLIENT_TYPE = "HTTP";
+
 	/**
 	 * The deviceId represents the client's url.
 	 */
@@ -15,7 +17,7 @@ public final class HttpClient extends Client {
 			@JsonProperty("deviceId") String clientCallbackUrl,
 			@JsonProperty("eplStmt") String eplStmt) {
 
-		super(id, clientCallbackUrl, eplStmt);
+		super(CLIENT_TYPE, id, clientCallbackUrl, eplStmt);
 	}
 
 
