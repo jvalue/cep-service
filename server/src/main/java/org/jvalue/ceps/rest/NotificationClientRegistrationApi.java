@@ -1,8 +1,6 @@
 package org.jvalue.ceps.rest;
 
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
@@ -10,8 +8,12 @@ import org.apache.commons.lang3.ClassUtils;
 import org.jvalue.ceps.adapter.EplAdapter;
 import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.api.notifications.Client;
+import org.jvalue.ceps.api.notifications.ClientDescription;
+import org.jvalue.ceps.api.notifications.ClientDescriptionVisitor;
 import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.GcmClientDescription;
 import org.jvalue.ceps.api.notifications.HttpClient;
+import org.jvalue.ceps.api.notifications.HttpClientDescription;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.common.rest.RestUtils;
 
@@ -19,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.PUT;
@@ -27,9 +28,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import static com.fasterxml.jackson.annotation.JsonTypeInfo.As;
-import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 @Path("/clients")
 @Produces(MediaType.APPLICATION_JSON)
@@ -59,12 +57,12 @@ public final class NotificationClientRegistrationApi {
 		final Map<String, Object> adapterArguments = new HashMap<>();
 
 		final EplAdapter adapter = assertIsValidAdapterName(adapterName);
-		if (adapter.getRequiredParams().size() != clientDescription.eplArguments.size()) throw RestUtils.createJsonFormattedException("found additional param", 400);
+		if (adapter.getRequiredParams().size() != clientDescription.getEplArguments().size()) throw RestUtils.createJsonFormattedException("found additional param", 400);
 		for (String requiredParam : adapter.getRequiredParams().keySet()) {
-			if (!clientDescription.eplArguments.containsKey(requiredParam)) throw RestUtils.createJsonFormattedException("missing param " + requiredParam, 400);
+			if (!clientDescription.getEplArguments().containsKey(requiredParam)) throw RestUtils.createJsonFormattedException("missing param " + requiredParam, 400);
 
 			Class<?> paramClass = adapter.getRequiredParams().get(requiredParam);
-			JsonNode suppliedParam = clientDescription.eplArguments.get(requiredParam);
+			JsonNode suppliedParam = clientDescription.getEplArguments().get(requiredParam);
 
 			// convert supplied params to correct type
 			if (ClassUtils.isAssignable(paramClass, Number.class, true) && suppliedParam.isNumber()) {
@@ -83,12 +81,12 @@ public final class NotificationClientRegistrationApi {
 			Client client = clientDescription.accept(new ClientDescriptionVisitor<Void, Client>() {
 										 @Override
 										 public Client visit(GcmClientDescription clientDescription, Void param) {
-											 return new GcmClient(clientId, clientDescription.deviceId, adapter.toEplStmt(adapterArguments));
+											 return new GcmClient(clientId, clientDescription.getDeviceId(), adapter.toEplStmt(adapterArguments));
 										 }
 
 										 @Override
 										 public Client visit(HttpClientDescription clientDescription, Void param) {
-											 return new HttpClient(clientId, clientDescription.deviceId, adapter.toEplStmt(adapterArguments));
+											 return new HttpClient(clientId, clientDescription.getDeviceId(), adapter.toEplStmt(adapterArguments));
 										 }
 									 }, null);
 			notificationManager.register(client);
@@ -118,51 +116,5 @@ public final class NotificationClientRegistrationApi {
 		return adapter;
 	}
 
-
-	@JsonTypeInfo(
-			use = Id.NAME,
-			include = As.PROPERTY,
-			property = "type",
-			visible = true
-	)
-	@JsonSubTypes({
-			@JsonSubTypes.Type(value = HttpClientDescription.class, name = HttpClient.CLIENT_TYPE),
-			@JsonSubTypes.Type(value = GcmClientDescription.class, name = GcmClient.CLIENT_TYPE)
-	})
-	private static abstract class ClientDescription {
-
-		@NotNull public String deviceId;
-		@NotNull public Map<String, JsonNode> eplArguments;
-		public abstract <P,R> R accept(ClientDescriptionVisitor<P,R> visitor, P param);
-
-	}
-
-
-	private static final class GcmClientDescription extends ClientDescription {
-
-		@Override
-		public <P,R> R accept(ClientDescriptionVisitor<P,R> visitor, P param) {
-			return visitor.visit(this, param);
-		}
-
-	}
-
-
-	private static final class HttpClientDescription extends ClientDescription {
-
-		@Override
-		public <P,R> R accept(ClientDescriptionVisitor<P,R> visitor, P param) {
-			return visitor.visit(this, param);
-		}
-
-	}
-
-
-	private static interface ClientDescriptionVisitor<P,R> {
-
-		public R visit(GcmClientDescription clientDescription, P param);
-		public R visit(HttpClientDescription clientDescription, P param);
-
-	}
 
 }
