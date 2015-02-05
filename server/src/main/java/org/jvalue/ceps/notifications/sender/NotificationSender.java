@@ -1,10 +1,10 @@
 package org.jvalue.ceps.notifications.sender;
 
-import java.util.List;
-
-import org.jvalue.ceps.notifications.clients.Client;
-
 import com.fasterxml.jackson.databind.JsonNode;
+
+import org.jvalue.ceps.api.notifications.Client;
+
+import java.util.List;
 
 
 public abstract class NotificationSender<C extends Client> {

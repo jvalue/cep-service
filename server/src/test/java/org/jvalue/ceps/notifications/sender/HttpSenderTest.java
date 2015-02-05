@@ -12,7 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.jvalue.ceps.notifications.clients.HttpClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 
 import java.util.LinkedList;
 

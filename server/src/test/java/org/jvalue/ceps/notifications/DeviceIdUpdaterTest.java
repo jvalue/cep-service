@@ -1,7 +1,9 @@
-package org.jvalue.ceps.notifications.clients;
+package org.jvalue.ceps.notifications;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.jvalue.ceps.api.notifications.Client;
+import org.jvalue.ceps.api.notifications.GcmClient;
 
 public final class DeviceIdUpdaterTest {
 

@@ -6,12 +6,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.jvalue.ceps.api.notifications.Client;
+import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 import org.jvalue.ceps.db.ClientRepository;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.EventUpdateListener;
 import org.jvalue.ceps.event.EventManager;
-import org.jvalue.ceps.notifications.clients.Client;
-import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
 import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Pair;
@@ -38,6 +39,7 @@ public final class NotificationManagerTest {
 	@Mocked private EsperManager esperManager;
 	@Mocked private EventManager eventManager;
 	@Mocked private NotificationSender<GcmClient> gcmSender;
+	@Mocked private NotificationSender<HttpClient> httpSender;
 	@Mocked private ClientRepository clientRepository;
 	@Mocked private SenderResult senderResult;
 
@@ -47,7 +49,7 @@ public final class NotificationManagerTest {
 
 	@Before
 	public void setupNotificationManager() {
-		this.notificationManager = new NotificationManager(esperManager, eventManager, gcmSender, clientRepository);
+		this.notificationManager = new NotificationManager(esperManager, eventManager, gcmSender, httpSender, clientRepository);
 	}
 
 

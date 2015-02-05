@@ -1,4 +1,4 @@
-package org.jvalue.ceps.notifications.clients;
+package org.jvalue.ceps.api.notifications;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

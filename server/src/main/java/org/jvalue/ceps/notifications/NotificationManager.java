@@ -3,13 +3,13 @@ package org.jvalue.ceps.notifications;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
+import org.jvalue.ceps.api.notifications.Client;
+import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 import org.jvalue.ceps.db.ClientRepository;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.EventUpdateListener;
 import org.jvalue.ceps.event.EventManager;
-import org.jvalue.ceps.notifications.clients.Client;
-import org.jvalue.ceps.notifications.clients.DeviceIdUpdater;
-import org.jvalue.ceps.notifications.clients.GcmClient;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
 import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Assert;
@@ -37,12 +37,14 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 			EsperManager esperManager,
 			EventManager eventManager,
 			NotificationSender<GcmClient> gcmSender,
+			NotificationSender<HttpClient> httpSender,
 			ClientRepository clientRepository) {
 
 		this.esperManager = esperManager;
 		this.eventManager = eventManager;
 		this.sender = new HashMap<>();
 		this.sender.put(GcmClient.class, gcmSender);
+		this.sender.put(HttpClient.class, httpSender);
 		this.clientRepository = clientRepository;
 	}
 

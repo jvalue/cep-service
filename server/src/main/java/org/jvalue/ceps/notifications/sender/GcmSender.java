@@ -3,7 +3,7 @@ package org.jvalue.ceps.notifications.sender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.notifications.utils.GcmUtils;
 
 import java.util.HashMap;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.notifications.clients.HttpClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ final class HttpSender extends NotificationSender<HttpClient> {
 	public SenderResult sendEventUpdate(
 			HttpClient client,
 			String eventId,
-			List<JsonNode> newEvents, 
+			List<JsonNode> newEvents,
 			List<JsonNode> oldEvents) {
 
 		RestAdapter adapter = new RestAdapter.Builder()

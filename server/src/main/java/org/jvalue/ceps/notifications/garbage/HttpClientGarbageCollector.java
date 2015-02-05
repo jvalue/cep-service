@@ -2,7 +2,7 @@ package org.jvalue.ceps.notifications.garbage;
 
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.notifications.clients.HttpClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 
 
 final class HttpClientGarbageCollector implements ClientGarbageCollector<HttpClient> {

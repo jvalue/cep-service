@@ -2,14 +2,14 @@ package org.jvalue.ceps.notifications.garbage;
 
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.notifications.clients.ClientVisitor;
-import org.jvalue.ceps.notifications.clients.GcmClient;
-import org.jvalue.ceps.notifications.clients.HttpClient;
+import org.jvalue.ceps.api.notifications.ClientVisitor;
+import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 
 
 /**
  * Maps instances of {@link org.jvalue.ceps.notifications.garbage.ClientGarbageCollector} to
- * instances of {@link org.jvalue.ceps.notifications.clients.Client}.
+ * instances of {@link org.jvalue.ceps.api.notifications.Client}.
  */
 public final class ClientGarbageCollectorMapper implements ClientVisitor<Void, CollectionStatus> {
 

@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.notifications.utils.GcmUtils;
 
 import java.io.IOException;

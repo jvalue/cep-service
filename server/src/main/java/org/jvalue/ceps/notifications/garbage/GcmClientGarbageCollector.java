@@ -2,7 +2,7 @@ package org.jvalue.ceps.notifications.garbage;
 
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.notifications.utils.GcmUtils;
 import org.jvalue.ceps.utils.Assert;
 

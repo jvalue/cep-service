@@ -3,9 +3,9 @@ package org.jvalue.ceps.notifications.garbage;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import org.jvalue.ceps.api.notifications.Client;
+import org.jvalue.ceps.api.notifications.ClientVisitor;
 import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.notifications.clients.Client;
-import org.jvalue.ceps.notifications.clients.ClientVisitor;
 import org.jvalue.ceps.utils.Log;
 
 import java.util.HashSet;

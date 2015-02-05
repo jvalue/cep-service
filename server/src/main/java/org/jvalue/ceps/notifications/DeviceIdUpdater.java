@@ -1,5 +1,10 @@
-package org.jvalue.ceps.notifications.clients;
+package org.jvalue.ceps.notifications;
 
+
+import org.jvalue.ceps.api.notifications.Client;
+import org.jvalue.ceps.api.notifications.ClientVisitor;
+import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 
 public final class DeviceIdUpdater implements ClientVisitor<String, Client> {
 

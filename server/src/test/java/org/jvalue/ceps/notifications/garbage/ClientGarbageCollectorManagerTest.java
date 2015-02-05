@@ -2,10 +2,10 @@ package org.jvalue.ceps.notifications.garbage;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.jvalue.ceps.api.notifications.Client;
+import org.jvalue.ceps.api.notifications.ClientVisitor;
+import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.notifications.clients.Client;
-import org.jvalue.ceps.notifications.clients.ClientVisitor;
-import org.jvalue.ceps.notifications.clients.GcmClient;
 
 import java.util.Arrays;
 import java.util.LinkedList;

@@ -10,7 +10,7 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.DocumentNotFoundException;
 import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.View;
-import org.jvalue.ceps.notifications.clients.Client;
+import org.jvalue.ceps.api.notifications.Client;
 import org.jvalue.common.db.DbDocument;
 import org.jvalue.common.db.DbDocumentAdaptable;
 import org.jvalue.common.db.RepositoryAdapter;

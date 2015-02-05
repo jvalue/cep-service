@@ -4,8 +4,9 @@ package org.jvalue.ceps.notifications.sender;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 
-import org.jvalue.ceps.notifications.clients.GcmClient;
-import org.jvalue.ceps.notifications.clients.HttpClient;
+import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
+
 
 public class SenderModule extends AbstractModule {
 

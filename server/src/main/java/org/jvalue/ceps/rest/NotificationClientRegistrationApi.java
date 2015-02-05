@@ -9,10 +9,10 @@ import com.google.inject.Inject;
 import org.apache.commons.lang3.ClassUtils;
 import org.jvalue.ceps.adapter.EplAdapter;
 import org.jvalue.ceps.adapter.EplAdapterManager;
+import org.jvalue.ceps.api.notifications.Client;
+import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.ceps.notifications.clients.Client;
-import org.jvalue.ceps.notifications.clients.GcmClient;
-import org.jvalue.ceps.notifications.clients.HttpClient;
 import org.jvalue.common.rest.RestUtils;
 
 import java.util.HashMap;

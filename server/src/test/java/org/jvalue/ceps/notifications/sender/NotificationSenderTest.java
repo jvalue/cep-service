@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.jvalue.ceps.notifications.clients.Client;
+import org.jvalue.ceps.api.notifications.Client;
 
 import java.util.List;
 

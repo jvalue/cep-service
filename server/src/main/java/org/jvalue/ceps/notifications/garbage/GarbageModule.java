@@ -5,9 +5,9 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 
-import org.jvalue.ceps.notifications.clients.ClientVisitor;
-import org.jvalue.ceps.notifications.clients.GcmClient;
-import org.jvalue.ceps.notifications.clients.HttpClient;
+import org.jvalue.ceps.api.notifications.ClientVisitor;
+import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.HttpClient;
 
 public class GarbageModule extends AbstractModule {
 
