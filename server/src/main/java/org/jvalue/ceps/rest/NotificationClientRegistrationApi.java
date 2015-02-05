@@ -1,19 +1,12 @@
 package org.jvalue.ceps.rest;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
-import org.apache.commons.lang3.ClassUtils;
-import org.jvalue.ceps.api.adapter.EplAdapter;
 import org.jvalue.ceps.adapter.EplAdapterManager;
+import org.jvalue.ceps.api.adapter.EplAdapter;
 import org.jvalue.ceps.api.notifications.Client;
 import org.jvalue.ceps.api.notifications.ClientDescription;
-import org.jvalue.ceps.api.notifications.ClientDescriptionVisitor;
-import org.jvalue.ceps.api.notifications.GcmClient;
-import org.jvalue.ceps.api.notifications.GcmClientDescription;
-import org.jvalue.ceps.api.notifications.HttpClient;
-import org.jvalue.ceps.api.notifications.HttpClientDescription;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.common.rest.RestUtils;
 
@@ -57,6 +50,8 @@ public final class NotificationClientRegistrationApi {
 		final Map<String, Object> adapterArguments = new HashMap<>();
 
 		final EplAdapter adapter = assertIsValidAdapterName(adapterName);
+		throw new UnsupportedOperationException("working on it ...");
+		/*
 		if (adapter.getRequiredParams().size() != clientDescription.getEplArguments().size()) throw RestUtils.createJsonFormattedException("found additional param", 400);
 		for (String requiredParam : adapter.getRequiredParams().keySet()) {
 			if (!clientDescription.getEplArguments().containsKey(requiredParam)) throw RestUtils.createJsonFormattedException("missing param " + requiredParam, 400);
@@ -92,6 +87,7 @@ public final class NotificationClientRegistrationApi {
 			notificationManager.register(client);
 			return client;
 		}
+			*/
 	}
 
 

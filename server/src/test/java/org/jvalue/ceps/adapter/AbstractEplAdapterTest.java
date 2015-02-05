@@ -1,10 +1,6 @@
 package org.jvalue.ceps.adapter;
 
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.jvalue.ceps.api.adapter.EplAdapter;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +9,7 @@ public final class AbstractEplAdapterTest {
 	private static final String adapterName = "dummyName";
 	private static final Map<String, Class<?>> adapterArgs = new HashMap<>();
 
+	/*
 	private static final EplAdapter adapter = new DummyAdapter(adapterName, adapterArgs);
 
 	static {
@@ -72,5 +69,6 @@ public final class AbstractEplAdapterTest {
 		@Override
 		protected String doToEplStmt(Map<String, Object> args) { return null; }
 	}
+	*/
 
 }
