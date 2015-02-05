@@ -17,11 +17,11 @@ public interface DataApi {
 	public OdsRegistration addSource(@Path("sourceId") String sourceId);
 
 
-	@DELETE(URL_DATA + "/{clientId}")
+	@DELETE(URL_DATA + "/{sourceId}")
 	public Response removeSource(@Path("sourceId") String sourceId);
 
 
-	@GET(URL_DATA + "/{clientId}")
+	@GET(URL_DATA + "/{sourceId}")
 	public OdsRegistration getSource(@Path("sourceId") String sourceId);
 
 
