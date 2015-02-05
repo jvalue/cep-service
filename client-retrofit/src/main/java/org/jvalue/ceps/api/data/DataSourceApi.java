@@ -9,7 +9,7 @@ import retrofit.http.GET;
 import retrofit.http.PUT;
 import retrofit.http.Path;
 
-public interface DataApi {
+public interface DataSourceApi {
 
 	static final String URL_DATA = "/sources";
 
