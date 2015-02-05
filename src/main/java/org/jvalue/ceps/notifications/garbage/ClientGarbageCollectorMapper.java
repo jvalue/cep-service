@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 
 import org.jvalue.ceps.notifications.clients.ClientVisitor;
 import org.jvalue.ceps.notifications.clients.GcmClient;
+import org.jvalue.ceps.notifications.clients.HttpClient;
 
 
 /**
@@ -13,16 +14,27 @@ import org.jvalue.ceps.notifications.clients.GcmClient;
 public final class ClientGarbageCollectorMapper implements ClientVisitor<Void, CollectionStatus> {
 
 	private final ClientGarbageCollector<GcmClient> gcmCollector;
+	private final ClientGarbageCollector<HttpClient> httpCollector;
 
 	@Inject
-	ClientGarbageCollectorMapper(ClientGarbageCollector<GcmClient> gcmCollector) {
+	ClientGarbageCollectorMapper(
+			ClientGarbageCollector<GcmClient> gcmCollector,
+			ClientGarbageCollector<HttpClient>  httpCollector) {
+
 		this.gcmCollector = gcmCollector;
+		this.httpCollector = httpCollector;
 	}
 
 
 	@Override
 	public CollectionStatus visit(GcmClient client, Void param) {
 		return gcmCollector.determineStatus(client);
+	}
+
+
+	@Override
+	public CollectionStatus visit(HttpClient client, Void param) {
+		return httpCollector.determineStatus(client);
 	}
 
 }

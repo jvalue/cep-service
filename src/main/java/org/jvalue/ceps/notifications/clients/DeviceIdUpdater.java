@@ -8,4 +8,10 @@ public final class DeviceIdUpdater implements ClientVisitor<String, Client> {
 		return new GcmClient(client.getId(), newDeviceId, client.getEplStmt());
 	}
 
+
+	@Override
+	public Client visit(HttpClient client, String newDeviceId) {
+		return new HttpClient(client.getId(), newDeviceId, client.getEplStmt());
+	}
+
 }
