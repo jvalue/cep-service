@@ -56,6 +56,9 @@ dependencies {
     testCompile 'org.jmockit:jmockit:1.13'
 	testCompile 'org.powermock:powermock:1.5.5'
 	testCompile 'org.powermock:powermock-mockito-release-full:1.5.5'
+    testCompile 'com.squareup.okhttp:okhttp:2.1.+'
+    testCompile 'com.squareup.okhttp:okhttp-urlconnection:2.1.+'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.1.+'
 }
 
 
