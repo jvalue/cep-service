@@ -4,6 +4,7 @@ package org.jvalue.ceps.adapter;
 import org.apache.commons.lang3.ClassUtils;
 import org.junit.Assert;
 import org.junit.Test;
+import org.jvalue.ceps.api.adapter.EplAdapter;
 
 import java.util.HashMap;
 import java.util.Map;

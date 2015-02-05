@@ -2,7 +2,8 @@ package org.jvalue.ceps.adapter;
 
 
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
+
+import org.jvalue.ceps.api.adapter.EplAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +15,9 @@ public final class EplAdapterManager {
 
 	// static configuration for now
 	@Inject
-	EplAdapterManager(@Named(AdapterModule.EPL_ADAPTER_PEGELONLINE) EplAdapter pegelonlineAdapter) {
-		adapter.put(pegelonlineAdapter.getName(), pegelonlineAdapter);
+	EplAdapterManager() {
+		// EplAdapterManager(@Named(AdapterModule.EPL_ADAPTER_PEGELONLINE) EplAdapter pegelonlineAdapter) {
+		// adapter.put(pegelonlineAdapter.getId(), pegelonlineAdapter);
 	}
 
 

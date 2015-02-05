@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.jvalue.ceps.adapter.EplAdapter;
+import org.jvalue.ceps.api.adapter.EplAdapter;
 import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.api.notifications.Client;
 import org.jvalue.ceps.api.notifications.ClientDescription;

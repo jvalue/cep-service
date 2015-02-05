@@ -6,7 +6,7 @@ import org.jvalue.ceps.utils.Assert;
 import java.util.Map;
 
 
-abstract class AbstractEplAdapter implements EplAdapter {
+abstract class AbstractEplAdapter {
 
 	private final String name;
 	private final Map<String, Class<?>> requiredParams;
@@ -17,19 +17,16 @@ abstract class AbstractEplAdapter implements EplAdapter {
 	}
 
 
-	@Override
 	public final String getName() {
 		return name;
 	}
 
 
-	@Override
 	public final Map<String, Class<?>> getRequiredParams() {
 		return requiredParams;
 	}
 
 
-	@Override
 	public final String toEplStmt(Map<String, Object> params) {
 		Assert.assertEquals(requiredParams.size(), params.size(), "found " + params.size() + " args but required " + requiredParams.size());
 		for (String key : requiredParams.keySet()) {

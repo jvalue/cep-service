@@ -3,6 +3,7 @@ package org.jvalue.ceps.adapter;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.jvalue.ceps.api.adapter.EplAdapter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,7 @@ public final class AbstractEplAdapterTest {
 
 	@Test
 	public void testGetters() {
-		Assert.assertEquals(adapterName, adapter.getName());
+		Assert.assertEquals(adapterName, adapter.getId());
 		Assert.assertEquals(adapterArgs, adapter.getRequiredParams());
 	}
 
