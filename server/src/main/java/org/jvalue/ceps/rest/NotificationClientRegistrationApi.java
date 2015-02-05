@@ -1,12 +1,19 @@
 package org.jvalue.ceps.rest;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.adapter.EplAdapterManager;
+import org.jvalue.ceps.api.adapter.ArgumentType;
 import org.jvalue.ceps.api.adapter.EplAdapter;
 import org.jvalue.ceps.api.notifications.Client;
 import org.jvalue.ceps.api.notifications.ClientDescription;
+import org.jvalue.ceps.api.notifications.ClientDescriptionVisitor;
+import org.jvalue.ceps.api.notifications.GcmClient;
+import org.jvalue.ceps.api.notifications.GcmClientDescription;
+import org.jvalue.ceps.api.notifications.HttpClient;
+import org.jvalue.ceps.api.notifications.HttpClientDescription;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.common.rest.RestUtils;
 
@@ -48,26 +55,24 @@ public final class NotificationClientRegistrationApi {
 			@Valid final ClientDescription clientDescription) {
 
 		final Map<String, Object> adapterArguments = new HashMap<>();
-
 		final EplAdapter adapter = assertIsValidAdapterName(adapterName);
-		throw new UnsupportedOperationException("working on it ...");
-		/*
-		if (adapter.getRequiredParams().size() != clientDescription.getEplArguments().size()) throw RestUtils.createJsonFormattedException("found additional param", 400);
-		for (String requiredParam : adapter.getRequiredParams().keySet()) {
+
+		if (adapter.getRequiredArguments().size() != clientDescription.getEplArguments().size()) throw RestUtils.createJsonFormattedException("found additional param", 400);
+		for (String requiredParam : adapter.getRequiredArguments().keySet()) {
 			if (!clientDescription.getEplArguments().containsKey(requiredParam)) throw RestUtils.createJsonFormattedException("missing param " + requiredParam, 400);
 
-			Class<?> paramClass = adapter.getRequiredParams().get(requiredParam);
+			ArgumentType argType = adapter.getRequiredArguments().get(requiredParam);
 			JsonNode suppliedParam = clientDescription.getEplArguments().get(requiredParam);
 
-			// convert supplied params to correct type
-			if (ClassUtils.isAssignable(paramClass, Number.class, true) && suppliedParam.isNumber()) {
+			// convert supplied args to correct type
+			if (argType.equals(ArgumentType.NUMBER) && suppliedParam.isNumber()) {
 				adapterArguments.put(requiredParam, suppliedParam.asDouble());
-			} else if (ClassUtils.isAssignable(paramClass, String.class, true) && suppliedParam.isTextual()) {
+			} else if (argType.equals(ArgumentType.STRING) && suppliedParam.isTextual()) {
 				adapterArguments.put(requiredParam, suppliedParam.asText());
-			} else if (ClassUtils.isAssignable(paramClass, Boolean.class, true) && suppliedParam.isBoolean()) {
+			} else if (argType.equals(ArgumentType.BOOLEAN) && suppliedParam.isBoolean()) {
 				adapterArguments.put(requiredParam, suppliedParam.asBoolean());
 			} else {
-				throw RestUtils.createJsonFormattedException("invalid type for param " + requiredParam + ", should be " + paramClass.getSimpleName(), 400);
+				throw RestUtils.createJsonFormattedException("invalid type for param " + requiredParam + ", should be " + argType.name(), 400);
 			}
 		}
 
@@ -76,18 +81,17 @@ public final class NotificationClientRegistrationApi {
 			Client client = clientDescription.accept(new ClientDescriptionVisitor<Void, Client>() {
 										 @Override
 										 public Client visit(GcmClientDescription clientDescription, Void param) {
-											 return new GcmClient(clientId, clientDescription.getDeviceId(), adapter.toEplStmt(adapterArguments));
+											 return new GcmClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
 										 }
 
 										 @Override
 										 public Client visit(HttpClientDescription clientDescription, Void param) {
-											 return new HttpClient(clientId, clientDescription.getDeviceId(), adapter.toEplStmt(adapterArguments));
+											 return new HttpClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
 										 }
 									 }, null);
 			notificationManager.register(client);
 			return client;
 		}
-			*/
 	}
 
 
@@ -107,7 +111,7 @@ public final class NotificationClientRegistrationApi {
 
 
 	private EplAdapter assertIsValidAdapterName(String adapterName) {
-		EplAdapter adapter = adapterManager.getByName(adapterName);
+		EplAdapter adapter = adapterManager.get(adapterName);
 		if (adapter == null) throw RestUtils.createNotFoundException();
 		return adapter;
 	}

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-final class PegelOnlineEplAdapter extends AbstractEplAdapter {
+final class PegelOnlineEplAdapter {
 
 	private static final String
 		KEY_RIVER = "river",
@@ -25,12 +25,6 @@ final class PegelOnlineEplAdapter extends AbstractEplAdapter {
 	}
 
 
-	PegelOnlineEplAdapter() {
-		super("pegelOnline", requiredParams);
-	}
-
-
-	@Override
 	protected String doToEplStmt(Map<String, Object> params) {
 		String river = params.get(KEY_RIVER).toString();
 		String station =  params.get(KEY_STATION).toString();

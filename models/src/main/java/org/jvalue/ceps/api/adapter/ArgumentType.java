@@ -8,8 +8,17 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(using = ArgumentTypeSerializer.class)
 public enum ArgumentType {
 
-	STRING,
-	NUMBER,
-	BOOLEAN
+	STRING(String.class),
+	NUMBER(Double.class),
+	BOOLEAN(Boolean.class);
 
+	private final Class<?> javaType;
+
+	ArgumentType(Class<?> javaType) {
+		this.javaType = javaType;
+	}
+
+	public Class<?> getJavaType() {
+		return javaType;
+	}
 }

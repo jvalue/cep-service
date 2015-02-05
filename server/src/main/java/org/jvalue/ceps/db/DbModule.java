@@ -40,6 +40,10 @@ public class DbModule extends AbstractModule {
 
 			CouchDbConnector clientConnector = connectorFactory.createConnector(ClientRepository.DATABASE_NAME, true);
 			bind(CouchDbConnector.class).annotatedWith(Names.named(ClientRepository.DATABASE_NAME)).toInstance(clientConnector);
+
+			CouchDbConnector eplAdapterConnector = connectorFactory.createConnector(EplAdapterRepository.DATABASE_NAME, true);
+			bind(CouchDbConnector.class).annotatedWith(Names.named(EplAdapterRepository.DATABASE_NAME)).toInstance(eplAdapterConnector);
+
 		} catch (MalformedURLException mue) {
 			throw new RuntimeException(mue);
 		}
