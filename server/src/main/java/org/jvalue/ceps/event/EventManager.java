@@ -3,6 +3,7 @@ package org.jvalue.ceps.event;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
+import org.jvalue.ceps.api.event.Event;
 import org.jvalue.ceps.db.EventRepository;
 import org.jvalue.ceps.utils.Assert;
 

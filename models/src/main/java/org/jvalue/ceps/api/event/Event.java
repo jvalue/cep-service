@@ -1,21 +1,22 @@
-package org.jvalue.ceps.event;
+package org.jvalue.ceps.api.event;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Objects;
 
-import org.jvalue.ceps.utils.Assert;
-
 import java.util.List;
+
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
 
 
 public final class Event {
 
-	private final String id;
-	private final long timestamp;
-	private final List<JsonNode> newEventData;
-	private final List<JsonNode> oldEventData;
+	@NotNull private final String id;
+	@DecimalMin("0") private final long timestamp;
+	@NotNull private final List<JsonNode> newEventData;
+	@NotNull private final List<JsonNode> oldEventData;
 
 	@JsonCreator
 	public Event(
@@ -24,7 +25,6 @@ public final class Event {
 			@JsonProperty("newEventData") List<JsonNode> newEventData,
 			@JsonProperty("oldEventData") List<JsonNode> oldEventData) {
 
-		Assert.assertNotNull(id, newEventData, oldEventData);;
 		this.id = id;
 		this.timestamp = timestamp;
 		this.newEventData = newEventData;

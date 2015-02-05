@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.jvalue.ceps.api.event.Event;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -3,6 +3,7 @@ package org.jvalue.ceps.event;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import org.jvalue.ceps.api.event.Event;
 import org.jvalue.ceps.utils.Assert;
 
 import java.util.concurrent.Executors;

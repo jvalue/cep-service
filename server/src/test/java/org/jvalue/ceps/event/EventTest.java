@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.jvalue.ceps.api.event.Event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

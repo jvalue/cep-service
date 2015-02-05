@@ -3,7 +3,7 @@ package org.jvalue.ceps.rest;
 
 import com.google.inject.Inject;
 
-import org.jvalue.ceps.event.Event;
+import org.jvalue.ceps.api.event.Event;
 import org.jvalue.ceps.event.EventManager;
 
 import java.util.List;

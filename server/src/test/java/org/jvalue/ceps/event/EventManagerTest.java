@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.jvalue.ceps.api.event.Event;
 import org.jvalue.ceps.db.EventRepository;
 
 import java.util.LinkedList;
