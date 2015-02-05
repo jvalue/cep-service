@@ -4,7 +4,7 @@ package org.jvalue.ceps.rest;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.data.DataManager;
-import org.jvalue.ceps.data.OdsRegistration;
+import org.jvalue.ceps.api.data.OdsRegistration;
 import org.jvalue.common.rest.RestUtils;
 import org.jvalue.ods.api.sources.DataSourceApi;
 

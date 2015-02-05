@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
+import org.jvalue.ceps.api.data.OdsRegistration;
 import org.jvalue.ceps.db.OdsRegistrationRepository;
 import org.jvalue.ceps.main.ConfigModule;
 import org.jvalue.ceps.rest.RestModule;

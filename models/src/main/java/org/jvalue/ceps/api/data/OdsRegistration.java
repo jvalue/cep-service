@@ -1,4 +1,4 @@
-package org.jvalue.ceps.data;
+package org.jvalue.ceps.api.data;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

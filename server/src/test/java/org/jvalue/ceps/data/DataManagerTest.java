@@ -10,6 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.jvalue.ceps.api.data.OdsRegistration;
 import org.jvalue.ceps.db.OdsRegistrationRepository;
 import org.jvalue.ods.api.notifications.ClientDescription;
 import org.jvalue.ods.api.notifications.HttpClient;
