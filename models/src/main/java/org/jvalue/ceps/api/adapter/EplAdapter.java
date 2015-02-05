@@ -1,5 +1,6 @@
 package org.jvalue.ceps.api.adapter;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 
@@ -8,25 +9,18 @@ import java.util.Map;
 import javax.validation.constraints.NotNull;
 
 
-/**
- * Describes one adapter that is capable of transforming client parameters into
- * a valid EPL statement.
- */
-public final class EplAdapter {
+public final class EplAdapter extends AbstractEplAdapter {
 
 	@NotNull private final String id;
-	@NotNull private final String eplBlueprint;
-	@NotNull private final Map<String, ArgumentType> requiredArguments;
 
-
+	@JsonCreator
 	public EplAdapter(
 			@JsonProperty("id") String id,
 			@JsonProperty("eplBlueprint") String eplBlueprint,
 			@JsonProperty("requiredArguments") Map<String, ArgumentType> requiredArguments) {
 
+		super(eplBlueprint, requiredArguments);
 		this.id = id;
-		this.eplBlueprint = eplBlueprint;
-		this.requiredArguments = requiredArguments;
 	}
 
 
@@ -35,30 +29,17 @@ public final class EplAdapter {
 	}
 
 
-	public String getEplBlueprint() {
-		return eplBlueprint;
-	}
-
-
-	public Map<String, ArgumentType> getRequiredArguments() {
-		return requiredArguments;
-	}
-
-
 	@Override
 	public boolean equals(Object other) {
-		if (other == null || !(other instanceof EplAdapter)) return false;
-		if (other == this) return true;
+		if (!super.equals(other) || !(other instanceof EplAdapter)) return false;
 		EplAdapter adapter = (EplAdapter) other;
-		return Objects.equal(id, adapter.id)
-				&& Objects.equal(eplBlueprint, adapter.eplBlueprint)
-				&& Objects.equal(requiredArguments, adapter.requiredArguments);
+		return Objects.equal(id, adapter.id);
 	}
 
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id, eplBlueprint, requiredArguments);
+		return Objects.hashCode(super.hashCode(), id);
 	}
 
 }
