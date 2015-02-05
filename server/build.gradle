@@ -1,0 +1,85 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'war'
+apply plugin: 'cargo'
+
+repositories {
+    maven { url 'https://raw.githubusercontent.com/slorber/gcm-server-repository/master/releases/'}
+	mavenCentral()
+}
+
+
+buildscript {
+    repositories {
+    	jcenter()
+    }
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-cargo-plugin:1.4'
+    }
+}
+
+cargo {
+    containerId = 'tomcat7x'
+}
+
+
+cargoRedeployRemote.dependsOn('war')
+cargoRunLocal.dependsOn('war')
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.10'
+}
+
+
+mainClassName = "org.jvalue.ceps.main.CepsApplication"
+
+
+run() {
+    args 'server', 'ceps-configuration.yml'
+}
+
+
+dependencies {
+    cargo 'org.codehaus.cargo:cargo-ant:1.4.5'
+    compile 'io.dropwizard:dropwizard-core:0.8.0-rc1'
+    compile 'com.squareup.retrofit:retrofit:1.8.+'
+    compile 'com.squareup.retrofit:converter-jackson:1.8.0'
+    compile 'com.google.inject:guice:4.0-beta5'
+    compile 'com.google.inject.extensions:guice-assistedinject:4.0-beta5'
+    compile 'org.ektorp:org.ektorp:1.4.+'
+	compile 'com.espertech:esper:4.6.0'
+	compile 'com.google.android.gcm:gcm-server:1.0.2'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+	testCompile 'junit:junit:4.11'
+    testCompile 'org.jmockit:jmockit:1.13'
+	testCompile 'org.powermock:powermock:1.5.5'
+	testCompile 'org.powermock:powermock-mockito-release-full:1.5.5'
+    testCompile 'com.squareup.okhttp:okhttp:2.1.+'
+    testCompile 'com.squareup.okhttp:okhttp-urlconnection:2.1.+'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.1.+'
+}
+
+
+tasks.withType(Compile) {
+	options.compilerArgs << "-Xlint:unchecked"
+}
+
+
+sourceSets {
+    integrationTest {
+        java.srcDir file('src/integrationtest/java')
+        resources.srcDir file('src/integrationtest/resouces')
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+
+task integrationTest(type: Test) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+build.dependsOn integrationTest
