@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.dropwizard.lifecycle.Managed;
+import retrofit.RetrofitError;
 
 
 public final class DataManager implements Managed, DataSink {
@@ -83,9 +84,14 @@ public final class DataManager implements Managed, DataSink {
 		OdsRegistration registration = getRegistrationForSourceId(sourceId);
 		if (registration == null) throw new IllegalStateException("source not being monitored");
 
-		odsNotificationApi.unregisterClient(sourceId, registration.getClient().getId());
-		registrationRepository.remove(registration);
-		dataListener.onSourceRemoved(sourceId, registration.getDataSource().getSchema());
+		try {
+			odsNotificationApi.unregisterClient(sourceId, registration.getClient().getId());
+		} catch (RetrofitError re) {
+			Log.error("failed to unregister from ODS", re);
+		} finally {
+			registrationRepository.remove(registration);
+			dataListener.onSourceRemoved(sourceId, registration.getDataSource().getSchema());
+		}
 	}
 
 
