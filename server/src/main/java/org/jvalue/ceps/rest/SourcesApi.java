@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import org.jvalue.ceps.api.data.OdsRegistration;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.common.rest.RestUtils;
-import org.jvalue.ods.api.sources.DataSourceApi;
+import org.jvalue.ods.api.DataSourceApi;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public final class SourcesApi {
 	public OdsRegistration addSource(@PathParam("sourceId") String sourceId) {
 		try {
 			// check that source is registered on ODS
-			odsSourceApi.get(sourceId);
+			odsSourceApi.getSource(sourceId);
 		} catch (RetrofitError re) {
 			throw RestUtils.createJsonFormattedException("source not registered on ODS", 409);
 		}

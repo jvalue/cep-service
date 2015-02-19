@@ -12,12 +12,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvalue.ceps.api.data.OdsRegistration;
 import org.jvalue.ceps.db.OdsRegistrationRepository;
+import org.jvalue.ods.api.DataSourceApi;
+import org.jvalue.ods.api.NotificationApi;
 import org.jvalue.ods.api.notifications.ClientDescription;
 import org.jvalue.ods.api.notifications.HttpClient;
 import org.jvalue.ods.api.notifications.HttpClientDescription;
-import org.jvalue.ods.api.notifications.NotificationApi;
 import org.jvalue.ods.api.sources.DataSource;
-import org.jvalue.ods.api.sources.DataSourceApi;
 import org.jvalue.ods.api.sources.DataSourceMetaData;
 
 import java.util.LinkedList;
@@ -72,21 +72,21 @@ public final class DataManagerTest {
 	@Test
 	public void testStartMonitoring() {
 		new Expectations() {{
-			sourceApi.get(anyString);
+			sourceApi.getSource(anyString);
 			result = source;
 
-			notificationApi.register(anyString, anyString, (ClientDescription) any);
+			notificationApi.registerClient(anyString, anyString, (ClientDescription) any);
 			result = client;
 		}};
 
 		dataManager.startMonitoring(sourceId);
 
 		new Verifications() {{
-			sourceApi.get(sourceId);
+			sourceApi.getSource(sourceId);
 			times = 1;
 
 			HttpClientDescription clientDescription;
-			notificationApi.register(sourceId, anyString, clientDescription = withCapture());
+			notificationApi.registerClient(sourceId, anyString, clientDescription = withCapture());
 
 			Assert.assertEquals(cepsBaseUrl + dataUrl, clientDescription.getCallbackUrl());
 			Assert.assertEquals(true, clientDescription.getSendData());
@@ -110,7 +110,7 @@ public final class DataManagerTest {
 		dataManager.stopMonitoring(sourceId);
 
 		new Verifications() {{
-			notificationApi.unregister(sourceId, anyString);
+			notificationApi.unregisterClient(sourceId, anyString);
 
 			updateListener.onSourceRemoved(sourceId, sourceSchema); times = 1;
 		}};

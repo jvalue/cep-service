@@ -7,8 +7,8 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
-import org.jvalue.ods.api.notifications.NotificationApi;
-import org.jvalue.ods.api.sources.DataSourceApi;
+import org.jvalue.ods.api.DataSourceApi;
+import org.jvalue.ods.api.NotificationApi;
 
 import retrofit.RestAdapter;
 import retrofit.converter.JacksonConverter;

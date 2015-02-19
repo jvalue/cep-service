@@ -11,12 +11,12 @@ import org.jvalue.ceps.main.ConfigModule;
 import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.Log;
+import org.jvalue.ods.api.DataSourceApi;
+import org.jvalue.ods.api.NotificationApi;
 import org.jvalue.ods.api.notifications.ClientDescription;
 import org.jvalue.ods.api.notifications.HttpClient;
 import org.jvalue.ods.api.notifications.HttpClientDescription;
-import org.jvalue.ods.api.notifications.NotificationApi;
 import org.jvalue.ods.api.sources.DataSource;
-import org.jvalue.ods.api.sources.DataSourceApi;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,11 +61,11 @@ public final class DataManager implements Managed, DataSink {
 		if (isBeingMonitored(sourceId)) throw new IllegalStateException("source already being monitored");
 
 		// get source / schema
-		DataSource source = odsDataSourceApi.get(sourceId);
+		DataSource source = odsDataSourceApi.getSource(sourceId);
 
 		// register for updates
 		ClientDescription clientDescription = new HttpClientDescription(cepsDataCallbackUrl, true);
-		HttpClient client = (HttpClient) odsNotificationApi.register(sourceId, ODS_CLIENT_ID, clientDescription);
+		HttpClient client = (HttpClient) odsNotificationApi.registerClient(sourceId, ODS_CLIENT_ID, clientDescription);
 
 		// store result in db
 		OdsRegistration registration = new OdsRegistration(sourceId, source, client);
@@ -83,7 +83,7 @@ public final class DataManager implements Managed, DataSink {
 		OdsRegistration registration = getRegistrationForSourceId(sourceId);
 		if (registration == null) throw new IllegalStateException("source not being monitored");
 
-		odsNotificationApi.unregister(sourceId, registration.getClient().getId());
+		odsNotificationApi.unregisterClient(sourceId, registration.getClient().getId());
 		registrationRepository.remove(registration);
 		dataListener.onSourceRemoved(sourceId, registration.getDataSource().getSchema());
 	}
