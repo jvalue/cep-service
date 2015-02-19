@@ -1,4 +1,3 @@
-apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'war'
 apply plugin: 'cargo'
@@ -25,12 +24,6 @@ cargo {
 
 cargoRedeployRemote.dependsOn('war')
 cargoRunLocal.dependsOn('war')
-
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.10'
-}
-
 
 mainClassName = "org.jvalue.ceps.main.CepsApplication"
 
@@ -62,25 +55,25 @@ dependencies {
     testCompile 'com.squareup.okhttp:mockwebserver:2.1.+'
 }
 
-
-tasks.withType(Compile) {
-	options.compilerArgs << "-Xlint:unchecked"
-}
-
-
+// integration test
+def testSrcDir = 'src/integrationtest/java'
+def testResourceDir = 'src/integrationtest/resources'
 sourceSets {
     integrationTest {
-        java.srcDir file('src/integrationtest/java')
-        resources.srcDir file('src/integrationtest/resouces')
-        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        java.srcDir file(testSrcDir)
+        resources.srcDir file(testResourceDir)
+        compileClasspath = sourceSets.main.output + configurations.testCompile + sourceSets.test.output
         runtimeClasspath = output + compileClasspath
     }
 }
-
-
 task integrationTest(type: Test) {
     testClassesDir = sourceSets.integrationTest.output.classesDir
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
+check.dependsOn integrationTest
+idea {
+    module {
+        testSrcDir += new File(testSrcDir)
+    }
+}
 
-build.dependsOn integrationTest
