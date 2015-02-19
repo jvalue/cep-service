@@ -1,40 +1,17 @@
 apply plugin: 'application'
-apply plugin: 'war'
-apply plugin: 'cargo'
 
 repositories {
     maven { url 'https://raw.githubusercontent.com/slorber/gcm-server-repository/master/releases/'}
 	mavenCentral()
 }
 
-
-buildscript {
-    repositories {
-    	jcenter()
-    }
-    dependencies {
-        classpath 'org.gradle.api.plugins:gradle-cargo-plugin:1.4'
-    }
-}
-
-cargo {
-    containerId = 'tomcat7x'
-}
-
-
-cargoRedeployRemote.dependsOn('war')
-cargoRunLocal.dependsOn('war')
-
 mainClassName = "org.jvalue.ceps.main.CepsApplication"
-
 
 run() {
     args 'server', 'ceps-configuration.yml'
 }
 
-
 dependencies {
-    cargo 'org.codehaus.cargo:cargo-ant:1.4.5'
     compile 'io.dropwizard:dropwizard-core:0.8.0-rc1'
     compile 'com.squareup.retrofit:retrofit:1.8.+'
     compile 'com.squareup.retrofit:converter-jackson:1.8.0'
