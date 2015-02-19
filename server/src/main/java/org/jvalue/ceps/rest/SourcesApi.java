@@ -38,7 +38,7 @@ public final class SourcesApi {
 
 	@PUT
 	@Path("/{sourceId}")
-	public OdsRegistration registerSource(@PathParam("sourceId") String sourceId) {
+	public OdsRegistration addSource(@PathParam("sourceId") String sourceId) {
 		try {
 			// check that source is registered on ODS
 			odsSourceApi.get(sourceId);
@@ -52,21 +52,21 @@ public final class SourcesApi {
 
 	@GET
 	@Path("/{sourceId}")
-	public OdsRegistration getRegisteredSource(@PathParam("sourceId") String sourceId) {
+	public OdsRegistration getSource(@PathParam("sourceId") String sourceId) {
 		if (!dataManager.isBeingMonitored(sourceId)) throw RestUtils.createNotFoundException();
 		return dataManager.get(sourceId);
 	}
 
 
 	@GET
-	public List<OdsRegistration> getAllRegisteredSource() {
+	public List<OdsRegistration> getAllSources() {
 		return dataManager.getAll();
 	}
 
 
 	@DELETE
 	@Path("/{sourceId}")
-	public void unregisterSource(@PathParam("sourceId") String sourceId) {
+	public void deleteSource(@PathParam("sourceId") String sourceId) {
 		if (dataManager.isBeingMonitored(sourceId)) throw RestUtils.createJsonFormattedException("already being monitored", 409);
 		dataManager.stopMonitoring(sourceId);
 	}

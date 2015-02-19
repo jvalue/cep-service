@@ -16,7 +16,7 @@ import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorManager;
 import org.jvalue.ceps.ods.OdsModule;
 import org.jvalue.ceps.rest.DataApi;
 import org.jvalue.ceps.rest.EventApi;
-import org.jvalue.ceps.rest.NotificationClientRegistrationApi;
+import org.jvalue.ceps.rest.RegistrationApi;
 import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.rest.SourcesApi;
 import org.jvalue.common.rest.DbExceptionMapper;
@@ -72,7 +72,7 @@ public final class CepsApplication extends Application<CepsConfig> {
 
 		environment.jersey().register(injector.getInstance(DataApi.class));
 		environment.jersey().register(injector.getInstance(EventApi.class));
-		environment.jersey().register(injector.getInstance(NotificationClientRegistrationApi.class));
+		environment.jersey().register(injector.getInstance(RegistrationApi.class));
 		environment.jersey().register(injector.getInstance(SourcesApi.class));
 		environment.jersey().register(new DbExceptionMapper());
 	}

@@ -32,13 +32,13 @@ import javax.ws.rs.core.MediaType;
 @Path("/notifications")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public final class NotificationClientRegistrationApi {
+public final class RegistrationApi {
 
 	private final NotificationManager notificationManager;
 	private final EplAdapterManager adapterManager;
 
 	@Inject
-	public NotificationClientRegistrationApi(
+	public RegistrationApi(
 			NotificationManager notificationManager,
 			EplAdapterManager adapterManager) {
 

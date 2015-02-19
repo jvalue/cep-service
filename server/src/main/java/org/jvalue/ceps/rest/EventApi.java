@@ -30,21 +30,21 @@ public final class EventApi {
 
 
 	@GET
-	public List<Event> getAll() {
+	public List<Event> getAllEvents() {
 		return eventManager.getAll();
 	}
 
 
 	@GET
 	@Path("/{eventId}")
-	public Event get(@PathParam("eventId") String eventId) {
+	public Event getEvent(@PathParam("eventId") String eventId) {
 		return eventManager.get(eventId);
 	}
 
 
 	@DELETE
 	@Path("/{eventId}")
-	public void remove(@PathParam("eventId") String eventId) {
+	public void deleteEvent(@PathParam("eventId") String eventId) {
 		eventManager.remove(eventId);
 	}
 

@@ -57,7 +57,7 @@ public final class EplAdapterApi {
 
 	@DELETE
 	@Path("/{adapterId}")
-	public void removeAdapter(@PathParam("adapterId") String adapterId) {
+	public void deleteAdapter(@PathParam("adapterId") String adapterId) {
 		EplAdapter adapter = adapterManager.get(adapterId);
 		if (adapter == null) throw RestUtils.createNotFoundException();
 		adapterManager.remove(adapter);
