@@ -1,11 +1,9 @@
 package org.jvalue.ceps.rest;
 
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.inject.Inject;
 
+import org.jvalue.ceps.api.data.SourceData;
 import org.jvalue.ceps.data.DataSink;
 
 import javax.ws.rs.Consumes;
@@ -31,24 +29,8 @@ public final class DataApi {
 
 	@POST
 	public void onNewData(SourceData sourceData) {
-		dataSink.onNewData(sourceData.sourceId, sourceData.data);
+		dataSink.onNewData(sourceData.getSourceId(), sourceData.getData());
 	}
 
-
-	private static final class SourceData {
-
-		private final String sourceId;
-		private final ArrayNode data;
-
-		@JsonCreator
-		public SourceData(
-				@JsonProperty("sourceId") String sourceId,
-				@JsonProperty("data") ArrayNode data) {
-
-			this.sourceId = sourceId;
-			this.data = data;
-		}
-
-	}
 
 }
