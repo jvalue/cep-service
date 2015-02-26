@@ -18,18 +18,20 @@ import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.common.rest.RestUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/notifications")
+@Path("/notifications/{adapterName}")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public final class RegistrationApi {
@@ -48,8 +50,8 @@ public final class RegistrationApi {
 
 
 	@PUT
-	@Path("/{adapterName}/{clientId}")
-	public Client register(
+	@Path("/{clientId}")
+	public Client registerClient(
 			@PathParam("adapterName") final String adapterName,
 			@PathParam("clientId") final String clientId,
 			@Valid final ClientDescription clientDescription) {
@@ -76,37 +78,53 @@ public final class RegistrationApi {
 			}
 		}
 
-		synchronized (this) {
-			if (notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("already registered", 409);
-			Client client = clientDescription.accept(new ClientDescriptionVisitor<Void, Client>() {
-										 @Override
-										 public Client visit(GcmClientDescription clientDescription, Void param) {
-											 return new GcmClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
-										 }
+		if (notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("already registered", 409);
+		Client client = clientDescription.accept(new ClientDescriptionVisitor<Void, Client>() {
+																						  @Override
+																						  public Client visit(GcmClientDescription clientDescription, Void param) {
+																						  return new GcmClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
+																						  }
 
-										 @Override
-										 public Client visit(HttpClientDescription clientDescription, Void param) {
-											 return new HttpClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
-										 }
-									 }, null);
-			notificationManager.register(client);
-			return client;
-		}
+																						  @Override
+																						  public Client visit(HttpClientDescription clientDescription, Void param) {
+																						  return new HttpClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
+																						  }
+																						  }, null);
+		notificationManager.register(client);
+		return client;
 	}
 
 
 	@DELETE
-	@Path("/{adapterName}/{clientId}")
-	public void unregister(
+	@Path("/{clientId}")
+	public void unregisterClient(
 			@PathParam("adapterName") String adapterName,
 			@PathParam("clientId") String clientId) {
 
 		assertIsValidAdapterName(adapterName);
 
-		synchronized (this) {
-			if (!notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("not registered", 404);
-			notificationManager.unregister(clientId);
-		}
+		if (!notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("not registered", 404);
+		notificationManager.unregister(clientId);
+	}
+
+
+	@GET
+	@Path("/{clientId}")
+	public Client getClient(
+			@PathParam("adapterName") String adapterName,
+			@PathParam("clientId") String clientId) {
+
+		assertIsValidAdapterName(adapterName);
+		return notificationManager.get(clientId);
+	}
+
+
+	@GET
+	public List<Client> getAllClients(
+			@PathParam("adapterName") String adapterName) {
+
+		assertIsValidAdapterName(adapterName);
+		return notificationManager.getAll();
 	}
 
 

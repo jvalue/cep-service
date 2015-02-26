@@ -11,15 +11,22 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.jvalue.ceps.api.EplAdapterApi;
 import org.jvalue.ceps.api.RegistrationApi;
 import org.jvalue.ceps.api.SourcesApi;
+import org.jvalue.ceps.api.adapter.ArgumentType;
+import org.jvalue.ceps.api.adapter.EplAdapterDescription;
+import org.jvalue.ceps.api.notifications.HttpClientDescription;
 import org.jvalue.ods.api.DataSourceApi;
 import org.jvalue.ods.api.ProcessorChainApi;
 import org.jvalue.ods.api.sources.DataSourceDescription;
 import org.jvalue.ods.api.sources.DataSourceMetaData;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit.RestAdapter;
 import retrofit.converter.JacksonConverter;
@@ -98,7 +105,6 @@ public final class SimpleSourceTest {
 		cepsSourceApi = cepsRestAdapter.create(SourcesApi.class);
 		cepsSourceApi.addSource(SOURCE_ID);
 
-		/*
 		// add simple EPL adapter to CEPS
 		cepsAdapterApi = cepsRestAdapter.create(EplAdapterApi.class);
 		String adapterArgKey = "VALUE";
@@ -107,13 +113,14 @@ public final class SimpleSourceTest {
 		cepsAdapterApi.addAdapter(
 				ADAPTER_ID,
 				new EplAdapterDescription("select object.data from " + SOURCE_ID + ".win:length(1) as object where object.data > " + adapterArgKey, requiredAdapterArgs));
+		Assert.assertEquals(ADAPTER_ID, cepsAdapterApi.getAdapter(ADAPTER_ID).getId());
 
 		// add http client to CEPS
 		Map<String, JsonNode> adapterArgs = new HashMap<>();
 		adapterArgs.put(adapterArgKey, JsonNodeFactory.instance.numberNode(42));
 		cepsRegistrationApi = cepsRestAdapter.create(RegistrationApi.class);
-		cepsRegistrationApi.register(SOURCE_ID, CLIENT_ID, new HttpClientDescription(clientUrl, adapterArgs));
-		*/
+		cepsRegistrationApi.registerClient(SOURCE_ID, CLIENT_ID, new HttpClientDescription(clientUrl, adapterArgs));
+		Assert.assertEquals(CLIENT_ID, cepsRegistrationApi.getClient(SOURCE_ID, CLIENT_ID).getId());
 	}
 
 
@@ -123,7 +130,7 @@ public final class SimpleSourceTest {
 		webServer.shutdown();
 
 		// remove client, adapter and source from CEPS
-		if (cepsRegistrationApi != null) cepsRegistrationApi.unregister(SOURCE_ID, CLIENT_ID);
+		if (cepsRegistrationApi != null) cepsRegistrationApi.unregisterClient(SOURCE_ID, CLIENT_ID);
 		if (cepsAdapterApi != null) cepsAdapterApi.deleteAdapter(ADAPTER_ID);
 		if (cepsSourceApi != null) cepsSourceApi.deleteSource(SOURCE_ID);
 
