@@ -10,7 +10,6 @@ import org.jvalue.ods.api.DataSourceApi;
 
 import java.util.List;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
@@ -23,7 +22,6 @@ import retrofit.RetrofitError;
 
 @Path("/sources")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public final class SourcesApi {
 
 	private final DataManager dataManager;
@@ -67,7 +65,7 @@ public final class SourcesApi {
 	@DELETE
 	@Path("/{sourceId}")
 	public void deleteSource(@PathParam("sourceId") String sourceId) {
-		if (dataManager.isBeingMonitored(sourceId)) throw RestUtils.createJsonFormattedException("already being monitored", 409);
+		if (!dataManager.isBeingMonitored(sourceId)) throw RestUtils.createNotFoundException();
 		dataManager.stopMonitoring(sourceId);
 	}
 

@@ -130,6 +130,10 @@ public final class DataManager implements Managed, DataSink {
 	public void start() {
 		Map<String, JsonNode> sources = new HashMap<>();
 		for (OdsRegistration registration : registrationRepository.getAll()) {
+			// check if source is still present on ODS, otherwise remove
+
+
+
 			sources.put(registration.getDataSource().getId(), registration.getDataSource().getSchema());
 		}
 		dataListener.onRestoreSources(sources);

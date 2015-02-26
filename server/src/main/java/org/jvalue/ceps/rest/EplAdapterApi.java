@@ -1,6 +1,7 @@
 package org.jvalue.ceps.rest;
 
 
+import org.ektorp.DocumentNotFoundException;
 import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.api.adapter.EplAdapter;
 import org.jvalue.ceps.api.adapter.EplAdapterDescription;
@@ -35,7 +36,13 @@ public final class EplAdapterApi {
 	@PUT
 	@Path("/{adapterId}")
 	public EplAdapter addAdapter(@PathParam("adapterId") String adapterId, @Valid EplAdapterDescription adapterDescription) {
-		if (adapterManager.get(adapterId) != null) throw RestUtils.createJsonFormattedException("adapter already exists", 409);
+		try {
+			adapterManager.get(adapterId);
+			throw RestUtils.createJsonFormattedException("adapter already exists", 409);
+		} catch (DocumentNotFoundException dnfe) {
+			// all good
+		}
+
 		EplAdapter adapter = new EplAdapter(adapterId, adapterDescription.getEplBlueprint(), adapterDescription.getRequiredArguments());
 		adapterManager.add(adapter);
 		return adapter;
