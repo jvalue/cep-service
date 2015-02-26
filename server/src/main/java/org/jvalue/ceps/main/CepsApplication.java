@@ -67,8 +67,8 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new OdsModule(),
 				new RestModule());
 
-		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
+		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
 		environment.lifecycle().manage(injector.getInstance(ClientGarbageCollectorManager.class));
 
