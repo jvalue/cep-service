@@ -108,6 +108,7 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 		String clientId = clientToRegistrationIdMap.getFirst(registrationId);
 		Client client = clientRepository.findById(clientId);
 
+		Log.info("Sending event to client " + client.getId() + " (deviceId: "  + client.getDeviceId() + ")");
 		NotificationSender s = sender.get(client.getClass());
 		SenderResult result = s.sendEventUpdate(client, eventId, newEvents, oldEvents);
 

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -21,7 +22,10 @@ import org.jvalue.ceps.api.adapter.ArgumentType;
 import org.jvalue.ceps.api.adapter.EplAdapterDescription;
 import org.jvalue.ceps.api.notifications.HttpClientDescription;
 import org.jvalue.ods.api.DataSourceApi;
+import org.jvalue.ods.api.NotificationApi;
 import org.jvalue.ods.api.ProcessorChainApi;
+import org.jvalue.ods.api.processors.ProcessorReference;
+import org.jvalue.ods.api.processors.ProcessorReferenceChainDescription;
 import org.jvalue.ods.api.sources.DataSourceDescription;
 import org.jvalue.ods.api.sources.DataSourceMetaData;
 
@@ -104,6 +108,8 @@ public final class SimpleSourceTest {
 		// add source to CEPS
 		cepsSourceApi = cepsRestAdapter.create(SourcesApi.class);
 		cepsSourceApi.addSource(SOURCE_ID);
+		NotificationApi odsNotificationApi = odsRestAdapter.create(NotificationApi.class);
+		Assert.assertNotNull(odsNotificationApi.getClient(SOURCE_ID, "ceps"));
 
 		// add simple EPL adapter to CEPS
 		cepsAdapterApi = cepsRestAdapter.create(EplAdapterApi.class);
@@ -142,21 +148,33 @@ public final class SimpleSourceTest {
 	@Test
 	public void testSimpleSource() throws Exception {
 		// give ODS and CEPS some time to settle
-		Thread.sleep(1000);
-		/*
+		Thread.sleep(500);
 
 		// setup one time pull for ODS
 		Map <String, Object> adapterParams = new HashMap<>();
 		adapterParams.put("sourceUrl", sourceUrl);
-		odsProcessorApi.add(
+		Map <String, Object> dbParams = new HashMap<>();
+		dbParams.put("updateData", false);
+
+		odsProcessorApi.addProcessorChain(
 				SOURCE_ID,
 				"myProcessor",
-				new ProcessorReferenceChainDescription.Builder(null).processor(new ProcessorReference("JsonSourceAdapter", adapterParams)).build());
+				new ProcessorReferenceChainDescription
+						.Builder(null)
+						.processor(new ProcessorReference("JsonSourceAdapter", adapterParams))
+						.processor(new ProcessorReference("NotificationFilter", new HashMap<String, Object>()))
+						.processor(new ProcessorReference("DbInsertionFilter", dbParams))
+						.build());
 
+		// one request for fetching data from mock server
 		webServer.takeRequest();
+
+		// one callback request to mock server which also acts as the client
 		RecordedRequest clientCallbackRequest = webServer.takeRequest();
-		System.out.println(clientCallbackRequest.getBody().toString());
-		*/
+
+		JsonNode jsonResult = mapper.readTree(clientCallbackRequest.getBody());
+		Assert.assertTrue(jsonResult.has("clientId"));
+		Assert.assertTrue(jsonResult.has("eventId"));
 	}
 
 }
