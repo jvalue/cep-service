@@ -37,5 +37,30 @@ allprojects {
     task wrapper(type: Wrapper) {
         gradleVersion = '2.3'
     }
+
+    // integration test
+    def testSrcDir = file(project.projectDir.toString() + '/src/integrationtest/java')
+    def testResourceDir = file(project.projectDir.toString() + '/src/integrationtest/resources')
+    sourceSets {
+        integrationTest {
+            java.srcDir testSrcDir
+            resources.srcDir testResourceDir
+            compileClasspath = sourceSets.main.output + configurations.testCompile + sourceSets.test.output
+            runtimeClasspath = output + compileClasspath
+        }
+    }
+    task integrationTest(type: Test) {
+        testClassesDir = sourceSets.integrationTest.output.classesDir
+        classpath = sourceSets.integrationTest.runtimeClasspath
+    }
+    check.dependsOn integrationTest
+
+    // let intellij know about 'special' folders
+    idea {
+        module {
+            testSourceDirs += testSrcDir
+            sourceDirs += file(generatedSourcesDir)
+        }
+    }
 }
 
