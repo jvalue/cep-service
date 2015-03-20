@@ -4,9 +4,17 @@ buildscript {
     }
 }
 
+
 allprojects {
+    // nothing here yet
+}
+
+
+subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
+
+    sourceCompatibility = 1.7
 
     // setup generated sources (if any)
     ext {
@@ -39,8 +47,8 @@ allprojects {
     }
 
     // integration test
-    def testSrcDir = file(project.projectDir.toString() + '/src/integrationtest/java')
-    def testResourceDir = file(project.projectDir.toString() + '/src/integrationtest/resources')
+    def testSrcDir = file('src/integrationtest/java')
+    def testResourceDir = file('src/integrationtest/resources')
     sourceSets {
         integrationTest {
             java.srcDir testSrcDir
