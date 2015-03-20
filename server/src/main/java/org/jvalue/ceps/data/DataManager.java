@@ -46,7 +46,7 @@ public final class DataManager implements Managed, DataSink {
 			NotificationApi odsNotificationApi,
 			OdsRegistrationRepository registrationRepository,
 			DataUpdateListener dataListener,
-			@Named(ConfigModule.CEPS_BASE_URL) String cepsBaseUrl,
+			@Named(ConfigModule.BASE_URL) String cepsBaseUrl,
 			@Named(RestModule.URL_DATA) String dataUrl) {
 
 		this.odsDataSourceApi = odsDataSourceApi;

@@ -32,6 +32,7 @@ import org.jvalue.ods.api.sources.DataSourceMetaData;
 import java.util.HashMap;
 import java.util.Map;
 
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.converter.JacksonConverter;
 
@@ -84,6 +85,12 @@ public final class SimpleSourceTest {
 		RestAdapter odsRestAdapter = new RestAdapter.Builder()
 				.setConverter(new JacksonConverter())
 				.setEndpoint("http://localhost:8080/ods/api/v1")
+				.setRequestInterceptor(new RequestInterceptor() {
+					@Override
+					public void intercept(RequestFacade request) {
+						request.addHeader("Authorization", "Basic YWRtaW46YWRtaW4="); // admin:admin
+					}
+				})
 				.build();
 
 		odsSourceApi = odsRestAdapter.create(DataSourceApi.class);

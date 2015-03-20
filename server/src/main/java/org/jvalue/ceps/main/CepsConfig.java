@@ -13,8 +13,7 @@ import io.dropwizard.Configuration;
 
 public final class CepsConfig extends Configuration {
 
-	@NotNull private final String cepsBaseUrl;
-	@NotNull private final String odsBaseUrl;
+	@NotNull private final String url;
 
 	@NotNull private final String gcmApiKey;
 	private final long gcmGarbageCollectorPeriod;
@@ -22,36 +21,32 @@ public final class CepsConfig extends Configuration {
 	private final long eventGarbageCollectorPeriod;
 	private final long eventGarbageCollectorMaxAge;
 
+	@NotNull @Valid private final OdsConfig ods;
 	@NotNull @Valid private final CouchDbConfig couchDb;
 
 
 	@JsonCreator
 	public CepsConfig(
-			@JsonProperty("cepsBaseUrl") String cepsBaseUrl,
-			@JsonProperty("odsBaseUrl") String odsBaseUrl,
+			@JsonProperty("url") String url,
 			@JsonProperty("gcmApiKey") String gcmApiKey,
 			@JsonProperty("gcmGarbageCollectorPeriod") long gcmGarbageCollectorPeriod,
 			@JsonProperty("eventGarbageCollectorPeriod") long eventGarbageCollectorPeriod,
 			@JsonProperty("eventGarbageCollectorMaxAge") long eventGarbageCollectorMaxAge,
+			@JsonProperty("ods") OdsConfig ods,
 			@JsonProperty("couchDb") CouchDbConfig couchDb) {
 
-		this.cepsBaseUrl = cepsBaseUrl;
-		this.odsBaseUrl = odsBaseUrl;
+		this.url = url;
 		this.gcmApiKey = gcmApiKey;
 		this.gcmGarbageCollectorPeriod = gcmGarbageCollectorPeriod;
 		this.eventGarbageCollectorPeriod = eventGarbageCollectorPeriod;
 		this.eventGarbageCollectorMaxAge = eventGarbageCollectorMaxAge;
+		this.ods = ods;
 		this.couchDb = couchDb;
 	}
 
 
-	public String getCepsBaseUrl() {
-		return cepsBaseUrl;
-	}
-
-
-	public String getOdsBaseUrl() {
-		return odsBaseUrl;
+	public String getUrl() {
+		return url;
 	}
 
 
@@ -72,6 +67,11 @@ public final class CepsConfig extends Configuration {
 
 	public long getEventGarbageCollectorMaxAge() {
 		return eventGarbageCollectorMaxAge;
+	}
+
+
+	public OdsConfig getOds() {
+		return ods;
 	}
 
 
