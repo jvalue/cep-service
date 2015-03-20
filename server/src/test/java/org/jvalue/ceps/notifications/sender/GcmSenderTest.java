@@ -37,6 +37,7 @@ public final class GcmSenderTest {
 
 
 	@Before
+	@SuppressWarnings("unchecked")
 	public void setupSender() {
 		sender = new GcmSender(gcmUtils);
 
