@@ -5,10 +5,10 @@ import org.ektorp.DocumentNotFoundException;
 import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.api.adapter.EplAdapter;
 import org.jvalue.ceps.api.adapter.EplAdapterDescription;
+import org.jvalue.common.auth.RestrictedTo;
+import org.jvalue.common.auth.Role;
+import org.jvalue.common.auth.User;
 import org.jvalue.common.rest.RestUtils;
-import org.jvalue.ods.api.auth.RestrictedTo;
-import org.jvalue.ods.api.auth.Role;
-import org.jvalue.ods.api.auth.User;
 
 import java.util.List;
 

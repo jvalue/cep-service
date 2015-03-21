@@ -4,7 +4,7 @@ package org.jvalue.ceps.main;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.jvalue.ods.api.auth.BasicCredentials;
+import org.jvalue.common.auth.BasicCredentials;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
