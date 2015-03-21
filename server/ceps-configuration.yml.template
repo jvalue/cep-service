@@ -8,14 +8,16 @@ eventGarbageCollectorMaxAge: 3600000
 
 ods:
   url: http://localhost:8080/ods/api/v1
-  username: admin
-  password: admin
+  admin:
+    username: admin
+    password: admin
 
 couchDb:
   url: http://localhost:5984/
-  username: ADMIN_USERNAME
-  password: ADMIN_PASSWORD
   dbPrefix: ceps
+  admin:
+    username: ADMIN_USERNAME
+    password: ADMIN_PASSWORD
 
 server:
   applicationContextPath: /ceps/api/v1

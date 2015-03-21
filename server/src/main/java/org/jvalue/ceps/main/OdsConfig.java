@@ -4,23 +4,23 @@ package org.jvalue.ceps.main;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.jvalue.ods.api.auth.BasicCredentials;
+
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public final class OdsConfig {
 
 	@NotNull private final String url;
-	@NotNull private final String username;
-	@NotNull private final String password;
+	@NotNull @Valid private final BasicCredentials admin;
 
 	@JsonCreator
 	public OdsConfig(
 			@JsonProperty("url") String url,
-			@JsonProperty("username") String username,
-			@JsonProperty("password") String password) {
+			@JsonProperty("admin") BasicCredentials admin) {
 
 		this.url = url;
-		this.username = username;
-		this.password = password;
+		this.admin = admin;
 	}
 
 
@@ -29,13 +29,8 @@ public final class OdsConfig {
 	}
 
 
-	public String getUsername() {
-		return username;
-	}
-
-
-	public String getPassword() {
-		return password;
+	public BasicCredentials getAdmin() {
+		return admin;
 	}
 
 }

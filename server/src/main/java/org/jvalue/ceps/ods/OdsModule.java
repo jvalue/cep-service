@@ -40,7 +40,7 @@ public class OdsModule extends AbstractModule {
 	@Provides
 	@Singleton
 	RestAdapter provideRestAdapter(final OdsConfig odsConfig) {
-		byte[] credentials = (odsConfig.getUsername() + ":" + odsConfig.getPassword()).getBytes();
+		byte[] credentials = (odsConfig.getAdmin().getUsername() + ":" + odsConfig.getAdmin().getPassword()).getBytes();
 		final String authHeader = "Basic " + BaseEncoding.base64().encode(credentials);
 
 		return new RestAdapter.Builder()
