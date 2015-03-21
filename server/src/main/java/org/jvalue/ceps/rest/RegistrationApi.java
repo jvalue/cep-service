@@ -80,16 +80,16 @@ public final class RegistrationApi {
 
 		if (notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("already registered", 409);
 		Client client = clientDescription.accept(new ClientDescriptionVisitor<Void, Client>() {
-																						  @Override
-																						  public Client visit(GcmClientDescription clientDescription, Void param) {
-																						  return new GcmClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
-																						  }
+			@Override
+			public Client visit(GcmClientDescription clientDescription, Void param) {
+				return new GcmClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
+			}
 
-																						  @Override
-																						  public Client visit(HttpClientDescription clientDescription, Void param) {
-																						  return new HttpClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
-																						  }
-																						  }, null);
+			@Override
+			public Client visit(HttpClientDescription clientDescription, Void param) {
+				return new HttpClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
+			}
+		}, null);
 		notificationManager.register(client);
 		return client;
 	}

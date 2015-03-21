@@ -7,6 +7,9 @@ import org.jvalue.ceps.api.data.OdsRegistration;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.common.rest.RestUtils;
 import org.jvalue.ods.api.DataSourceApi;
+import org.jvalue.ods.api.auth.RestrictedTo;
+import org.jvalue.ods.api.auth.Role;
+import org.jvalue.ods.api.auth.User;
 
 import java.util.List;
 
@@ -36,7 +39,10 @@ public final class SourcesApi {
 
 	@PUT
 	@Path("/{sourceId}")
-	public OdsRegistration addSource(@PathParam("sourceId") String sourceId) {
+	public OdsRegistration addSource(
+			@RestrictedTo(Role.ADMIN) User user,
+			@PathParam("sourceId") String sourceId) {
+
 		try {
 			// check that source is registered on ODS
 			odsSourceApi.getSource(sourceId);
@@ -64,7 +70,10 @@ public final class SourcesApi {
 
 	@DELETE
 	@Path("/{sourceId}")
-	public void deleteSource(@PathParam("sourceId") String sourceId) {
+	public void deleteSource(
+			@RestrictedTo(Role.ADMIN) User user,
+			@PathParam("sourceId") String sourceId) {
+
 		if (!dataManager.isBeingMonitored(sourceId)) throw RestUtils.createNotFoundException();
 		dataManager.stopMonitoring(sourceId);
 	}

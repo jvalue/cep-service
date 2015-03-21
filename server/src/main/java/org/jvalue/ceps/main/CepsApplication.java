@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.jvalue.ceps.adapter.AdapterModule;
+import org.jvalue.ceps.auth.AuthModule;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataModule;
 import org.jvalue.ceps.db.DbModule;
@@ -20,6 +21,7 @@ import org.jvalue.ceps.rest.EventApi;
 import org.jvalue.ceps.rest.RegistrationApi;
 import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.rest.SourcesApi;
+import org.jvalue.common.auth.AuthBinder;
 import org.jvalue.common.rest.DbExceptionMapper;
 import org.jvalue.common.rest.JsonExceptionMapper;
 
@@ -65,13 +67,15 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new AdapterModule(),
 				new EsperModule(),
 				new OdsModule(),
-				new RestModule());
+				new RestModule(),
+				new AuthModule(configuration.getAdmins()));
 
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
 		environment.lifecycle().manage(injector.getInstance(ClientGarbageCollectorManager.class));
 
+		environment.jersey().getResourceConfig().register(injector.getInstance(AuthBinder.class));
 		environment.jersey().register(injector.getInstance(DataApi.class));
 		environment.jersey().register(injector.getInstance(EventApi.class));
 		environment.jersey().register(injector.getInstance(RegistrationApi.class));

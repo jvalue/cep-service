@@ -6,6 +6,9 @@ import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.api.adapter.EplAdapter;
 import org.jvalue.ceps.api.adapter.EplAdapterDescription;
 import org.jvalue.common.rest.RestUtils;
+import org.jvalue.ods.api.auth.RestrictedTo;
+import org.jvalue.ods.api.auth.Role;
+import org.jvalue.ods.api.auth.User;
 
 import java.util.List;
 
@@ -35,7 +38,11 @@ public final class EplAdapterApi {
 
 	@PUT
 	@Path("/{adapterId}")
-	public EplAdapter addAdapter(@PathParam("adapterId") String adapterId, @Valid EplAdapterDescription adapterDescription) {
+	public EplAdapter addAdapter(
+			@RestrictedTo(Role.ADMIN) User user,
+			@PathParam("adapterId") String adapterId,
+			@Valid EplAdapterDescription adapterDescription) {
+
 		try {
 			adapterManager.get(adapterId);
 			throw RestUtils.createJsonFormattedException("adapter already exists", 409);
@@ -64,7 +71,10 @@ public final class EplAdapterApi {
 
 	@DELETE
 	@Path("/{adapterId}")
-	public void deleteAdapter(@PathParam("adapterId") String adapterId) {
+	public void deleteAdapter(
+			@RestrictedTo(Role.ADMIN) User user,
+			@PathParam("adapterId") String adapterId) {
+
 		EplAdapter adapter = adapterManager.get(adapterId);
 		if (adapter == null) throw RestUtils.createNotFoundException();
 		adapterManager.remove(adapter);

@@ -110,6 +110,12 @@ public final class SimpleSourceTest {
 		RestAdapter cepsRestAdapter = new RestAdapter.Builder()
 				.setConverter(new JacksonConverter())
 				.setEndpoint("http://localhost:8082/ceps/api/v1")
+				.setRequestInterceptor(new RequestInterceptor() {
+					@Override
+					public void intercept(RequestFacade request) {
+						request.addHeader("Authorization", "Basic YWRtaW46YWRtaW4="); // admin:admin
+					}
+				})
 				.build();
 
 		// add source to CEPS
