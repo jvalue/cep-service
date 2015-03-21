@@ -21,6 +21,7 @@ import org.jvalue.ceps.rest.EventApi;
 import org.jvalue.ceps.rest.RegistrationApi;
 import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.rest.SourcesApi;
+import org.jvalue.ceps.rest.VersionApi;
 import org.jvalue.common.auth.AuthBinder;
 import org.jvalue.common.rest.DbExceptionMapper;
 import org.jvalue.common.rest.JsonExceptionMapper;
@@ -82,6 +83,7 @@ public final class CepsApplication extends Application<CepsConfig> {
 		environment.jersey().register(injector.getInstance(RegistrationApi.class));
 		environment.jersey().register(injector.getInstance(SourcesApi.class));
 		environment.jersey().register(injector.getInstance(EplAdapterApi.class));
+		environment.jersey().register(injector.getInstance(VersionApi.class));
 		environment.jersey().register(new DbExceptionMapper());
 		environment.jersey().register(new JsonExceptionMapper());
 		environment.jersey().register(new UnauthorizedExceptionMapper());

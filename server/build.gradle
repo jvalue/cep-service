@@ -1,4 +1,14 @@
 apply plugin: 'application'
+apply plugin: 'de.bitdroid.githash'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'de.bitdroid.githash:plugin:0.1.2'
+    }
+}
 
 mainClassName = "org.jvalue.ceps.main.CepsApplication"
 
@@ -14,8 +24,7 @@ dependencies {
     compile 'com.google.inject.extensions:guice-assistedinject:4.0-beta5'
     compile 'org.ektorp:org.ektorp:1.4.+'
 	compile 'com.espertech:esper:4.6.0'
-    compile 'org.jvalue.ods:common:0.1.1'
-    compile 'org.jvalue.ods:client-retrofit:0.1.1'
+    compile 'org.jvalue.ods:client-retrofit:0.1.2'
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':models')
 
@@ -29,3 +38,8 @@ dependencies {
     testCompile project(':client-retrofit')
 }
 
+// create java code which contains git hash
+gitHash {
+    packageName = 'org.jvalue.ods'
+    outputDir = file(generatedSourcesDir)
+}
