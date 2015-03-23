@@ -89,40 +89,4 @@ public final class CepsApplication extends Application<CepsConfig> {
 		environment.jersey().register(new UnauthorizedExceptionMapper());
 	}
 
-
-
-	/*
-	private void startSourceMonitoring() {
-		try {
-			DataSource source = new DataSource(
-					"de-pegelonline",
-					new URL(odsServerName),
-					"ods/de/pegelonline/stations/$class");
-			DataManager manager = DataManager.getInstance();
-
-			if (manager.isBeingMonitored(source)) return;
-
-			manager.startMonitoring(
-					source,
-					cepsServerName + OdsRestHook.URL_NOTIFY_SOURCE_CHANGED,
-					OdsRestHook.PARAM_SOURCE);
-
-		} catch (RestException | MalformedURLException e) {
-			throw new IllegalStateException(e);
-		}
-	}
-	*/
-
-
-	/*
-	private static void startGarbageCollection() {
-	TODO
-		// try removing old clients every 3 days (exact removal interval depends on client type)
-		NotificationManager notificationManager = NotificationManager.getInstance();
-		org.jvalue.ceps.notifications.garbage.GarbageCollector gcmCollector = new GcmGarbageCollector(new GcmUtils("/googleApi.key"));
-		GarbageCollectorMapper mapper = new GarbageCollectorMapper(gcmCollector);
-		new GarbageCollectorManager(notificationManager, mapper, 259200000).startCollection();
-	}
-	*/
-
 }
