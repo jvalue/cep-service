@@ -18,6 +18,7 @@ buildscript {
 dependencies {
     compile 'com.squareup.retrofit:retrofit:1.8.+'
     compile 'com.squareup.retrofit:converter-jackson:1.8.+'
+    compile 'org.jvalue.ods:common:0.1.2'
     compile project(':models')
 
     testCompile 'org.jmockit:jmockit:1.13'
