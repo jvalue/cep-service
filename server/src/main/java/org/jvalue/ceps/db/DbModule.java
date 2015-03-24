@@ -8,8 +8,8 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
-import org.jvalue.common.db.CouchDbConfig;
-import org.jvalue.common.db.DbConnectorFactory;
+import org.jvalue.commons.couchdb.CouchDbConfig;
+import org.jvalue.commons.couchdb.DbConnectorFactory;
 
 import java.net.MalformedURLException;
 

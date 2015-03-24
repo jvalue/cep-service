@@ -22,10 +22,10 @@ import org.jvalue.ceps.rest.RegistrationApi;
 import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.rest.SourcesApi;
 import org.jvalue.ceps.rest.VersionApi;
-import org.jvalue.common.auth.AuthBinder;
-import org.jvalue.common.rest.DbExceptionMapper;
-import org.jvalue.common.rest.JsonExceptionMapper;
-import org.jvalue.common.rest.UnauthorizedExceptionMapper;
+import org.jvalue.commons.auth.AuthBinder;
+import org.jvalue.commons.rest.DbExceptionMapper;
+import org.jvalue.commons.rest.JsonExceptionMapper;
+import org.jvalue.commons.rest.UnauthorizedExceptionMapper;
 
 import javax.ws.rs.core.Context;
 

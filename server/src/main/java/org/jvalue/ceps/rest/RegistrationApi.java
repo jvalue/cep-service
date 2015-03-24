@@ -15,7 +15,7 @@ import org.jvalue.ceps.api.notifications.GcmClientDescription;
 import org.jvalue.ceps.api.notifications.HttpClient;
 import org.jvalue.ceps.api.notifications.HttpClientDescription;
 import org.jvalue.ceps.notifications.NotificationManager;
-import org.jvalue.common.rest.RestUtils;
+import org.jvalue.commons.rest.RestUtils;
 
 import java.util.HashMap;
 import java.util.List;

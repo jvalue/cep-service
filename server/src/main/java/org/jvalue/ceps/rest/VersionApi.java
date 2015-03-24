@@ -1,7 +1,7 @@
 package org.jvalue.ceps.rest;
 
 
-import org.jvalue.common.utils.VersionInfo;
+import org.jvalue.commons.rest.VersionInfo;
 import org.jvalue.ods.GitConstants;
 
 import javax.ws.rs.GET;
