@@ -1,8 +1,8 @@
 package org.jvalue.ceps.rest;
 
 
+import org.jvalue.ceps.GitConstants;
 import org.jvalue.commons.rest.VersionInfo;
-import org.jvalue.ods.GitConstants;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

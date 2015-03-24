@@ -41,6 +41,6 @@ dependencies {
 
 // create java code which contains git hash
 gitHash {
-    packageName = 'org.jvalue.ods'
+    packageName = 'org.jvalue.ceps'
     outputDir = file(generatedSourcesDir)
 }
