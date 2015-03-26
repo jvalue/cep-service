@@ -3,6 +3,7 @@ buildscript {
         jcenter()
     }
     dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.1'
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.0.3'
     }
 }
@@ -10,13 +11,16 @@ buildscript {
 
 allprojects {
     group = 'org.jvalue.ceps'
-    version = '0.1.0-SNAPSHOT'
+    version = '0.1.0'
 }
 
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
+    apply plugin: 'maven'
+    apply plugin: 'maven-publish'
+    apply plugin: 'com.jfrog.bintray'
     apply plugin: 'com.jfrog.artifactory'
 
     sourceCompatibility = 1.7
@@ -73,6 +77,62 @@ subprojects {
         module {
             testSourceDirs += testSrcDir
             sourceDirs += file(generatedSourcesDir)
+        }
+    }
+
+    // publishing to jcenter
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+            }
+        }
+    }
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar, javadocJar
+    }
+
+    bintray {
+        user = project.hasProperty("bintray_user") ? bintray_user : "dummy user"
+        key = project.hasProperty("bintray_key") ? bintray_key : "dummy key"
+        publications = ['mavenJava']
+        dryRun = false
+        publish = true
+        pkg {
+            repo = 'maven'
+            name = 'ceps'
+            desc = 'Complex Event Processing Service'
+            websiteUrl = 'https://github.com/jvalue/cep-serivce'
+            issueTrackerUrl = 'https://github.com/jvalue/cep-service/issues'
+            vcsUrl = 'https://github.com/jvalue/cep-service.git'
+            licenses = ['AGPL-3.0']
+            publicDownloadNumbers = true
+            version {
+                name = project.version
+                gpg {
+                    sign = true
+                    passphrase = project.hasProperty("bintray_gpg_passphrase") ? bintray_gpg_passphrase : "dummy passphrase"
+                }
+                mavenCentralSync {
+                    sync = false
+                    user = 'userToken'
+                    password = 'password'
+                    close = '1'
+                }
+            }
         }
     }
 
