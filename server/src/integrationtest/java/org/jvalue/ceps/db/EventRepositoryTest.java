@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.jvalue.ceps.api.event.Event;
-import org.jvalue.common.db.DbConnectorFactory;
-import org.jvalue.common.db.RepositoryAdapter;
+import org.jvalue.commons.couchdb.DbConnectorFactory;
+import org.jvalue.commons.couchdb.RepositoryAdapter;
 
 import java.util.Arrays;
 

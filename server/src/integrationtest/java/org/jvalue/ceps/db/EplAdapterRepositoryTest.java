@@ -3,8 +3,8 @@ package org.jvalue.ceps.db;
 
 import org.jvalue.ceps.api.adapter.ArgumentType;
 import org.jvalue.ceps.api.adapter.EplAdapter;
-import org.jvalue.common.db.DbConnectorFactory;
-import org.jvalue.common.db.RepositoryAdapter;
+import org.jvalue.commons.couchdb.DbConnectorFactory;
+import org.jvalue.commons.couchdb.RepositoryAdapter;
 
 import java.util.HashMap;
 
