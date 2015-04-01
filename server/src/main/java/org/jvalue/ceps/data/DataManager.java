@@ -62,11 +62,11 @@ public final class DataManager implements Managed, DataSink {
 		if (isBeingMonitored(sourceId)) throw new IllegalStateException("source already being monitored");
 
 		// get source / schema
-		DataSource source = odsDataSourceApi.getSource(sourceId);
+		DataSource source = odsDataSourceApi.getSourceSynchronously(sourceId);
 
 		// register for updates
 		ClientDescription clientDescription = new HttpClientDescription(cepsDataCallbackUrl, true);
-		HttpClient client = (HttpClient) odsNotificationApi.registerClient(sourceId, ODS_CLIENT_ID, clientDescription);
+		HttpClient client = (HttpClient) odsNotificationApi.registerClientSynchronously(sourceId, ODS_CLIENT_ID, clientDescription);
 
 		// store result in db
 		OdsRegistration registration = new OdsRegistration(sourceId, source, client);
@@ -85,7 +85,7 @@ public final class DataManager implements Managed, DataSink {
 		if (registration == null) throw new IllegalStateException("source not being monitored");
 
 		try {
-			odsNotificationApi.unregisterClient(sourceId, registration.getClient().getId());
+			odsNotificationApi.unregisterClientSynchronously(sourceId, registration.getClient().getId());
 		} catch (RetrofitError re) {
 			Log.error("failed to unregister from ODS", re);
 		} finally {

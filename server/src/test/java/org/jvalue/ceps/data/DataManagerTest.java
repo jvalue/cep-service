@@ -72,21 +72,21 @@ public final class DataManagerTest {
 	@Test
 	public void testStartMonitoring() {
 		new Expectations() {{
-			sourceApi.getSource(anyString);
+			sourceApi.getSourceSynchronously(anyString);
 			result = source;
 
-			notificationApi.registerClient(anyString, anyString, (ClientDescription) any);
+			notificationApi.registerClientSynchronously(anyString, anyString, (ClientDescription) any);
 			result = client;
 		}};
 
 		dataManager.startMonitoring(sourceId);
 
 		new Verifications() {{
-			sourceApi.getSource(sourceId);
+			sourceApi.getSourceSynchronously(sourceId);
 			times = 1;
 
 			HttpClientDescription clientDescription;
-			notificationApi.registerClient(sourceId, anyString, clientDescription = withCapture());
+			notificationApi.registerClientSynchronously(sourceId, anyString, clientDescription = withCapture());
 
 			Assert.assertEquals(cepsBaseUrl + dataUrl, clientDescription.getCallbackUrl());
 			Assert.assertEquals(true, clientDescription.getSendData());
@@ -110,7 +110,7 @@ public final class DataManagerTest {
 		dataManager.stopMonitoring(sourceId);
 
 		new Verifications() {{
-			notificationApi.unregisterClient(sourceId, anyString);
+			notificationApi.unregisterClientSynchronously(sourceId, anyString);
 
 			updateListener.onSourceRemoved(sourceId, sourceSchema); times = 1;
 		}};

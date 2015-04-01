@@ -139,6 +139,17 @@ subprojects {
     // snapshots
     artifactory {
         contextUrl = 'http://oss.jfrog.org/artifactory'
+        publish {
+            repository {
+                repoKey = 'oss-snapshot-local'
+                username = project.hasProperty("artifactory_user") ? artifactory_user : "dummy user"
+                password = project.hasProperty("artifactory_password") ? artifactory_password : "dummy key"
+                maven = true
+            }
+            defaults {
+                publications ('mavenJava')
+            }
+        }
         resolve {
             repository {
                 repoKey = 'libs-snapshot'
@@ -147,4 +158,3 @@ subprojects {
         }
     }
 }
-

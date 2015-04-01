@@ -104,7 +104,7 @@ public final class SimpleSourceTest {
 						+ "\"data\": { \"type\": \"number\" }"
 						+ "}}");
 
-		odsSourceApi.addSource(SOURCE_ID, new DataSourceDescription(JsonPointer.compile("/id"), schema, new DataSourceMetaData("", "", "", "", "", "", "")));
+		odsSourceApi.addSourceSynchronously(SOURCE_ID, new DataSourceDescription(JsonPointer.compile("/id"), schema, new DataSourceMetaData("", "", "", "", "", "", "")));
 
 		// setup CEPS
 		RestAdapter cepsRestAdapter = new RestAdapter.Builder()
@@ -120,7 +120,7 @@ public final class SimpleSourceTest {
 
 		// add source to CEPS
 		cepsSourceApi = cepsRestAdapter.create(SourcesApi.class);
-		cepsSourceApi.addSource(SOURCE_ID);
+		cepsSourceApi.addSourceSynchronously(SOURCE_ID);
 		NotificationApi odsNotificationApi = odsRestAdapter.create(NotificationApi.class);
 		Assert.assertNotNull(odsNotificationApi.getClient(SOURCE_ID, "ceps"));
 
@@ -129,17 +129,17 @@ public final class SimpleSourceTest {
 		String adapterArgKey = "VALUE";
 		Map<String, ArgumentType> requiredAdapterArgs = new HashMap<>();
 		requiredAdapterArgs.put(adapterArgKey, ArgumentType.NUMBER);
-		cepsAdapterApi.addAdapter(
+		cepsAdapterApi.addAdapterSynchronously(
 				ADAPTER_ID,
 				new EplAdapterDescription("select object.data from " + SOURCE_ID + ".win:length(1) as object where object.data > " + adapterArgKey, requiredAdapterArgs));
-		Assert.assertEquals(ADAPTER_ID, cepsAdapterApi.getAdapter(ADAPTER_ID).getId());
+		Assert.assertEquals(ADAPTER_ID, cepsAdapterApi.getAdapterSynchronously(ADAPTER_ID).getId());
 
 		// add http client to CEPS
 		Map<String, JsonNode> adapterArgs = new HashMap<>();
 		adapterArgs.put(adapterArgKey, JsonNodeFactory.instance.numberNode(42));
 		cepsRegistrationApi = cepsRestAdapter.create(RegistrationApi.class);
-		cepsRegistrationApi.registerClient(SOURCE_ID, CLIENT_ID, new HttpClientDescription(clientUrl, adapterArgs));
-		Assert.assertEquals(CLIENT_ID, cepsRegistrationApi.getClient(SOURCE_ID, CLIENT_ID).getId());
+		cepsRegistrationApi.registerClientSynchronously(SOURCE_ID, CLIENT_ID, new HttpClientDescription(clientUrl, adapterArgs));
+		Assert.assertEquals(CLIENT_ID, cepsRegistrationApi.getClientSynchronously(SOURCE_ID, CLIENT_ID).getId());
 	}
 
 
@@ -149,12 +149,12 @@ public final class SimpleSourceTest {
 		webServer.shutdown();
 
 		// remove client, adapter and source from CEPS
-		if (cepsRegistrationApi != null) cepsRegistrationApi.unregisterClient(SOURCE_ID, CLIENT_ID);
-		if (cepsAdapterApi != null) cepsAdapterApi.deleteAdapter(ADAPTER_ID);
-		if (cepsSourceApi != null) cepsSourceApi.deleteSource(SOURCE_ID);
+		if (cepsRegistrationApi != null) cepsRegistrationApi.unregisterClientSynchronously(SOURCE_ID, CLIENT_ID);
+		if (cepsAdapterApi != null) cepsAdapterApi.deleteAdapterSynchronously(ADAPTER_ID);
+		if (cepsSourceApi != null) cepsSourceApi.deleteSourceSynchronously(SOURCE_ID);
 
 		// remove source from ODS
-		if (odsSourceApi != null) odsSourceApi.deleteSource(SOURCE_ID);
+		if (odsSourceApi != null) odsSourceApi.deleteSourceSynchronously(SOURCE_ID);
 	}
 
 
@@ -169,7 +169,7 @@ public final class SimpleSourceTest {
 		Map <String, Object> dbParams = new HashMap<>();
 		dbParams.put("updateData", false);
 
-		odsProcessorApi.addProcessorChain(
+		odsProcessorApi.addProcessorChainSynchronously(
 				SOURCE_ID,
 				"myProcessor",
 				new ProcessorReferenceChainDescription
