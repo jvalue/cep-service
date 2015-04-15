@@ -8,6 +8,7 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.http.StdHttpClient;
 import org.ektorp.impl.StdCouchDbInstance;
+import org.jvalue.commons.auth.UserRepository;
 import org.jvalue.commons.couchdb.CouchDbConfig;
 import org.jvalue.commons.couchdb.DbConnectorFactory;
 
@@ -44,6 +45,9 @@ public class DbModule extends AbstractModule {
 
 			CouchDbConnector eplAdapterConnector = connectorFactory.createConnector(EplAdapterRepository.DATABASE_NAME, true);
 			bind(CouchDbConnector.class).annotatedWith(Names.named(EplAdapterRepository.DATABASE_NAME)).toInstance(eplAdapterConnector);
+			
+			CouchDbConnector userConnector = connectorFactory.createConnector(UserRepository.DATABASE_NAME, true);
+			bind(CouchDbConnector.class).annotatedWith(Names.named(UserRepository.DATABASE_NAME)).toInstance(userConnector);
 
 		} catch (MalformedURLException mue) {
 			throw new RuntimeException(mue);

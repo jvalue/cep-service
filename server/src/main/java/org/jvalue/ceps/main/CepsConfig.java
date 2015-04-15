@@ -4,7 +4,7 @@ package org.jvalue.ceps.main;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.jvalue.commons.auth.BasicCredentials;
+import org.jvalue.commons.auth.UserDescription;
 import org.jvalue.commons.couchdb.CouchDbConfig;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public final class CepsConfig extends Configuration {
 	private final long eventGarbageCollectorPeriod;
 	private final long eventGarbageCollectorMaxAge;
 
-	@NotNull @Valid private final List<BasicCredentials> admins;
+	@NotNull @Valid private final List<UserDescription> admins;
 
 	@NotNull @Valid private final OdsConfig ods;
 	@NotNull @Valid private final CouchDbConfig couchDb;
@@ -37,7 +37,7 @@ public final class CepsConfig extends Configuration {
 			@JsonProperty("gcmGarbageCollectorPeriod") long gcmGarbageCollectorPeriod,
 			@JsonProperty("eventGarbageCollectorPeriod") long eventGarbageCollectorPeriod,
 			@JsonProperty("eventGarbageCollectorMaxAge") long eventGarbageCollectorMaxAge,
-			@JsonProperty("admins") List<BasicCredentials> admins,
+			@JsonProperty("admins") List<UserDescription> admins,
 			@JsonProperty("ods") OdsConfig ods,
 			@JsonProperty("couchDb") CouchDbConfig couchDb) {
 
@@ -77,7 +77,7 @@ public final class CepsConfig extends Configuration {
 	}
 
 
-	public List<BasicCredentials> getAdmins() {
+	public List<UserDescription> getAdmins() {
 		return admins;
 	}
 

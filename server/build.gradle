@@ -22,7 +22,8 @@ dependencies {
     compile 'com.google.inject.extensions:guice-assistedinject:4.0-beta5'
     compile 'org.ektorp:org.ektorp:1.4.+'
 	compile 'com.espertech:esper:4.6.0'
-    compile 'org.jvalue.commons:rest:0.1.1-SNAPSHOT'
+    compile 'org.jvalue.commons:couchdb:0.1.1-SNAPSHOT'
+    compile 'org.jvalue.commons:auth:0.1.1-SNAPSHOT'
     compile 'org.jvalue.ods:client-retrofit:0.1.3-SNAPSHOT'
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':models')

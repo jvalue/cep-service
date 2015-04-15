@@ -4,7 +4,6 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.jvalue.ceps.adapter.AdapterModule;
-import org.jvalue.ceps.auth.AuthModule;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataModule;
 import org.jvalue.ceps.db.DbModule;
@@ -23,9 +22,9 @@ import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.rest.SourcesApi;
 import org.jvalue.ceps.rest.VersionApi;
 import org.jvalue.commons.auth.AuthBinder;
-import org.jvalue.commons.rest.DbExceptionMapper;
+import org.jvalue.commons.auth.rest.UnauthorizedExceptionMapper;
+import org.jvalue.commons.couchdb.rest.DbExceptionMapper;
 import org.jvalue.commons.rest.JsonExceptionMapper;
-import org.jvalue.commons.rest.UnauthorizedExceptionMapper;
 
 import javax.ws.rs.core.Context;
 
@@ -69,8 +68,7 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new AdapterModule(),
 				new EsperModule(),
 				new OdsModule(),
-				new RestModule(),
-				new AuthModule(configuration.getAdmins()));
+				new RestModule());
 
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
