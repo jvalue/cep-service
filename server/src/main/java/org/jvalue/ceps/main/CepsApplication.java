@@ -22,9 +22,13 @@ import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.rest.SourcesApi;
 import org.jvalue.ceps.rest.VersionApi;
 import org.jvalue.commons.auth.AuthBinder;
+import org.jvalue.commons.auth.UserDescription;
+import org.jvalue.commons.auth.UserManager;
 import org.jvalue.commons.auth.rest.UnauthorizedExceptionMapper;
 import org.jvalue.commons.couchdb.rest.DbExceptionMapper;
 import org.jvalue.commons.rest.JsonExceptionMapper;
+
+import java.util.List;
 
 import javax.ws.rs.core.Context;
 
@@ -70,6 +74,8 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new OdsModule(),
 				new RestModule());
 
+		setupDefaultUsers(injector.getInstance(UserManager.class), configuration.getAdmins());
+
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
@@ -85,6 +91,13 @@ public final class CepsApplication extends Application<CepsConfig> {
 		environment.jersey().register(new DbExceptionMapper());
 		environment.jersey().register(new JsonExceptionMapper());
 		environment.jersey().register(new UnauthorizedExceptionMapper());
+	}
+
+
+	private void setupDefaultUsers(UserManager userManager, List<UserDescription> userList) {
+		for (UserDescription user : userList) {
+			if (!userManager.contains(user.getEmail())) userManager.add(user);
+		}
 	}
 
 }
