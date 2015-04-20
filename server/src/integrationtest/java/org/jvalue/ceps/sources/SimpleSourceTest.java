@@ -88,7 +88,8 @@ public final class SimpleSourceTest {
 				.setRequestInterceptor(new RequestInterceptor() {
 					@Override
 					public void intercept(RequestFacade request) {
-						request.addHeader("Authorization", "Basic YWRtaW46YWRtaW4="); // admin:admin
+						// admin@adminland.com:admin123
+						request.addHeader("Authorization", "Basic cGhpbGlwcC5laWNoaG9ybkBmYXUuZGU6YWRtaW4xMjM=");
 					}
 				})
 				.build();
@@ -113,7 +114,8 @@ public final class SimpleSourceTest {
 				.setRequestInterceptor(new RequestInterceptor() {
 					@Override
 					public void intercept(RequestFacade request) {
-						request.addHeader("Authorization", "Basic YWRtaW46YWRtaW4="); // admin:admin
+						// admin@adminland.com:admin123
+						request.addHeader("Authorization", "Basic cGhpbGlwcC5laWNoaG9ybkBmYXUuZGU6YWRtaW4xMjM=");
 					}
 				})
 				.build();
