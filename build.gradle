@@ -41,8 +41,8 @@ subprojects {
 
     // default dependency locations
     repositories {
-        jcenter()
         mavenLocal()
+        jcenter()
     }
 
     // show compiler warnings

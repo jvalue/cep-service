@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.jvalue.ceps.adapter.AdapterModule;
+import org.jvalue.ceps.auth.AuthModule;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataModule;
 import org.jvalue.ceps.db.DbModule;
@@ -22,7 +23,7 @@ import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.rest.SourcesApi;
 import org.jvalue.ceps.rest.VersionApi;
 import org.jvalue.commons.auth.AuthBinder;
-import org.jvalue.commons.auth.UserDescription;
+import org.jvalue.commons.auth.BasicAuthUserDescription;
 import org.jvalue.commons.auth.UserManager;
 import org.jvalue.commons.auth.rest.UnauthorizedExceptionMapper;
 import org.jvalue.commons.auth.rest.UserApi;
@@ -39,10 +40,6 @@ import io.dropwizard.setup.Environment;
 
 
 public final class CepsApplication extends Application<CepsConfig> {
-
-	private String cepsServerName = "http://faui2o2f.cs.fau.de:8080/cep-service";
-	private String odsServerName = "http://faui2o2f.cs.fau.de:8080/open-data-service";
-
 
 	public static void main(String[] args) throws Exception {
 		new CepsApplication().run(args);
@@ -73,9 +70,10 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new AdapterModule(),
 				new EsperModule(),
 				new OdsModule(),
-				new RestModule());
+				new RestModule(),
+				new AuthModule(configuration.getAuth()));
 
-		setupDefaultUsers(injector.getInstance(UserManager.class), configuration.getAdmins());
+		setupDefaultUsers(injector.getInstance(UserManager.class), configuration.getAuth().getUsers());
 
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
@@ -96,8 +94,8 @@ public final class CepsApplication extends Application<CepsConfig> {
 	}
 
 
-	private void setupDefaultUsers(UserManager userManager, List<UserDescription> userList) {
-		for (UserDescription user : userList) {
+	private void setupDefaultUsers(UserManager userManager, List<BasicAuthUserDescription> userList) {
+		for (BasicAuthUserDescription user : userList) {
 			if (!userManager.contains(user.getEmail())) userManager.add(user);
 		}
 	}

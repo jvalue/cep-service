@@ -4,10 +4,8 @@ package org.jvalue.ceps.main;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.jvalue.commons.auth.UserDescription;
+import org.jvalue.commons.auth.AuthConfig;
 import org.jvalue.commons.couchdb.CouchDbConfig;
-
-import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -24,8 +22,7 @@ public final class CepsConfig extends Configuration {
 	private final long eventGarbageCollectorPeriod;
 	private final long eventGarbageCollectorMaxAge;
 
-	@NotNull @Valid private final List<UserDescription> admins;
-
+	@NotNull @Valid private final AuthConfig auth;
 	@NotNull @Valid private final OdsConfig ods;
 	@NotNull @Valid private final CouchDbConfig couchDb;
 
@@ -37,7 +34,7 @@ public final class CepsConfig extends Configuration {
 			@JsonProperty("gcmGarbageCollectorPeriod") long gcmGarbageCollectorPeriod,
 			@JsonProperty("eventGarbageCollectorPeriod") long eventGarbageCollectorPeriod,
 			@JsonProperty("eventGarbageCollectorMaxAge") long eventGarbageCollectorMaxAge,
-			@JsonProperty("admins") List<UserDescription> admins,
+			@JsonProperty("auth") AuthConfig auth,
 			@JsonProperty("ods") OdsConfig ods,
 			@JsonProperty("couchDb") CouchDbConfig couchDb) {
 
@@ -46,7 +43,7 @@ public final class CepsConfig extends Configuration {
 		this.gcmGarbageCollectorPeriod = gcmGarbageCollectorPeriod;
 		this.eventGarbageCollectorPeriod = eventGarbageCollectorPeriod;
 		this.eventGarbageCollectorMaxAge = eventGarbageCollectorMaxAge;
-		this.admins = admins;
+		this.auth = auth;
 		this.ods = ods;
 		this.couchDb = couchDb;
 	}
@@ -77,8 +74,8 @@ public final class CepsConfig extends Configuration {
 	}
 
 
-	public List<UserDescription> getAdmins() {
-		return admins;
+	public AuthConfig getAuth() {
+		return auth;
 	}
 
 
