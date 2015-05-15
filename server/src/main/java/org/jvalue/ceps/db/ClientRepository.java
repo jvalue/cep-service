@@ -39,6 +39,13 @@ public final class ClientRepository extends RepositoryAdapter<
 	}
 
 
+	public List<Client> findByUserId(String userId) {
+		List<Client> clients = new LinkedList<>();
+		for (ClientDocument document : repository.findByUserId(userId)) clients.add(document.getValue());
+		return clients;
+	}
+
+
 	@View( name = "all", map = "function(doc) { if (" + DOCUMENT_ID + ") emit(null, doc) }")
 	static final class ClientCouchDbRepository
 			extends CouchDbRepositorySupport<ClientDocument>
@@ -65,6 +72,12 @@ public final class ClientRepository extends RepositoryAdapter<
 		@View(name = "by_deviceId", map = "function(doc) { if (" + DOCUMENT_ID + ") emit(doc.value.deviceId, doc._id) }")
 		public List<ClientDocument> findByDeviceId(String deviceId) {
 			return queryView("by_deviceId", deviceId);
+		}
+
+
+		@View(name = "by_userId", map = "function(doc) { if (" + DOCUMENT_ID + ") emit(doc.value.userId, doc._id) }")
+		public List<ClientDocument> findByUserId(String userId) {
+			return queryView("by_userId", userId);
 		}
 
 

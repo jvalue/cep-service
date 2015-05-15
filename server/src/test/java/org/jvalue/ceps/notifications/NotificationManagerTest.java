@@ -33,6 +33,7 @@ public final class NotificationManagerTest {
 	private static final String
 			CLIENT_ID = "someClientId",
 			DEVICE_ID = "someDeviceId",
+			USER_ID = "someUserId",
 			EPL_STMT = "someEplStmt",
 			EVENT_ID = "someEventId";
 
@@ -45,7 +46,7 @@ public final class NotificationManagerTest {
 
 	private NotificationManager notificationManager;
 
-	private final Client client = new GcmClient(CLIENT_ID, DEVICE_ID, EPL_STMT);
+	private final Client client = new GcmClient(CLIENT_ID, DEVICE_ID, EPL_STMT, USER_ID);
 
 	@Before
 	public void setupNotificationManager() {

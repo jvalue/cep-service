@@ -47,7 +47,7 @@ public final class HttpSenderTest {
 		String path = "/foo/bar/data/";
 		String callbackUrl = server.getUrl(path).toString();
 		HttpSender sender = new HttpSender();
-		HttpClient client = new HttpClient(CLIENT_ID, callbackUrl, "someEplStmt");
+		HttpClient client = new HttpClient(CLIENT_ID, callbackUrl, "someEplStmt", "someUserId");
 
 		SenderResult result = sender.sendEventUpdate(client, EVENT_ID, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
 		Assert.assertEquals(SenderResult.Status.SUCCESS, result.getStatus());

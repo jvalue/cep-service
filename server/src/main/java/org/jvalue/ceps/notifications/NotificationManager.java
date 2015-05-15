@@ -15,6 +15,7 @@ import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Assert;
 import org.jvalue.ceps.utils.BiMap;
 import org.jvalue.ceps.utils.Log;
+import org.jvalue.commons.auth.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -93,6 +94,11 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 	public synchronized List<Client> getAll() {
 		return clientRepository.getAll();
+	}
+
+
+	public synchronized List<Client> getAll(User user) {
+		return clientRepository.findByUserId(user.getId());
 	}
 
 

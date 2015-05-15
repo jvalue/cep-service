@@ -15,9 +15,10 @@ public final class HttpClient extends Client {
 	public HttpClient(
 			@JsonProperty("id") String id,
 			@JsonProperty("deviceId") String clientCallbackUrl,
-			@JsonProperty("eplStmt") String eplStmt) {
+			@JsonProperty("eplStmt") String eplStmt,
+			@JsonProperty("clientId") String clientId) {
 
-		super(CLIENT_TYPE, id, clientCallbackUrl, eplStmt);
+		super(CLIENT_TYPE, id, clientCallbackUrl, eplStmt, clientId);
 	}
 
 

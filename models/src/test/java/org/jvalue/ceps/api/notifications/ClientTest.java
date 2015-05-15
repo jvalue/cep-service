@@ -9,7 +9,7 @@ public final class ClientTest {
 
 	@Test
 	public void testGet() {
-		Client client = new DummyClient("dummy1", "dummy2", "dummy3");
+		Client client = new DummyClient("dummy1", "dummy2", "dummy3", "dummy4");
 		assertEquals("dummy1", client.getId());
 		assertEquals("dummy2", client.getDeviceId());
 		assertEquals("dummy3", client.getEplStmt());
@@ -18,11 +18,11 @@ public final class ClientTest {
 
 	@Test
 	public void testEqualsAndHashCode() {
-		Client client1 = new DummyClient("dummy", "dummy", "dummy");
-		Client client2 = new DummyClient("dummy", "dummy", "dummy");
-		Client client3 = new DummyClient("dummy2", "dummy", "dummy");
-		Client client4 = new DummyClient("dummy", "dummy2", "dummy");
-		Client client5 = new DummyClient("dummy", "dummy", "dummy2");
+		Client client1 = new DummyClient("dummy", "dummy", "dummy", "dummy");
+		Client client2 = new DummyClient("dummy", "dummy", "dummy", "dummy");
+		Client client3 = new DummyClient("dummy2", "dummy", "dummy", "dummy");
+		Client client4 = new DummyClient("dummy", "dummy2", "dummy", "dummy");
+		Client client5 = new DummyClient("dummy", "dummy", "dummy2", "dummy");
 
 		assertEquals(client1, client2);
 		assertNotEquals(client1, client3);
@@ -38,8 +38,8 @@ public final class ClientTest {
 
 	private static final class DummyClient extends Client {
 
-		public DummyClient(String clientId, String deviceId, String eplStmt) {
-			super("someType", clientId, deviceId, eplStmt);
+		public DummyClient(String clientId, String deviceId, String eplStmt, String userId) {
+			super("someType", clientId, deviceId, eplStmt, userId);
 		}
 
 

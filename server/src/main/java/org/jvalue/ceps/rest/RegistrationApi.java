@@ -15,17 +15,21 @@ import org.jvalue.ceps.api.notifications.GcmClientDescription;
 import org.jvalue.ceps.api.notifications.HttpClient;
 import org.jvalue.ceps.api.notifications.HttpClientDescription;
 import org.jvalue.ceps.notifications.NotificationManager;
+import org.jvalue.commons.auth.RestrictedTo;
+import org.jvalue.commons.auth.Role;
+import org.jvalue.commons.auth.User;
 import org.jvalue.commons.rest.RestUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -49,11 +53,10 @@ public final class RegistrationApi {
 	}
 
 
-	@PUT
-	@Path("/{clientId}")
+	@POST
 	public Client registerClient(
+			@RestrictedTo(Role.PUBLIC) final User user,
 			@PathParam("adapterName") final String adapterName,
-			@PathParam("clientId") final String clientId,
 			@Valid final ClientDescription clientDescription) {
 
 		final Map<String, Object> adapterArguments = new HashMap<>();
@@ -78,16 +81,16 @@ public final class RegistrationApi {
 			}
 		}
 
-		if (notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("already registered", 409);
+		final String clientId = UUID.randomUUID().toString();
 		Client client = clientDescription.accept(new ClientDescriptionVisitor<Void, Client>() {
 			@Override
 			public Client visit(GcmClientDescription clientDescription, Void param) {
-				return new GcmClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
+				return new GcmClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments), user.getId());
 			}
 
 			@Override
 			public Client visit(HttpClientDescription clientDescription, Void param) {
-				return new HttpClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments));
+				return new HttpClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments), user.getId());
 			}
 		}, null);
 		notificationManager.register(client);
@@ -98,12 +101,15 @@ public final class RegistrationApi {
 	@DELETE
 	@Path("/{clientId}")
 	public void unregisterClient(
+			@RestrictedTo(Role.PUBLIC) User user,
 			@PathParam("adapterName") String adapterName,
 			@PathParam("clientId") String clientId) {
 
 		assertIsValidAdapterName(adapterName);
 
-		if (!notificationManager.isRegistered(clientId)) throw RestUtils.createJsonFormattedException("not registered", 404);
+		if (!notificationManager.isRegistered(clientId)) throw RestUtils.createNotFoundException();
+		Client client = notificationManager.get(clientId);
+		if (!user.getRole().equals(Role.ADMIN) && !user.getId().equals(client.getId()))  throw RestUtils.createNotFoundException();
 		notificationManager.unregister(clientId);
 	}
 
@@ -111,20 +117,25 @@ public final class RegistrationApi {
 	@GET
 	@Path("/{clientId}")
 	public Client getClient(
+			@RestrictedTo(Role.PUBLIC) User user,
 			@PathParam("adapterName") String adapterName,
 			@PathParam("clientId") String clientId) {
 
 		assertIsValidAdapterName(adapterName);
-		return notificationManager.get(clientId);
+		Client client = notificationManager.get(clientId);
+		if (!user.getRole().equals(Role.ADMIN) && !user.getId().equals(client.getId()))  throw RestUtils.createNotFoundException();
+		return client;
 	}
 
 
 	@GET
 	public List<Client> getAllClients(
+			@RestrictedTo(Role.PUBLIC) User user,
 			@PathParam("adapterName") String adapterName) {
 
 		assertIsValidAdapterName(adapterName);
-		return notificationManager.getAll();
+		if (user.getRole().equals(Role.ADMIN)) return notificationManager.getAll();
+		else return notificationManager.getAll(user);
 	}
 
 

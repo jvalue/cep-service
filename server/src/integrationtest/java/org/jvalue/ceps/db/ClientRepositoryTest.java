@@ -20,15 +20,15 @@ public final class ClientRepositoryTest extends AbstractRepositoryAdapterTest<Cl
 
 	@Override
 	protected Client doCreateValue(String id, String data) {
-		return new GcmClient(id, data, "someEplStmt");
+		return new GcmClient(id, data, "someEplStmt", "someUserId");
 	}
 
 
 	@Test
 	public void testFindByDeviceId() {
-		Client client1 = new GcmClient("someId1", "someDevice1", "someEpl");
-		Client client2 = new GcmClient("someId2", "someDevice1", "someEpl");
-		Client client3 = new GcmClient("someId3", "someDevice2", "someEpl");
+		Client client1 = new GcmClient("someId1", "someDevice1", "someEpl", "someUserId");
+		Client client2 = new GcmClient("someId2", "someDevice1", "someEpl", "someUserId");
+		Client client3 = new GcmClient("someId3", "someDevice2", "someEpl", "someUserId");
 
 		repository.add(client1);
 		repository.add(client2);

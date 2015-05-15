@@ -15,9 +15,10 @@ public final class GcmClient extends Client {
 	public GcmClient(
 			@JsonProperty("id") String id,
 			@JsonProperty("deviceId") String gcmId,
-			@JsonProperty("eplStmt") String eplStmt) {
+			@JsonProperty("eplStmt") String eplStmt,
+			@JsonProperty("userId") String userId) {
 
-		super(CLIENT_TYPE, id, gcmId, eplStmt);
+		super(CLIENT_TYPE, id, gcmId, eplStmt, userId);
 	}
 
 

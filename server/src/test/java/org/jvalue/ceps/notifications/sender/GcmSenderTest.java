@@ -27,7 +27,7 @@ public final class GcmSenderTest {
 			DEVICE_ID = "deviceId",
 			EVENT_ID = "eventId";
 
-	private static final GcmClient client = new GcmClient(CLIENT_ID, DEVICE_ID, "eplStmt");
+	private static final GcmClient client = new GcmClient(CLIENT_ID, DEVICE_ID, "eplStmt", "someUserId");
 
 
 	@Mocked private GcmUtils gcmUtils;

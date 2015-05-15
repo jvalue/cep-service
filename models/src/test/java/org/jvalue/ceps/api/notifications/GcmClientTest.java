@@ -15,7 +15,7 @@ public final class GcmClientTest {
 
 	@Test
 	public void testJson() throws JsonProcessingException {
-		GcmClient client = new GcmClient("dummy1", "dummy2", "dummy3");
+		GcmClient client = new GcmClient("dummy1", "dummy2", "dummy3", "dummy4");
 		JsonNode json = mapper.valueToTree(client);
 		assertNotNull(json);
 		assertEquals(client, mapper.treeToValue(json, Client.class));

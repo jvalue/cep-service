@@ -33,9 +33,9 @@ public final class ClientGarbageCollectorManagerTest {
 	public void testCollection() throws Exception {
 		new Expectations() {{
 			List<Client> clients = new LinkedList<>();
-			GcmClient client1 = new GcmClient("clientId1", DEVICE_REMOVE_1, "eplStmt");
-			GcmClient client2 = new GcmClient("clientId2", DEVICE_REMOVE_2, "eplStmt");
-			GcmClient client3 = new GcmClient("clientId3", DEVICE_RETAIN, "eplStmt");
+			GcmClient client1 = new GcmClient("clientId1", DEVICE_REMOVE_1, "eplStmt", "userId");
+			GcmClient client2 = new GcmClient("clientId2", DEVICE_REMOVE_2, "eplStmt", "userId");
+			GcmClient client3 = new GcmClient("clientId3", DEVICE_RETAIN, "eplStmt", "userId");
 			clients.addAll(Arrays.asList(client1, client2, client3));
 
 			notificationManager.getAll();

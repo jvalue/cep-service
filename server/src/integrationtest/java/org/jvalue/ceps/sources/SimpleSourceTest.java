@@ -20,6 +20,7 @@ import org.jvalue.ceps.api.RegistrationApi;
 import org.jvalue.ceps.api.SourcesApi;
 import org.jvalue.ceps.api.adapter.ArgumentType;
 import org.jvalue.ceps.api.adapter.EplAdapterDescription;
+import org.jvalue.ceps.api.notifications.Client;
 import org.jvalue.ceps.api.notifications.HttpClientDescription;
 import org.jvalue.ods.api.DataSourceApi;
 import org.jvalue.ods.api.NotificationApi;
@@ -48,8 +49,7 @@ public final class SimpleSourceTest {
 
 	private static final String
 			SOURCE_ID = "ceps" + SimpleSourceTest.class.getSimpleName(),
-			ADAPTER_ID = "ceps" + SimpleSourceTest.class.getSimpleName(),
-			CLIENT_ID = "ceps" + SimpleSourceTest.class.getSimpleName();
+			ADAPTER_ID = "ceps" + SimpleSourceTest.class.getSimpleName();
 
 	private MockWebServer webServer;
 	private String sourceUrl;
@@ -60,6 +60,8 @@ public final class SimpleSourceTest {
 	private RegistrationApi cepsRegistrationApi;
 	private DataSourceApi odsSourceApi;
 	private ProcessorChainApi odsProcessorApi;
+
+	private String registeredClientId = null;
 
 
 	@Before
@@ -140,8 +142,9 @@ public final class SimpleSourceTest {
 		Map<String, JsonNode> adapterArgs = new HashMap<>();
 		adapterArgs.put(adapterArgKey, JsonNodeFactory.instance.numberNode(42));
 		cepsRegistrationApi = cepsRestAdapter.create(RegistrationApi.class);
-		cepsRegistrationApi.registerClientSynchronously(SOURCE_ID, CLIENT_ID, new HttpClientDescription(clientUrl, adapterArgs));
-		Assert.assertEquals(CLIENT_ID, cepsRegistrationApi.getClientSynchronously(SOURCE_ID, CLIENT_ID).getId());
+		Client registeredClient = cepsRegistrationApi.registerClientSynchronously(SOURCE_ID, new HttpClientDescription(clientUrl, adapterArgs));
+		Assert.assertEquals(registeredClient, cepsRegistrationApi.getClientSynchronously(SOURCE_ID, registeredClient.getId()));
+		this.registeredClientId = registeredClient.getId();
 	}
 
 
@@ -151,7 +154,7 @@ public final class SimpleSourceTest {
 		webServer.shutdown();
 
 		// remove client, adapter and source from CEPS
-		if (cepsRegistrationApi != null) cepsRegistrationApi.unregisterClientSynchronously(SOURCE_ID, CLIENT_ID);
+		if (cepsRegistrationApi != null) cepsRegistrationApi.unregisterClientSynchronously(SOURCE_ID, registeredClientId);
 		if (cepsAdapterApi != null) cepsAdapterApi.deleteAdapterSynchronously(ADAPTER_ID);
 		if (cepsSourceApi != null) cepsSourceApi.deleteSourceSynchronously(SOURCE_ID);
 

@@ -43,7 +43,7 @@ public final class GcmClientGarbageCollectorTest {
 		}};
 
 		final String deviceId = "someDeviceId";
-		GcmClient client = new GcmClient("someClientId", deviceId, "someEplStmt");
+		GcmClient client = new GcmClient("someClientId", deviceId, "someEplStmt", "someUserId");
 		CollectionStatus status = new GcmClientGarbageCollector(gcmUtils).determineStatus(client);
 
 		if (collect) Assert.assertEquals(CollectionStatus.COLLECT, status);
