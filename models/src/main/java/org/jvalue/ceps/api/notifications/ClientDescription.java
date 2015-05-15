@@ -2,7 +2,6 @@ package org.jvalue.ceps.api.notifications;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Map;
 
@@ -23,9 +22,9 @@ public abstract class ClientDescription {
 
 	@NotNull private final String type;
 	@NotNull private final String deviceId;
-	@NotNull private final Map<String, JsonNode> eplArguments;
+	@NotNull private final Map<String, Object> eplArguments;
 
-	public ClientDescription(String type, String deviceId, Map<String, JsonNode> eplArguments) {
+	public ClientDescription(String type, String deviceId, Map<String, Object> eplArguments) {
 		this.type = type;
 		this.deviceId = deviceId;
 		this.eplArguments = eplArguments;
@@ -42,7 +41,7 @@ public abstract class ClientDescription {
 	}
 
 
-	public Map<String, JsonNode> getEplArguments() {
+	public Map<String, Object> getEplArguments() {
 		return eplArguments;
 	}
 

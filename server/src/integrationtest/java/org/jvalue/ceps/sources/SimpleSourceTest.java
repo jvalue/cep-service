@@ -91,7 +91,7 @@ public final class SimpleSourceTest {
 					@Override
 					public void intercept(RequestFacade request) {
 						// admin@adminland.com:admin123
-						request.addHeader("Authorization", "Basic cGhpbGlwcC5laWNoaG9ybkBmYXUuZGU6YWRtaW4xMjM=");
+						request.addHeader("Authorization", "Basic YWRtaW5AYWRtaW5sYW5kLmNvbTphZG1pbjEyMw==");
 					}
 				})
 				.build();
@@ -117,7 +117,7 @@ public final class SimpleSourceTest {
 					@Override
 					public void intercept(RequestFacade request) {
 						// admin@adminland.com:admin123
-						request.addHeader("Authorization", "Basic cGhpbGlwcC5laWNoaG9ybkBmYXUuZGU6YWRtaW4xMjM=");
+						request.addHeader("Authorization", "Basic YWRtaW5AYWRtaW5sYW5kLmNvbTphZG1pbjEyMw==");
 					}
 				})
 				.build();
@@ -139,8 +139,8 @@ public final class SimpleSourceTest {
 		Assert.assertEquals(ADAPTER_ID, cepsAdapterApi.getAdapterSynchronously(ADAPTER_ID).getId());
 
 		// add http client to CEPS
-		Map<String, JsonNode> adapterArgs = new HashMap<>();
-		adapterArgs.put(adapterArgKey, JsonNodeFactory.instance.numberNode(42));
+		Map<String, Object> adapterArgs = new HashMap<>();
+		adapterArgs.put(adapterArgKey, 42);
 		cepsRegistrationApi = cepsRestAdapter.create(RegistrationApi.class);
 		Client registeredClient = cepsRegistrationApi.registerClientSynchronously(SOURCE_ID, new HttpClientDescription(clientUrl, adapterArgs));
 		Assert.assertEquals(registeredClient, cepsRegistrationApi.getClientSynchronously(SOURCE_ID, registeredClient.getId()));

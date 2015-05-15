@@ -3,6 +3,8 @@ package org.jvalue.ceps.notifications;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
+import org.jvalue.ceps.adapter.EplAdapterManager;
+import org.jvalue.ceps.api.adapter.EplAdapter;
 import org.jvalue.ceps.api.notifications.Client;
 import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.api.notifications.HttpClient;
@@ -29,18 +31,21 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 	private final ClientRepository clientRepository;
 	private final Map<Class<?>, NotificationSender<?>> sender;
 	private final EsperManager esperManager;
+	private final EplAdapterManager eplAdapterManager;
 	private final EventManager eventManager;
 	private final BiMap<String, String> clientToRegistrationIdMap = new BiMap<>(); // kept in memory es Esper rules are in memory too
 
 	@Inject
 	NotificationManager(
 			EsperManager esperManager,
+			EplAdapterManager eplAdapterManager,
 			EventManager eventManager,
 			NotificationSender<GcmClient> gcmSender,
 			NotificationSender<HttpClient> httpSender,
 			ClientRepository clientRepository) {
 
 		this.esperManager = esperManager;
+		this.eplAdapterManager = eplAdapterManager;
 		this.eventManager = eventManager;
 		this.sender = new HashMap<>();
 		this.sender.put(GcmClient.class, gcmSender);
@@ -58,7 +63,8 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 
 	private void register(Client client, boolean addToDb) {
-		String registrationId = esperManager.register(client.getEplStmt(), this);
+		EplAdapter adapter = eplAdapterManager.get(client.getEplAdapterId());
+		String registrationId = esperManager.register(eplAdapterManager.createEplStatement(adapter, client.getEplArguments()), this);
 		clientToRegistrationIdMap.put(client.getId(), registrationId);
 		if (addToDb) clientRepository.add(client);
 	}

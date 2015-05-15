@@ -8,6 +8,7 @@ import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.notifications.NotificationManager;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,9 +34,9 @@ public final class ClientGarbageCollectorManagerTest {
 	public void testCollection() throws Exception {
 		new Expectations() {{
 			List<Client> clients = new LinkedList<>();
-			GcmClient client1 = new GcmClient("clientId1", DEVICE_REMOVE_1, "eplStmt", "userId");
-			GcmClient client2 = new GcmClient("clientId2", DEVICE_REMOVE_2, "eplStmt", "userId");
-			GcmClient client3 = new GcmClient("clientId3", DEVICE_RETAIN, "eplStmt", "userId");
+			GcmClient client1 = new GcmClient("clientId1", DEVICE_REMOVE_1, "adapterId", new HashMap<String, Object>(), "userId");
+			GcmClient client2 = new GcmClient("clientId2", DEVICE_REMOVE_2, "adapterId", new HashMap<String, Object>(), "userId");
+			GcmClient client3 = new GcmClient("clientId3", DEVICE_RETAIN, "adapterId", new HashMap<String, Object>(), "userId");
 			clients.addAll(Arrays.asList(client1, client2, client3));
 
 			notificationManager.getAll();

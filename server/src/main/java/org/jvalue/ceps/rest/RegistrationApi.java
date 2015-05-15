@@ -1,7 +1,6 @@
 package org.jvalue.ceps.rest;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.adapter.EplAdapterManager;
@@ -20,9 +19,7 @@ import org.jvalue.commons.auth.Role;
 import org.jvalue.commons.auth.User;
 import org.jvalue.commons.rest.RestUtils;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -35,7 +32,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/notifications/{adapterName}")
+@Path("/notifications/{adapterId}")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public final class RegistrationApi {
@@ -56,27 +53,24 @@ public final class RegistrationApi {
 	@POST
 	public Client registerClient(
 			@RestrictedTo(Role.PUBLIC) final User user,
-			@PathParam("adapterName") final String adapterName,
+			@PathParam("adapterId") final String adapterId,
 			@Valid final ClientDescription clientDescription) {
 
-		final Map<String, Object> adapterArguments = new HashMap<>();
-		final EplAdapter adapter = assertIsValidAdapterName(adapterName);
+		final EplAdapter adapter = assertIsValidAdapterId(adapterId);
 
+		// check arg count
 		if (adapter.getRequiredArguments().size() != clientDescription.getEplArguments().size()) throw RestUtils.createJsonFormattedException("found additional param", 400);
+
+		// check arg types
 		for (String requiredParam : adapter.getRequiredArguments().keySet()) {
 			if (!clientDescription.getEplArguments().containsKey(requiredParam)) throw RestUtils.createJsonFormattedException("missing param " + requiredParam, 400);
 
 			ArgumentType argType = adapter.getRequiredArguments().get(requiredParam);
-			JsonNode suppliedParam = clientDescription.getEplArguments().get(requiredParam);
+			Object suppliedParam = clientDescription.getEplArguments().get(requiredParam);
 
-			// convert supplied args to correct type
-			if (argType.equals(ArgumentType.NUMBER) && suppliedParam.isNumber()) {
-				adapterArguments.put(requiredParam, suppliedParam.asDouble());
-			} else if (argType.equals(ArgumentType.STRING) && suppliedParam.isTextual()) {
-				adapterArguments.put(requiredParam, suppliedParam.asText());
-			} else if (argType.equals(ArgumentType.BOOLEAN) && suppliedParam.isBoolean()) {
-				adapterArguments.put(requiredParam, suppliedParam.asBoolean());
-			} else {
+			if (!(argType.equals(ArgumentType.NUMBER) && suppliedParam instanceof Number)
+					&& !(argType.equals(ArgumentType.STRING) && suppliedParam instanceof String)
+					&& !(argType.equals(ArgumentType.BOOLEAN) && suppliedParam instanceof Boolean)) {
 				throw RestUtils.createJsonFormattedException("invalid type for param " + requiredParam + ", should be " + argType.name(), 400);
 			}
 		}
@@ -85,12 +79,12 @@ public final class RegistrationApi {
 		Client client = clientDescription.accept(new ClientDescriptionVisitor<Void, Client>() {
 			@Override
 			public Client visit(GcmClientDescription clientDescription, Void param) {
-				return new GcmClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments), user.getId());
+				return new GcmClient(clientId, clientDescription.getDeviceId(), adapterId, clientDescription.getEplArguments(), user.getId());
 			}
 
 			@Override
 			public Client visit(HttpClientDescription clientDescription, Void param) {
-				return new HttpClient(clientId, clientDescription.getDeviceId(), adapterManager.createEplStatement(adapter, adapterArguments), user.getId());
+				return new HttpClient(clientId, clientDescription.getDeviceId(), adapterId, clientDescription.getEplArguments(), user.getId());
 			}
 		}, null);
 		notificationManager.register(client);
@@ -102,10 +96,10 @@ public final class RegistrationApi {
 	@Path("/{clientId}")
 	public void unregisterClient(
 			@RestrictedTo(Role.PUBLIC) User user,
-			@PathParam("adapterName") String adapterName,
+			@PathParam("adapterId") String adapterId,
 			@PathParam("clientId") String clientId) {
 
-		assertIsValidAdapterName(adapterName);
+		assertIsValidAdapterId(adapterId);
 
 		if (!notificationManager.isRegistered(clientId)) throw RestUtils.createNotFoundException();
 		Client client = notificationManager.get(clientId);
@@ -118,10 +112,10 @@ public final class RegistrationApi {
 	@Path("/{clientId}")
 	public Client getClient(
 			@RestrictedTo(Role.PUBLIC) User user,
-			@PathParam("adapterName") String adapterName,
+			@PathParam("adapterId") String adapterId,
 			@PathParam("clientId") String clientId) {
 
-		assertIsValidAdapterName(adapterName);
+		assertIsValidAdapterId(adapterId);
 		Client client = notificationManager.get(clientId);
 		if (!user.getRole().equals(Role.ADMIN) && !user.getId().equals(client.getId()))  throw RestUtils.createNotFoundException();
 		return client;
@@ -131,16 +125,16 @@ public final class RegistrationApi {
 	@GET
 	public List<Client> getAllClients(
 			@RestrictedTo(Role.PUBLIC) User user,
-			@PathParam("adapterName") String adapterName) {
+			@PathParam("adapterId") String adapterId) {
 
-		assertIsValidAdapterName(adapterName);
+		assertIsValidAdapterId(adapterId);
 		if (user.getRole().equals(Role.ADMIN)) return notificationManager.getAll();
 		else return notificationManager.getAll(user);
 	}
 
 
-	private EplAdapter assertIsValidAdapterName(String adapterName) {
-		EplAdapter adapter = adapterManager.get(adapterName);
+	private EplAdapter assertIsValidAdapterId(String adapterId) {
+		EplAdapter adapter = adapterManager.get(adapterId);
 		if (adapter == null) throw RestUtils.createNotFoundException();
 		return adapter;
 	}

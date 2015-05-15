@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.jvalue.ceps.adapter.EplAdapterManager;
 import org.jvalue.ceps.api.notifications.Client;
 import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.api.notifications.HttpClient;
@@ -18,6 +19,7 @@ import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Pair;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,10 +36,11 @@ public final class NotificationManagerTest {
 			CLIENT_ID = "someClientId",
 			DEVICE_ID = "someDeviceId",
 			USER_ID = "someUserId",
-			EPL_STMT = "someEplStmt",
+			EPL_ADAPTER_ID = "someAdapterId",
 			EVENT_ID = "someEventId";
 
 	@Mocked private EsperManager esperManager;
+	@Mocked private EplAdapterManager eplAdapterManager;
 	@Mocked private EventManager eventManager;
 	@Mocked private NotificationSender<GcmClient> gcmSender;
 	@Mocked private NotificationSender<HttpClient> httpSender;
@@ -46,11 +49,11 @@ public final class NotificationManagerTest {
 
 	private NotificationManager notificationManager;
 
-	private final Client client = new GcmClient(CLIENT_ID, DEVICE_ID, EPL_STMT, USER_ID);
+	private final Client client = new GcmClient(CLIENT_ID, DEVICE_ID, EPL_ADAPTER_ID, new HashMap<String, Object>(), USER_ID);
 
 	@Before
 	public void setupNotificationManager() {
-		this.notificationManager = new NotificationManager(esperManager, eventManager, gcmSender, httpSender, clientRepository);
+		this.notificationManager = new NotificationManager(esperManager, eplAdapterManager, eventManager, gcmSender, httpSender, clientRepository);
 	}
 
 
@@ -59,7 +62,7 @@ public final class NotificationManagerTest {
 		notificationManager.register(client);
 
 		new Verifications() {{
-			esperManager.register(EPL_STMT, notificationManager);
+			esperManager.register(anyString, notificationManager);
 			clientRepository.add(client);
 		}};
 	}
@@ -128,7 +131,7 @@ public final class NotificationManagerTest {
 		notificationManager.start();
 
 		new Verifications() {{
-			esperManager.register(EPL_STMT, notificationManager);
+			esperManager.register(anyString, notificationManager);
 			clientRepository.add(client); times = 0;
 		}};
 	}
@@ -201,7 +204,7 @@ public final class NotificationManagerTest {
 
 			Assert.assertEquals(newDeviceId, newClient.getDeviceId());
 			Assert.assertEquals(CLIENT_ID, newClient.getId());
-			Assert.assertEquals(EPL_STMT, newClient.getEplStmt());
+			Assert.assertEquals(EPL_ADAPTER_ID, newClient.getEplAdapterId());
 		}};
 	}
 

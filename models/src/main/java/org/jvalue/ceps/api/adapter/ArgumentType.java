@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 public enum ArgumentType {
 
 	STRING(String.class),
-	NUMBER(Double.class),
+	NUMBER(Number.class),
 	BOOLEAN(Boolean.class);
 
 	private final Class<?> javaType;

@@ -3,6 +3,8 @@ package org.jvalue.ceps.api.notifications;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
 
 public final class GcmClient extends Client {
 
@@ -15,10 +17,11 @@ public final class GcmClient extends Client {
 	public GcmClient(
 			@JsonProperty("id") String id,
 			@JsonProperty("deviceId") String gcmId,
-			@JsonProperty("eplStmt") String eplStmt,
+			@JsonProperty("eplAdapterId") String eplAdapterId,
+			@JsonProperty("eplArguments") Map<String, Object> eplArguments,
 			@JsonProperty("userId") String userId) {
 
-		super(CLIENT_TYPE, id, gcmId, eplStmt, userId);
+		super(CLIENT_TYPE, id, gcmId, eplAdapterId, eplArguments, userId);
 	}
 
 

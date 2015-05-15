@@ -12,7 +12,7 @@ public final class ClientTest {
 		Client client = new DummyClient("dummy1", "dummy2", "dummy3", "dummy4");
 		assertEquals("dummy1", client.getId());
 		assertEquals("dummy2", client.getDeviceId());
-		assertEquals("dummy3", client.getEplStmt());
+		assertEquals("dummy3", client.getEplAdapterId());
 	}
 
 
@@ -38,8 +38,8 @@ public final class ClientTest {
 
 	private static final class DummyClient extends Client {
 
-		public DummyClient(String clientId, String deviceId, String eplStmt, String userId) {
-			super("someType", clientId, deviceId, eplStmt, userId);
+		public DummyClient(String clientId, String deviceId, String eplAdapterId, String userId) {
+			super("someType", clientId, deviceId, eplAdapterId, null, userId);
 		}
 
 

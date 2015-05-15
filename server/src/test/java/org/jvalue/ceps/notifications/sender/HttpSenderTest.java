@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvalue.ceps.api.notifications.HttpClient;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import mockit.integration.junit4.JMockit;
@@ -47,7 +48,7 @@ public final class HttpSenderTest {
 		String path = "/foo/bar/data/";
 		String callbackUrl = server.getUrl(path).toString();
 		HttpSender sender = new HttpSender();
-		HttpClient client = new HttpClient(CLIENT_ID, callbackUrl, "someEplStmt", "someUserId");
+		HttpClient client = new HttpClient(CLIENT_ID, callbackUrl, "someEplAdapterId", new HashMap<String, Object>(), "someUserId");
 
 		SenderResult result = sender.sendEventUpdate(client, EVENT_ID, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
 		Assert.assertEquals(SenderResult.Status.SUCCESS, result.getStatus());

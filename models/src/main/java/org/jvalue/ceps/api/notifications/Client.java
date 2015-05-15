@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.google.common.base.Objects;
 
+import java.util.Map;
+
 
 @JsonTypeInfo(
 		use = Id.NAME,
@@ -24,20 +26,23 @@ public abstract class Client {
 	private final String id;
 	/** Identifies one device. Multiple epl stmts can be mapped to one deviceId. */
 	private final String deviceId;
-	private final String eplStmt;
+	private final String eplAdapterId;
+	private final Map<String, Object> eplArguments;
 	private final String userId;
 
 	Client(
 			String type,
 			String id,
 			String deviceId,
-			String eplStmt,
+			String eplAdapterId,
+			Map<String, Object> eplArguments,
 			String userId) {
 
 		this.type = type;
 		this.id = id;
 		this.deviceId = deviceId;
-		this.eplStmt = eplStmt;
+		this.eplAdapterId = eplAdapterId;
+		this.eplArguments = eplArguments;
 		this.userId = userId;
 	}
 
@@ -47,41 +52,48 @@ public abstract class Client {
 	}
 
 
-	public final String getId() {
+	public String getId() {
 		return id;
 	}
 
 
-	public final String getDeviceId() {
+	public String getDeviceId() {
 		return deviceId;
 	}
 
 
-	public final String getEplStmt() {
-		return eplStmt;
+	public String getEplAdapterId() {
+		return eplAdapterId;
 	}
 
 
-	public final String getUserId() {
+	public Map<String, Object> getEplArguments() {
+		return eplArguments;
+	}
+
+
+	public String getUserId() {
 		return userId;
 	}
 
 
 	@Override
-	public boolean equals(Object other) {
-		if (other == null || !(other instanceof Client)) return false;
-		if (other == this) return true;
-		Client client = (Client) other;
-		return Objects.equal(id, client.id)
-				&& Objects.equal(deviceId, client.deviceId)
-				&& Objects.equal(eplStmt, client.eplStmt)
-				&& Objects.equal(userId, client.userId);
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Client client = (Client) o;
+		return Objects.equal(type, client.type) &&
+				Objects.equal(id, client.id) &&
+				Objects.equal(deviceId, client.deviceId) &&
+				Objects.equal(eplAdapterId, client.eplAdapterId) &&
+				Objects.equal(eplArguments, client.eplArguments) &&
+				Objects.equal(userId, client.userId);
 	}
 
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(id, deviceId, eplStmt, userId);
+		return Objects.hashCode(type, id, deviceId, eplAdapterId, eplArguments, userId);
 	}
 
 

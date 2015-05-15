@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.notifications.utils.GcmUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import mockit.Expectations;
@@ -43,7 +44,7 @@ public final class GcmClientGarbageCollectorTest {
 		}};
 
 		final String deviceId = "someDeviceId";
-		GcmClient client = new GcmClient("someClientId", deviceId, "someEplStmt", "someUserId");
+		GcmClient client = new GcmClient("someClientId", deviceId, "someAdapterId", new HashMap<String, Object>(), "someUserId");
 		CollectionStatus status = new GcmClientGarbageCollector(gcmUtils).determineStatus(client);
 
 		if (collect) Assert.assertEquals(CollectionStatus.COLLECT, status);

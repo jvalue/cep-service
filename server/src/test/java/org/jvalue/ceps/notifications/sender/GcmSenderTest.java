@@ -10,6 +10,7 @@ import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.notifications.utils.GcmUtils;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public final class GcmSenderTest {
 			DEVICE_ID = "deviceId",
 			EVENT_ID = "eventId";
 
-	private static final GcmClient client = new GcmClient(CLIENT_ID, DEVICE_ID, "eplStmt", "someUserId");
+	private static final GcmClient client = new GcmClient(CLIENT_ID, DEVICE_ID, "eplAdapterId", new HashMap<String, Object>(), "someUserId");
 
 
 	@Mocked private GcmUtils gcmUtils;

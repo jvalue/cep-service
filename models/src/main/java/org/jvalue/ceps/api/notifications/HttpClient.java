@@ -3,6 +3,8 @@ package org.jvalue.ceps.api.notifications;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Map;
+
 
 public final class HttpClient extends Client {
 
@@ -15,10 +17,11 @@ public final class HttpClient extends Client {
 	public HttpClient(
 			@JsonProperty("id") String id,
 			@JsonProperty("deviceId") String clientCallbackUrl,
-			@JsonProperty("eplStmt") String eplStmt,
+			@JsonProperty("eplAdapterId") String eplAdapterId,
+			@JsonProperty("eplArguments") Map<String, Object> eplArguments,
 			@JsonProperty("clientId") String clientId) {
 
-		super(CLIENT_TYPE, id, clientCallbackUrl, eplStmt, clientId);
+		super(CLIENT_TYPE, id, clientCallbackUrl, eplAdapterId, eplArguments, clientId);
 	}
 
 
