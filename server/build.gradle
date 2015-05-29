@@ -24,7 +24,7 @@ dependencies {
 	compile 'com.espertech:esper:4.6.0'
     compile 'org.jvalue.commons:couchdb:0.1.2'
     compile 'org.jvalue.commons:auth:0.1.2'
-    compile 'org.jvalue.ods:client-retrofit:0.1.3-SNAPSHOT'
+    compile 'org.jvalue.ods:client-retrofit:0.1.3'
     compile fileTree(dir: 'libs', include: '*.jar')
     compile project(':models')
 
