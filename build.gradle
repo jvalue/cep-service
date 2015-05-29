@@ -11,7 +11,7 @@ buildscript {
 
 allprojects {
     group = 'org.jvalue.ceps'
-    version = '0.1.1-SNAPSHOT'
+    version = '0.1.1'
 }
 
 
