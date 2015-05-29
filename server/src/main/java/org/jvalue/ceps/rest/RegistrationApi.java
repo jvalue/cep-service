@@ -19,6 +19,7 @@ import org.jvalue.commons.auth.Role;
 import org.jvalue.commons.auth.User;
 import org.jvalue.commons.rest.RestUtils;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -128,8 +129,16 @@ public final class RegistrationApi {
 			@PathParam("adapterId") String adapterId) {
 
 		assertIsValidAdapterId(adapterId);
-		if (user.getRole().equals(Role.ADMIN)) return notificationManager.getAll();
-		else return notificationManager.getAll(user);
+		List<Client> clients;
+		if (user.getRole().equals(Role.ADMIN)) clients = notificationManager.getAll();
+		else clients = notificationManager.getAll(user);
+
+		// filter for adapter id
+		Iterator<Client> iterator = clients.iterator();
+		while (iterator.hasNext()) {
+			if (!iterator.next().getEplAdapterId().equals(adapterId)) iterator.remove();
+		}
+		return clients;
 	}
 
 
