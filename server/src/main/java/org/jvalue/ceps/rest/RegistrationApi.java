@@ -104,7 +104,7 @@ public final class RegistrationApi {
 
 		if (!notificationManager.isRegistered(clientId)) throw RestUtils.createNotFoundException();
 		Client client = notificationManager.get(clientId);
-		if (!user.getRole().equals(Role.ADMIN) && !user.getId().equals(client.getId()))  throw RestUtils.createNotFoundException();
+		if (!user.getRole().equals(Role.ADMIN) && !user.getId().equals(client.getUserId()))  throw RestUtils.createNotFoundException();
 		notificationManager.unregister(clientId);
 	}
 
@@ -118,7 +118,7 @@ public final class RegistrationApi {
 
 		assertIsValidAdapterId(adapterId);
 		Client client = notificationManager.get(clientId);
-		if (!user.getRole().equals(Role.ADMIN) && !user.getId().equals(client.getId()))  throw RestUtils.createNotFoundException();
+		if (!user.getRole().equals(Role.ADMIN) && !user.getId().equals(client.getUserId()))  throw RestUtils.createNotFoundException();
 		return client;
 	}
 
