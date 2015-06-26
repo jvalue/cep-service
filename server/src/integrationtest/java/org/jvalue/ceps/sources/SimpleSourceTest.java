@@ -192,7 +192,6 @@ public final class SimpleSourceTest {
 
 		JsonNode jsonResult = mapper.readTree(clientCallbackRequest.getBody());
 		Assert.assertTrue(jsonResult.has("clientId"));
-		Assert.assertTrue(jsonResult.has("eventId"));
 	}
 
 }

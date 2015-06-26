@@ -1,12 +1,8 @@
 package org.jvalue.ceps.notifications.sender;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.jvalue.ceps.api.notifications.Client;
-
-import java.util.List;
 
 public final class NotificationSenderTest {
 
@@ -79,12 +75,7 @@ public final class NotificationSenderTest {
 	private static final class DummyNotificationSender extends NotificationSender<Client> {
 
 		@Override
-		public SenderResult sendEventUpdate(
-				Client client,
-				String eventId,
-				List<JsonNode> newEvents,
-				List<JsonNode> oldEvents) {
-
+		public SenderResult sendEventUpdate(Client client) {
 			return null;
 		}
 

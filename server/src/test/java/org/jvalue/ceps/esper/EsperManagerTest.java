@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import mockit.Expectations;
@@ -76,7 +75,7 @@ public final class EsperManagerTest {
 
 		Assert.assertNotNull(regId);
 		new Verifications() {{
-			updateListener.onNewEvents(regId, (List<JsonNode>) any, (List<JsonNode>) any);
+			updateListener.onNewEvents(regId);
 			times = dataItems;
 		}};
 	}

@@ -9,15 +9,12 @@ import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataModule;
 import org.jvalue.ceps.db.DbModule;
 import org.jvalue.ceps.esper.EsperModule;
-import org.jvalue.ceps.event.EventGarbageCollector;
-import org.jvalue.ceps.event.EventModule;
 import org.jvalue.ceps.notifications.NotificationManager;
 import org.jvalue.ceps.notifications.NotificationsModule;
 import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorManager;
 import org.jvalue.ceps.ods.OdsModule;
 import org.jvalue.ceps.rest.DataApi;
 import org.jvalue.ceps.rest.EplAdapterApi;
-import org.jvalue.ceps.rest.EventApi;
 import org.jvalue.ceps.rest.RegistrationApi;
 import org.jvalue.ceps.rest.RestModule;
 import org.jvalue.ceps.rest.SourcesApi;
@@ -66,7 +63,6 @@ public final class CepsApplication extends Application<CepsConfig> {
 				new DbModule(configuration.getCouchDb()),
 				new NotificationsModule(),
 				new DataModule(),
-				new EventModule(),
 				new AdapterModule(),
 				new EsperModule(),
 				new OdsModule(),
@@ -77,12 +73,10 @@ public final class CepsApplication extends Application<CepsConfig> {
 
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
-		environment.lifecycle().manage(injector.getInstance(EventGarbageCollector.class));
 		environment.lifecycle().manage(injector.getInstance(ClientGarbageCollectorManager.class));
 
 		environment.jersey().getResourceConfig().register(injector.getInstance(AuthBinder.class));
 		environment.jersey().register(injector.getInstance(DataApi.class));
-		environment.jersey().register(injector.getInstance(EventApi.class));
 		environment.jersey().register(injector.getInstance(RegistrationApi.class));
 		environment.jersey().register(injector.getInstance(SourcesApi.class));
 		environment.jersey().register(injector.getInstance(EplAdapterApi.class));

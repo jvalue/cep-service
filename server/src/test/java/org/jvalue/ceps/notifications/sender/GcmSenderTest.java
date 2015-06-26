@@ -1,7 +1,5 @@
 package org.jvalue.ceps.notifications.sender;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +9,6 @@ import org.jvalue.ceps.notifications.utils.GcmUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import mockit.Expectations;
@@ -25,8 +22,7 @@ public final class GcmSenderTest {
 
 	private static final String
 			CLIENT_ID = "clientId",
-			DEVICE_ID = "deviceId",
-			EVENT_ID = "eventId";
+			DEVICE_ID = "deviceId";
 
 	private static final GcmClient client = new GcmClient(CLIENT_ID, DEVICE_ID, "eplAdapterId", new HashMap<String, Object>(), "someUserId");
 
@@ -57,7 +53,7 @@ public final class GcmSenderTest {
 			result = true;
 		}};
 
-		SenderResult senderResult = sender.sendEventUpdate(client, EVENT_ID, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
+		SenderResult senderResult = sender.sendEventUpdate(client);
 
 		Assert.assertEquals(SenderResult.Status.SUCCESS, senderResult.getStatus());
 		new Verifications() {{
@@ -65,7 +61,6 @@ public final class GcmSenderTest {
 			gcmUtils.sendMsg(DEVICE_ID, payload = withCapture());
 			times = 1;
 
-			Assert.assertEquals(EVENT_ID, payload.get("event"));
 			Assert.assertEquals(CLIENT_ID, payload.get("client"));
 		}};
 	}
@@ -126,7 +121,7 @@ public final class GcmSenderTest {
 			gcmResult.getException(); returns(exception); minTimes = 0;
 		}};
 
-		return sender.sendEventUpdate(client, EVENT_ID, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
+		return sender.sendEventUpdate(client);
 	}
 
 }

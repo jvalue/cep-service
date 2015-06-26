@@ -1,7 +1,5 @@
 package org.jvalue.ceps.notifications;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,15 +11,12 @@ import org.jvalue.ceps.api.notifications.HttpClient;
 import org.jvalue.ceps.db.ClientRepository;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.EventUpdateListener;
-import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
 import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Pair;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 import mockit.Expectations;
 import mockit.Mocked;
@@ -36,12 +31,10 @@ public final class NotificationManagerTest {
 			CLIENT_ID = "someClientId",
 			DEVICE_ID = "someDeviceId",
 			USER_ID = "someUserId",
-			EPL_ADAPTER_ID = "someAdapterId",
-			EVENT_ID = "someEventId";
+			EPL_ADAPTER_ID = "someAdapterId";
 
 	@Mocked private EsperManager esperManager;
 	@Mocked private EplAdapterManager eplAdapterManager;
-	@Mocked private EventManager eventManager;
 	@Mocked private NotificationSender<GcmClient> gcmSender;
 	@Mocked private NotificationSender<HttpClient> httpSender;
 	@Mocked private ClientRepository clientRepository;
@@ -53,7 +46,7 @@ public final class NotificationManagerTest {
 
 	@Before
 	public void setupNotificationManager() {
-		this.notificationManager = new NotificationManager(esperManager, eplAdapterManager, eventManager, gcmSender, httpSender, clientRepository);
+		this.notificationManager = new NotificationManager(esperManager, eplAdapterManager, gcmSender, httpSender, clientRepository);
 	}
 
 
@@ -216,23 +209,20 @@ public final class NotificationManagerTest {
 			esperManager.register(anyString, (EventUpdateListener) any);
 			result = registrationId;
 
-			eventManager.onNewEvents((List) any, (List) any);
-			result = EVENT_ID;
-
 			clientRepository.findById(CLIENT_ID);
 			result = client;
 			clientRepository.findByDeviceId(DEVICE_ID);
 			result = Arrays.asList(client); minTimes = 0;
 
-			gcmSender.sendEventUpdate((GcmClient) any, anyString, (List) any, (List) any);
+			gcmSender.sendEventUpdate((GcmClient) any);
 			result = senderResult;
 		}};
 
 		notificationManager.register(client);
-		notificationManager.onNewEvents(registrationId, new LinkedList<JsonNode>(), new LinkedList<JsonNode>());
+		notificationManager.onNewEvents(registrationId);
 
 		new Verifications() {{
-			gcmSender.sendEventUpdate((GcmClient) client, EVENT_ID, (List) any, (List) any);
+			gcmSender.sendEventUpdate((GcmClient) client);
 			times = 1;
 		}};
 	}

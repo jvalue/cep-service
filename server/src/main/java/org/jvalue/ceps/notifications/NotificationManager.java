@@ -1,6 +1,5 @@
 package org.jvalue.ceps.notifications;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.adapter.EplAdapterManager;
@@ -11,7 +10,6 @@ import org.jvalue.ceps.api.notifications.HttpClient;
 import org.jvalue.ceps.db.ClientRepository;
 import org.jvalue.ceps.esper.EsperManager;
 import org.jvalue.ceps.esper.EventUpdateListener;
-import org.jvalue.ceps.event.EventManager;
 import org.jvalue.ceps.notifications.sender.NotificationSender;
 import org.jvalue.ceps.notifications.sender.SenderResult;
 import org.jvalue.ceps.utils.Assert;
@@ -32,21 +30,18 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 	private final Map<Class<?>, NotificationSender<?>> sender;
 	private final EsperManager esperManager;
 	private final EplAdapterManager eplAdapterManager;
-	private final EventManager eventManager;
 	private final BiMap<String, String> clientToRegistrationIdMap = new BiMap<>(); // kept in memory es Esper rules are in memory too
 
 	@Inject
 	NotificationManager(
 			EsperManager esperManager,
 			EplAdapterManager eplAdapterManager,
-			EventManager eventManager,
 			NotificationSender<GcmClient> gcmSender,
 			NotificationSender<HttpClient> httpSender,
 			ClientRepository clientRepository) {
 
 		this.esperManager = esperManager;
 		this.eplAdapterManager = eplAdapterManager;
-		this.eventManager = eventManager;
 		this.sender = new HashMap<>();
 		this.sender.put(GcmClient.class, gcmSender);
 		this.sender.put(HttpClient.class, httpSender);
@@ -115,14 +110,13 @@ public final class NotificationManager implements EventUpdateListener, Managed {
 
 	@Override
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public synchronized void onNewEvents(String registrationId, List<JsonNode> newEvents, List<JsonNode> oldEvents) {
-		String eventId = eventManager.onNewEvents(newEvents, oldEvents);
+	public synchronized void onNewEvents(String registrationId) {
 		String clientId = clientToRegistrationIdMap.getFirst(registrationId);
 		Client client = clientRepository.findById(clientId);
 
 		Log.info("Sending event to client " + client.getId() + " (deviceId: "  + client.getDeviceId() + ")");
 		NotificationSender s = sender.get(client.getClass());
-		SenderResult result = s.sendEventUpdate(client, eventId, newEvents, oldEvents);
+		SenderResult result = s.sendEventUpdate(client);
 
 		switch (result.getStatus()) {
 			case SUCCESS:

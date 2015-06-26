@@ -1,19 +1,11 @@
 package org.jvalue.ceps.notifications.sender;
 
-import com.fasterxml.jackson.databind.JsonNode;
-
 import org.jvalue.ceps.api.notifications.Client;
-
-import java.util.List;
 
 
 public abstract class NotificationSender<C extends Client> {
 
-	public abstract SenderResult sendEventUpdate(
-			C client, 
-			String eventId,
-			List<JsonNode> newEvents, 
-			List<JsonNode> oldEvents);
+	public abstract SenderResult sendEventUpdate(C client);
 
 
 	protected SenderResult getSuccessResult() {

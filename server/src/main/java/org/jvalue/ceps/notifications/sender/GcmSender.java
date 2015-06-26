@@ -1,13 +1,11 @@
 package org.jvalue.ceps.notifications.sender;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.api.notifications.GcmClient;
 import org.jvalue.ceps.notifications.utils.GcmUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -15,7 +13,6 @@ final class GcmSender extends NotificationSender<GcmClient> {
 
 	private static final String
 		DATA_KEY_CLIENT_ID = "client",
-		DATA_KEY_EVENT_ID = "event",
 		DATA_KEY_DEBUG = "debug";
 
 
@@ -29,16 +26,10 @@ final class GcmSender extends NotificationSender<GcmClient> {
 
 
 	@Override
-	public SenderResult sendEventUpdate(
-			GcmClient client, 
-			String eventId,
-			List<JsonNode> newEvents, 
-			List<JsonNode> oldEvents) {
-
+	public SenderResult sendEventUpdate(GcmClient client) {
 		// gather data
 		Map<String,String> payload = new HashMap<String,String>();
 		payload.put(DATA_KEY_CLIENT_ID, client.getId());
-		payload.put(DATA_KEY_EVENT_ID, eventId);
 		payload.put(DATA_KEY_DEBUG, Boolean.TRUE.toString());
 
 		GcmUtils.GcmResult result = gcmUtils.sendMsg(client.getDeviceId(), payload);

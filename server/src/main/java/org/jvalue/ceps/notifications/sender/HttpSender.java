@@ -2,12 +2,9 @@ package org.jvalue.ceps.notifications.sender;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.api.notifications.HttpClient;
-
-import java.util.List;
 
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
@@ -24,19 +21,14 @@ final class HttpSender extends NotificationSender<HttpClient> {
 
 
 	@Override
-	public SenderResult sendEventUpdate(
-			HttpClient client,
-			String eventId,
-			List<JsonNode> newEvents,
-			List<JsonNode> oldEvents) {
-
+	public SenderResult sendEventUpdate(HttpClient client) {
 		RestAdapter adapter = new RestAdapter.Builder()
 				.setConverter(new JacksonConverter())
 				.setEndpoint(client.getDeviceId())
 				.build();
 		NewDataCallbackService callbackService = adapter.create(NewDataCallbackService.class);
 
-		EventData content = new EventData(client.getId(), eventId);
+		EventData content = new EventData(client.getId());
 
 		try {
 			callbackService.onNewData(content);
@@ -55,11 +47,9 @@ final class HttpSender extends NotificationSender<HttpClient> {
 	private static final class EventData {
 
 		public final String clientId;
-		public final String eventId;
 
-		public EventData(String clientId, String eventId) {
+		public EventData(String clientId) {
 			this.clientId = clientId;
-			this.eventId = eventId;
 		}
 
 	}
