@@ -37,9 +37,6 @@ public class DbModule extends AbstractModule {
 			CouchDbConnector dataSourceConnector = connectorFactory.createConnector(OdsRegistrationRepository.DATABASE_NAME, true);
 			bind(CouchDbConnector.class).annotatedWith(Names.named(OdsRegistrationRepository.DATABASE_NAME)).toInstance(dataSourceConnector);
 
-			CouchDbConnector eventConnector = connectorFactory.createConnector(EventRepository.DATABASE_NAME, true);
-			bind(CouchDbConnector.class).annotatedWith(Names.named(EventRepository.DATABASE_NAME)).toInstance(eventConnector);
-
 			CouchDbConnector clientConnector = connectorFactory.createConnector(ClientRepository.DATABASE_NAME, true);
 			bind(CouchDbConnector.class).annotatedWith(Names.named(ClientRepository.DATABASE_NAME)).toInstance(clientConnector);
 
