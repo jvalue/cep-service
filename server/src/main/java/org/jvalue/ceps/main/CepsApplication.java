@@ -4,6 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import org.jvalue.ceps.adapter.AdapterModule;
+import org.jvalue.ceps.db.DbHealthCheck;
 import org.jvalue.ceps.auth.AuthModule;
 import org.jvalue.ceps.data.DataManager;
 import org.jvalue.ceps.data.DataModule;
@@ -71,10 +72,15 @@ public final class CepsApplication extends Application<CepsConfig> {
 
 		setupDefaultUsers(injector.getInstance(UserManager.class), configuration.getAuth().getUsers());
 
+		// CEPS start / stop callbacks
 		environment.lifecycle().manage(injector.getInstance(DataManager.class));
 		environment.lifecycle().manage(injector.getInstance(NotificationManager.class));
 		environment.lifecycle().manage(injector.getInstance(ClientGarbageCollectorManager.class));
 
+		// setup health checks
+		environment.healthChecks().register(DbHealthCheck.class.getSimpleName(), injector.getInstance(DbHealthCheck.class));
+
+		// setup REST API
 		environment.jersey().getResourceConfig().register(injector.getInstance(AuthBinder.class));
 		environment.jersey().register(injector.getInstance(DataApi.class));
 		environment.jersey().register(injector.getInstance(RegistrationApi.class));
