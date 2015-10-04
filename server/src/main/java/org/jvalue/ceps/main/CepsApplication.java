@@ -15,6 +15,7 @@ import org.jvalue.ceps.notifications.NotificationsModule;
 import org.jvalue.ceps.notifications.garbage.ClientGarbageCollectorManager;
 import org.jvalue.ceps.ods.OdsModule;
 import org.jvalue.ceps.pegelalarm.DataSourceHealthCheck;
+import org.jvalue.ceps.pegelalarm.EplAdapterHealthCheck;
 import org.jvalue.ceps.rest.DataApi;
 import org.jvalue.ceps.rest.EplAdapterApi;
 import org.jvalue.ceps.rest.RegistrationApi;
@@ -81,6 +82,7 @@ public final class CepsApplication extends Application<CepsConfig> {
 		// setup health checks
 		environment.healthChecks().register(DbHealthCheck.class.getSimpleName(), injector.getInstance(DbHealthCheck.class));
 		environment.healthChecks().register(DataSourceHealthCheck.class.getSimpleName(), injector.getInstance(DataSourceHealthCheck.class));
+		environment.healthChecks().register(EplAdapterHealthCheck.class.getSimpleName(), injector.getInstance(EplAdapterHealthCheck.class));
 
 		// setup REST API
 		environment.jersey().getResourceConfig().register(injector.getInstance(AuthBinder.class));
