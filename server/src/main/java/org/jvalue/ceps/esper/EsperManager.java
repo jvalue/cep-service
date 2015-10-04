@@ -6,6 +6,7 @@ import com.espertech.esper.client.EPServiceProvider;
 import com.espertech.esper.client.EPStatement;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 
 import org.jvalue.ceps.data.DataUpdateListener;
@@ -27,7 +28,9 @@ public final class EsperManager implements DataUpdateListener {
 	private final SchemaTranslator schemaTranslator;
 	private final DataTranslator dataTranslator;
 
-	private final Map<String, EPStatement> startedStatements = new HashMap<String, EPStatement>();
+	private final Map<String, EPStatement> startedStatements = new HashMap<>();
+
+	private Optional<SourceData> lastData = Optional.absent();
 
 	@Inject
 	EsperManager(
@@ -95,15 +98,45 @@ public final class EsperManager implements DataUpdateListener {
 
 
 	@Override
-	public void onNewSourceData(String sourceId, ArrayNode data) {
-		Assert.assertNotNull(sourceId, data);
-		for (int i = 0; i < data.size(); i++) {
+	@SuppressWarnings("rawTypes")
+	public void onNewSourceData(String sourceId, ArrayNode jsonData) {
+		Assert.assertNotNull(sourceId, jsonData);
+
+		// ensures that EPL statements which have been added AFTER this data can also see those events (required by PegelAlarm)
+		if (lastData.isPresent()) onNewSourceData(lastData.get());
+
+		Map[] data = new Map[jsonData.size()];
+		for (int i = 0; i < data.length; i++) {
 			try {
-				runtime.sendEvent(dataTranslator.toMap(data.get(i)), sourceId);
+				data[i] = dataTranslator.toMap(jsonData.get(i));
 			} catch (IOException ioe) {
 				Log.error("failed to translate data " + sourceId, ioe);
 			}
 		}
+		lastData = Optional.of(new SourceData(sourceId, data));
+		onNewSourceData(lastData.get());
+	}
+
+
+	@SuppressWarnings("rawTypes")
+	private void onNewSourceData(SourceData sourceData) {
+		for (Map data : sourceData.data) {
+			runtime.sendEvent(data, sourceData.sourceId);
+		}
+	}
+
+
+	private static class SourceData {
+
+		private final String sourceId;
+		@SuppressWarnings("rawTypes") private final Map[] data;
+
+		@SuppressWarnings("rawTypes")
+		public SourceData(String sourceId, Map[] data) {
+			this.sourceId = sourceId;
+			this.data = data;
+		}
+
 	}
 
 }
