@@ -1,3 +1,5 @@
+This is part of an old version. The new version (v2) available here: https://www.github.com/jvalue/open-data-service
+
 # Complex Event Processing Service
 
 The __Complex Event Processing Service__ (CEPS) is a Java based web service which is capable of receiving arbitrary data from outside sources and processing this data via client defined rules. 
